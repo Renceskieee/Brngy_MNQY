@@ -5,6 +5,7 @@ import OTPmodal from './modals/OTPmodal';
 import ForgotPassword from './forms/ForgotPassword';
 import Messages from './shared/Messages';
 import '../assets/style/Login.css';
+import { Eye, EyeClosed } from 'lucide-react';
 
 const API_URL = '/api';
 
@@ -24,6 +25,8 @@ function Login({ onLogin }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showPassword, setShowPassword] = useState(false);
+
 
   useEffect(() => {
     const fetchLoginImages = async () => {
@@ -198,15 +201,25 @@ function Login({ onLogin }) {
 
                 <div className="form-group">
                   <label htmlFor="password" className="form-label">Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`form-input ${errors.password ? 'error' : ''}`}
-                    placeholder="Enter your password"
-                  />
+                  <div className="password-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className={`form-input ${errors.password ? 'error' : ''}`}
+                      placeholder="Enter your password"
+                    />
+
+                    <span
+                      className="password-toggle"
+                      onClick={() => setShowPassword(prev => !prev)}
+                    >
+                      {showPassword ? <Eye /> : <EyeClosed />}
+                    </span>
+                  </div>
+
                   {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
 
@@ -236,7 +249,7 @@ function Login({ onLogin }) {
       </div>
 
       <footer className="app-footer login-footer">
-        <p>© Barangay Information System 2025</p>
+        <p>© SK Barangay Information System 2025</p>
       </footer>
 
       {showOTP && (

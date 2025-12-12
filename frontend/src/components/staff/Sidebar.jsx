@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -11,6 +12,7 @@ import {
 import '../../assets/style/Sidebar.css';
 
 function Sidebar({ activePage, setActivePage, user, onLogout }) {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'residents', icon: Users, label: 'Residents' },
@@ -26,10 +28,16 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
   ];
 
   const handleLogout = () => {
-    const confirmed = window.confirm('Are you sure you want to log out?');
-    if (confirmed) {
-      onLogout();
-    }
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    onLogout();
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   return (
@@ -99,6 +107,23 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
           );
         })}
       </nav>
+
+      {showLogoutModal && (
+        <div className="logout-modal-overlay">
+          <div className="logout-modal">
+            <h3 className="logout-modal-title">Confirm Logout</h3>
+            <p className="logout-modal-message">Are you sure you want to log out?</p>
+            <div className="logout-modal-actions">
+              <button className="logout-modal-cancel" onClick={cancelLogout}>
+                Cancel
+              </button>
+              <button className="logout-modal-confirm" onClick={confirmLogout}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

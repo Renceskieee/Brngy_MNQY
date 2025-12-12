@@ -58,7 +58,7 @@ function Header() {
 function Footer() {
   return (
     <footer className="app-footer">
-      <p>© Barangay Information System 2025</p>
+      <p>© SK Barangay Information System 2025</p>
     </footer>
   );
 }
