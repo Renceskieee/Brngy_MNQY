@@ -1,4 +1,5 @@
-import { X, CheckCircle, XCircle, Info } from 'lucide-react';
+import { useEffect } from 'react';
+import { CheckCircle, XCircle, Info } from 'lucide-react';
 import '../../assets/style/Messages.css';
 
 function Messages({ message, type = 'info', onClose }) {
@@ -9,15 +10,22 @@ function Messages({ message, type = 'info', onClose }) {
   };
   const Icon = iconMap[type] || Info;
 
+  useEffect(() => {
+    if (!message) return;
+    const t = setTimeout(() => {
+      if (onClose) onClose();
+    }, 3500);
+    return () => clearTimeout(t);
+  }, [message, onClose]);
+
+  if (!message) return null;
+
   return (
-    <div className={`message-toast message-${type}`}>
+    <div className={`message-toast message-${type}`} role="status">
       <div className="message-content">
         <Icon size={20} />
         <span className="message-text">{message}</span>
       </div>
-      <button className="message-close" onClick={onClose}>
-        <X size={16} />
-      </button>
     </div>
   );
 }

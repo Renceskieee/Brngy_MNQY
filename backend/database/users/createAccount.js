@@ -15,7 +15,8 @@ const transporter = nodemailer.createTransport({
 
 const createAccount = async (req, res) => {
   try {
-    const { employee_id, first_name, last_name, email, contact_number, position } = req.body;
+    const { employee_id, first_name, last_name, email, contact_number, phone_number, position } = req.body;
+    const contactNumber = contact_number || phone_number || null;
 
     if (!employee_id || !first_name || !last_name || !email || !position) {
       return res.status(400).json({
@@ -49,7 +50,7 @@ const createAccount = async (req, res) => {
     const [result] = await pool.execute(
       `INSERT INTO users (employee_id, password, first_name, last_name, email, contact_number, position, status) 
        VALUES (?, ?, ?, ?, ?, ?, ?, 'active')`,
-      [employee_id, hashedPassword, first_name, last_name, email, contact_number || null, position]
+      [employee_id, hashedPassword, first_name, last_name, email, contactNumber, position]
     );
 
     const mailOptions = {

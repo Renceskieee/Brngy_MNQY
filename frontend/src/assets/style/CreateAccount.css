@@ -36,15 +36,19 @@
   }
 }
 
+
 .create-account-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .create-account-title-row {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .create-account-title {
@@ -57,8 +61,9 @@
 
 .create-account-divider {
   border: none;
-  border-top: 1px solid #e5e5e5;
-  margin-top: 10px;
+  border-top: 1px solid #000000;
+  width: auto;
+  margin: 8px 0 0 0;
 }
 
 .create-account-close {
@@ -66,12 +71,13 @@
   border: none;
   cursor: pointer;
   color: #666;
-  padding: 5px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: all 0.3s ease;
+  align-self: flex-start;
 }
 
 .create-account-close:hover {
@@ -183,14 +189,23 @@
 }
 
 .submit-error {
-  padding: 12px;
+  padding: 12px 16px;
   background: #fee2e2;
   border: 1px solid #fecaca;
   border-radius: 8px;
   color: #dc2626;
   font-size: 14px;
-  text-align: center;
   font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.submit-error svg {
+  flex-shrink: 0;
+  min-width: 18px;
+  min-height: 18px;
 }
 
 .submit-success {

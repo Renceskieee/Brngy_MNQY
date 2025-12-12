@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { X } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import Messages from '../shared/Messages';
 import '../../assets/style/CreateAccount.css';
+import phFlag from '../../assets/logo/philippines.png';
 
 const API_URL = '/api';
 
@@ -17,7 +18,6 @@ function CreateAccount({ onClose }) {
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
   const handleChange = (e) => {
@@ -90,7 +90,6 @@ function CreateAccount({ onClose }) {
       });
 
       if (response.data.success) {
-        setSuccess(true);
         setMessage({ text: 'Account created successfully', type: 'success' });
         setTimeout(() => {
           setFormData({
@@ -101,15 +100,15 @@ function CreateAccount({ onClose }) {
             phone_number: '',
             position: ''
           });
-          setSuccess(false);
+        }, 500);
+        setTimeout(() => {
           setMessage({ text: '', type: '' });
           onClose();
-        }, 1500);
+        }, 3600);
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to create account';
       setErrors({ submit: errorMessage });
-      setMessage({ text: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -191,7 +190,7 @@ function CreateAccount({ onClose }) {
             <label htmlFor="phone_number" className="form-label">Phone Number</label>
             <div className="phone-input-wrapper">
               <div className="phone-flag">
-                <img src="/assets/logo/philippines.png" alt="PH" onError={(e) => { e.target.style.display = 'none'; }} />
+                <img src={phFlag} alt="PH" onError={(e) => { e.target.style.display = 'none'; }} />
               </div>
               <input
                 type="tel"
@@ -228,26 +227,23 @@ function CreateAccount({ onClose }) {
 
           {errors.submit && (
             <div className="submit-error">
-              {errors.submit}
+              <span>{errors.submit}</span>
+              <Info size={18} />
             </div>
           )}
 
-          {success && (
-            <div className="submit-success">
-              Account created successfully!
-            </div>
-          )}
+          {/* success message handled by global Messages component; do not show inline success */}
 
           <button
             type="submit"
             className="create-account-button"
-            disabled={loading || success}
+            disabled={loading}
           >
-            {loading ? 'Creating...' : success ? 'Account Created!' : 'Create Account'}
+            {loading ? 'Creating...' : 'Create Account'}
           </button>
         </form>
 
-        {message.text && (
+        {message.text && message.type === 'success' && (
           <Messages
             message={message.text}
             type={message.type}

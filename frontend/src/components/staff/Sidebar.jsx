@@ -2,7 +2,7 @@ import {
   LayoutDashboard,
   Users,
   Home,
-  AlertCircle,
+  OctagonAlert,
   Heart,
   Download,
   Settings,
@@ -15,7 +15,7 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'residents', icon: Users, label: 'Residents' },
     { id: 'households', icon: Home, label: 'Households' },
-    { id: 'incidents', icon: AlertCircle, label: 'Incidents' },
+    { id: 'incidents', icon: OctagonAlert, label: 'Incidents' },
     { id: 'services', icon: Heart, label: 'Services' },
     { id: 'certificates', icon: Download, label: 'Certificates' },
   ];
