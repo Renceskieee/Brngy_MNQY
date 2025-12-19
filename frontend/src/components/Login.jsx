@@ -229,11 +229,7 @@ function Login({ onLogin }) {
                   </button>
                 </div>
 
-                {errors.submit && (
-                  <div className="submit-error">
-                    {errors.submit}
-                  </div>
-                )}
+                {/* submit errors are handled globally by the Messages popup; local submit-error is suppressed */}
 
                 <button
                   type="submit"

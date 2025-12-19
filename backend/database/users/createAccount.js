@@ -53,17 +53,33 @@ const createAccount = async (req, res) => {
       [employee_id, hashedPassword, first_name, last_name, email, contactNumber, position]
     );
 
+    const username = employee_id;
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Your account has been created',
+      subject: 'Account Created — SK Barangay Information System',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5;">
-          <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 10px;">
-            <h2 style="color: #dc2626; text-align: center;">Welcome, ${first_name} ${last_name}</h2>
-            <p style="color: #333; font-size: 16px;">Your account has been created successfully.</p>
-            <p style="color: #333; font-size: 16px;">Default password: <strong>${defaultPassword}</strong></p>
-            <p style="color: #666; font-size: 14px;">Please log in and change your password as soon as possible.</p>
+        <div style="font-family: 'Poppins', Arial, sans-serif; padding: 24px; background-color: #f3f4f6;">
+          <div style="max-width: 680px; margin: 0 auto; background-color: #ffffff; padding: 28px; border-radius: 8px; border: 1px solid #e5e7eb;">
+            <h2 style="color: #111827; font-size:20px; margin:0 0 12px; text-align:left;">Account Created</h2>
+            <p style="color:#374151; font-size:14px; margin:0 0 12px;">Hello ${first_name} ${last_name},</p>
+            <p style="color:#374151; font-size:14px; margin:0 0 16px;">An account has been created for you in the SK Barangay Information System. Please find your account credentials below. For security, change your password after your first login.</p>
+
+            <div style="background:#f9fafb; border:1px solid #e5e7eb; padding:14px; border-radius:6px; margin-bottom:16px;">
+              <p style="margin:0; font-size:13px; color:#374151;"><strong>Username:</strong> <span style="color:#111827;">${username}</span></p>
+              <p style="margin:8px 0 0; font-size:13px; color:#374151;"><strong>Default password:</strong> <span style="color:#111827;">${defaultPassword}</span></p>
+              <p style="margin:8px 0 0; font-size:12px; color:#6b7280;">You will be prompted to update your password after logging in.</p>
+            </div>
+
+            <p style="font-size:13px; color:#374151; margin:0 0 18px;">If you did not expect this account, please contact your administrator immediately.</p>
+
+            <div style="text-align:left; margin-top:8px;">
+              <a href="" style="display:inline-block; background:#dc2626; color:#ffffff; padding:10px 14px; border-radius:6px; text-decoration:none; font-weight:600;">Access the system</a>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #eef2f7; margin:20px 0 8px;" />
+            <p style="font-size:12px; color:#9ca3af; margin:0;">SK Barangay Information System</p>
           </div>
         </div>
       `

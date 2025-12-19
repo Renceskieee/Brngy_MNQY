@@ -47,6 +47,39 @@ const sendOTPEmail = async (email, otp, subject, purposeText) => {
   }
 };
 
+const sendPasswordResetEmail = async (email, firstName, lastName, newPassword) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Your password has been reset — SK Barangay Information System',
+    html: `
+      <div style="font-family: 'Poppins', Arial, sans-serif; padding: 20px; background-color: #f3f4f6;">
+        <div style="max-width: 680px; margin: 0 auto; background:#ffffff; padding:22px; border-radius:8px; border:1px solid #e6e7eb;">
+          <h2 style="color:#111827; font-size:18px; margin:0 0 10px;">Password Reset Successful</h2>
+          <p style="color:#374151; font-size:14px; margin:0 0 12px;">Hello ${firstName} ${lastName},</p>
+          <p style="color:#374151; font-size:14px; margin:0 0 14px;">Your account password has been reset by the system. Please find your temporary credentials below. For security, change your password after logging in.</p>
+
+          <div style="background:#f9fafb; border:1px solid #e5e7eb; padding:12px; border-radius:6px; margin-bottom:14px;">
+            <p style="margin:0; font-size:13px; color:#374151;"><strong>Temporary password:</strong> <span style="color:#111827;">${newPassword}</span></p>
+          </div>
+
+          <p style="font-size:13px; color:#6b7280; margin:0 0 8px;">If you did not request this change, please contact your administrator immediately.</p>
+          <hr style="border:none; border-top:1px solid #eef2f7; margin:16px 0;" />
+          <p style="font-size:12px; color:#9ca3af; margin:0;">SK Barangay Information System</p>
+        </div>
+      </div>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (err) {
+    console.error('Password reset email error:', err);
+    return false;
+  }
+};
+
 const login = async (req, res) => {
   try {
     const { position, username, password } = req.body;
@@ -372,7 +405,7 @@ const confirmPasswordReset = async (req, res) => {
     }
 
     const [users] = await pool.execute(
-      `SELECT id, last_name FROM users WHERE id = ?`,
+      `SELECT id, first_name, last_name, email FROM users WHERE id = ?`,
       [storedOTP.userId]
     );
 
@@ -391,6 +424,12 @@ const confirmPasswordReset = async (req, res) => {
       `UPDATE users SET password = ? WHERE id = ?`,
       [hashedPassword, user.id]
     );
+
+    try {
+      await sendPasswordResetEmail(user.email, user.first_name, user.last_name, defaultPassword);
+    } catch (emailErr) {
+      console.error('Failed to send password reset confirmation email:', emailErr);
+    }
 
     otpStore.delete(email);
 
