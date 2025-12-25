@@ -331,9 +331,9 @@ function Personalise() {
         </div>
 
         <div className="personalise-section">
-          <h2 className="section-title">Login Page Settings</h2>
+          <h2 className="section-title">Text Color Settings</h2>
           <div className="form-group">
-            <label className="form-label">Login Page Color</label>
+            <label className="form-label">Text Color</label>
             <div className="color-input-group">
               <input
                 type="color"
@@ -349,7 +349,7 @@ function Personalise() {
                 placeholder="#dc2626"
               />
             </div>
-            <p className="form-help">Applies to header title, footer text, and User Authentication/Forgot Password pages</p>
+            <p className="form-help">Applies to header title, footer text, etc.</p>
           </div>
         </div>
 

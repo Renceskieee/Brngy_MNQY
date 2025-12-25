@@ -26,6 +26,14 @@
   object-fit: contain;
 }
 
+.app-header .header-title {
+  color: var(--login-color, #dc2626);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
 .header-title {
   color: white;
   font-size: 18px;
@@ -58,5 +66,6 @@
 
 .app-footer p {
   margin: 0;
+  color: var(--login-color, #dc2626);
 }
 
