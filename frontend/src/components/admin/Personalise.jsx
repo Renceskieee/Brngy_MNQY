@@ -349,7 +349,7 @@ function Personalise() {
                 placeholder="#dc2626"
               />
             </div>
-            <p className="form-help">Applies to User Authentication and Forgot Password pages</p>
+            <p className="form-help">Applies to header title, footer text, and User Authentication/Forgot Password pages</p>
           </div>
         </div>
 

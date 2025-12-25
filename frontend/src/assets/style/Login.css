@@ -33,6 +33,14 @@
   object-fit: contain;
 }
 
+.login-header .header-title {
+  color: var(--login-color, #dc2626);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
 .header-title {
   color: white;
   font-size: 18px;
@@ -153,13 +161,14 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
 .form-label {
@@ -244,17 +253,22 @@
 .error-message {
   color: #dc2626;
   font-size: 12px;
-  margin-top: -4px;
+  margin-top: 4px;
+  margin-bottom: 0;
+  font-family: 'Poppins', sans-serif;
+  min-height: 18px;
 }
 
 .forgot-password-link {
   color: var(--login-color, #dc2626);
   font-size: 14px;
-  text-decoration: none;
+  font-style: italic;
+  text-decoration: underline;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
 .forgot-row {
@@ -291,7 +305,7 @@
 
 .login-footer {
   background: var(--footer-bg-color, #dc2626);
-  color: white;
+  color: var(--login-color, #dc2626);
   text-align: center;
   padding: 15px;
   font-size: 14px;
@@ -300,6 +314,7 @@
 
 .login-footer p {
   margin: 0;
+  color: var(--login-color, #dc2626);
 }
 
 @media (max-width: 768px) {
