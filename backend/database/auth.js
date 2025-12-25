@@ -108,7 +108,7 @@ const login = async (req, res) => {
     if (users.length === 0) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials or position mismatch'
+        message: 'Invalid credentials'
       });
     }
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 25, 2025 at 04:36 AM
+-- Generation Time: Dec 25, 2025 at 07:49 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,6 +34,15 @@ CREATE TABLE `carousel` (
   `posted_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `carousel`
+--
+
+INSERT INTO `carousel` (`id`, `picture`, `position`, `posted_at`) VALUES
+(2, '/uploads/personalisation/images/carousel-1766636186725-314149602.jpg', 3, '2025-12-25 04:16:26'),
+(3, '/uploads/personalisation/images/carousel-1766636190716-534270392.jpg', 2, '2025-12-25 04:16:30'),
+(4, '/uploads/personalisation/images/carousel-1766636197294-357738198.jpg', 1, '2025-12-25 04:16:37');
+
 -- --------------------------------------------------------
 
 --
@@ -43,6 +52,7 @@ CREATE TABLE `carousel` (
 CREATE TABLE `personalisation` (
   `id` tinyint(4) NOT NULL DEFAULT 1 CHECK (`id` = 1),
   `logo` varchar(255) DEFAULT NULL,
+  `main_bg` varchar(255) DEFAULT NULL,
   `header_title` varchar(255) DEFAULT NULL,
   `header_color` varchar(50) DEFAULT NULL,
   `footer_title` varchar(255) DEFAULT NULL,
@@ -53,6 +63,13 @@ CREATE TABLE `personalisation` (
   `button_color` varchar(50) DEFAULT NULL,
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `personalisation`
+--
+
+INSERT INTO `personalisation` (`id`, `logo`, `main_bg`, `header_title`, `header_color`, `footer_title`, `footer_color`, `login_color`, `profile_bg`, `active_nav_color`, `button_color`, `updated_at`) VALUES
+(1, '/uploads/logo/logo-1766635917696-604757120.png', NULL, 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFC300', 'SK Barangay Information System 2025', '#FFC300', '#000000', '#ECECEC', '#FF1818', '#FF1818', '2025-12-25 06:21:19');
 
 -- --------------------------------------------------------
 
@@ -117,7 +134,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carousel`
 --
 ALTER TABLE `carousel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`

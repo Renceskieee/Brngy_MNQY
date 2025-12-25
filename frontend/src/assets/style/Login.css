@@ -161,13 +161,11 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   margin-bottom: 2px;
 }
 
