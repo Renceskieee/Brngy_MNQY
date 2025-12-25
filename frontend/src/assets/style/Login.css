@@ -273,7 +273,7 @@
 
 .login-button {
   padding: 14px;
-  background: var(--login-color, #dc2626);
+  background: var(--button-color, #dc2626);
   color: white;
   border: none;
   border-radius: 8px;
