@@ -549,7 +549,7 @@ function Personalise() {
             disabled={saving || loading}
           >
             <RotateCcw size={20} />
-            <span>Default / Reset</span>
+            <span>Reset</span>
           </button>
           <button
             className="save-button"
