@@ -32,3 +32,4 @@ function Messages({ message, type = 'info', onClose }) {
 
 export default Messages;
 
+
