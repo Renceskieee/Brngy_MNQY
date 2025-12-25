@@ -39,6 +39,7 @@ app.delete('/api/users/:id', userSettings.deleteUser);
 app.get('/api/personalisation', personalisation.getPersonalisation);
 app.put('/api/personalisation', personalisation.updatePersonalisation);
 app.post('/api/personalisation/logo', personalisation.uploadLogo);
+app.post('/api/personalisation/main-bg', personalisation.uploadMainBg);
 app.get('/api/carousel', personalisation.getCarousel);
 app.post('/api/carousel', personalisation.addCarouselImage);
 app.put('/api/carousel/:id/position', personalisation.updateCarouselPosition);

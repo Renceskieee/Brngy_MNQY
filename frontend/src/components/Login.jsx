@@ -31,6 +31,15 @@ function Login({ onLogin }) {
 
 
   useEffect(() => {
+    if (personalisation?.header_title) {
+      const titleElement = document.getElementById('app-title');
+      if (titleElement) {
+        titleElement.textContent = personalisation.header_title;
+      }
+    }
+  }, [personalisation?.header_title]);
+
+  useEffect(() => {
     const fetchLoginImages = async () => {
       try {
         const response = await axios.get(`${API_URL}/carousel`);
@@ -68,31 +77,31 @@ function Login({ onLogin }) {
       ...prev,
       [name]: value
     }));
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+    if (message.text) {
+      setMessage({ text: '', type: '' });
     }
   };
 
   const validateForm = () => {
-    const newErrors = {};
-
     if (!formData.position) {
-      newErrors.position = 'Please select a position';
+      setMessage({ text: 'Please select a position', type: 'error' });
+      setTimeout(() => document.getElementById('position')?.focus(), 0);
+      return false;
     }
 
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      setMessage({ text: 'Username is required', type: 'error' });
+      setTimeout(() => document.getElementById('username')?.focus(), 0);
+      return false;
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      setMessage({ text: 'Password is required', type: 'error' });
+      setTimeout(() => document.getElementById('password')?.focus(), 0);
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -154,7 +163,14 @@ function Login({ onLogin }) {
         </div>
       </header>
 
-      <div className="login-container">
+      <div 
+        className="login-container" 
+        style={{
+          backgroundImage: personalisation?.main_bg 
+            ? `url(${personalisation.main_bg})` 
+            : 'url(/uploads/personalisation/background/defaultbg.jpg)'
+        }}
+      >
         <div className="login-content">
           <div className="login-image-section">
             {loginImages.length > 0 && (
@@ -194,13 +210,12 @@ function Login({ onLogin }) {
                     name="position"
                     value={formData.position}
                     onChange={handleChange}
-                    className={`form-select form-select-tight ${errors.position ? 'error' : ''}`}
+                    className={`form-select form-select-tight`}
                   >
                     <option value="">Select position</option>
                     <option value="admin">Admin</option>
                     <option value="staff">Staff</option>
                   </select>
-                  {errors.position && <span className="error-message">{errors.position}</span>}
                 </div>
 
                 <div className="form-group">
@@ -211,10 +226,9 @@ function Login({ onLogin }) {
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    className={`form-input ${errors.username ? 'error' : ''}`}
+                    className={`form-input`}
                     placeholder="Enter your username"
                   />
-                  {errors.username && <span className="error-message">{errors.username}</span>}
                 </div>
 
                 <div className="form-group">
@@ -226,7 +240,7 @@ function Login({ onLogin }) {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className={`form-input ${errors.password ? 'error' : ''}`}
+                      className={`form-input`}
                       placeholder="Enter your password"
                     />
 
@@ -237,8 +251,6 @@ function Login({ onLogin }) {
                       {showPassword ? <Eye /> : <EyeClosed />}
                     </span>
                   </div>
-
-                  {errors.password && <span className="error-message">{errors.password}</span>}
                 </div>
 
                 <div className="form-group forgot-row">

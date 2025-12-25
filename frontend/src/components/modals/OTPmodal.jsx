@@ -110,8 +110,8 @@ function OTPmodal({ email, userId, onSuccess, onCancel }) {
   };
 
   return (
-    <div className="otp-modal-overlay" onClick={onCancel}>
-      <div className="otp-modal-container" onClick={(e) => e.stopPropagation()}>
+    <div className="otp-modal-overlay">
+      <div className="otp-modal-container">
         <button className="otp-modal-close" onClick={onCancel}>
           <X size={24} />
         </button>

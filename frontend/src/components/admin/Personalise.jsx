@@ -11,6 +11,7 @@ function Personalise() {
   const { personalisation: contextPersonalisation, refresh } = usePersonalisation();
   const [personalisation, setPersonalisation] = useState({
     logo: null,
+    main_bg: null,
     header_title: '',
     header_color: '#ffffff',
     footer_title: '',
@@ -25,6 +26,7 @@ function Personalise() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [logoPreview, setLogoPreview] = useState(null);
+  const [mainBgPreview, setMainBgPreview] = useState(null);
   const [carouselPreview, setCarouselPreview] = useState(null);
 
   useEffect(() => {
@@ -32,6 +34,9 @@ function Personalise() {
       setPersonalisation(contextPersonalisation);
       if (contextPersonalisation.logo) {
         setLogoPreview(contextPersonalisation.logo);
+      }
+      if (contextPersonalisation.main_bg) {
+        setMainBgPreview(contextPersonalisation.main_bg);
       }
     }
     fetchCarousel();
@@ -44,6 +49,7 @@ function Personalise() {
         const data = response.data.personalisation;
         setPersonalisation({
           logo: data.logo || null,
+          main_bg: data.main_bg || null,
           header_title: data.header_title || '',
           header_color: data.header_color || '#ffffff',
           footer_title: data.footer_title || '',
@@ -55,6 +61,9 @@ function Personalise() {
         });
         if (data.logo) {
           setLogoPreview(data.logo);
+        }
+        if (data.main_bg) {
+          setMainBgPreview(data.main_bg);
         }
       }
     } catch (error) {
@@ -115,10 +124,44 @@ function Personalise() {
     }
   };
 
+  const handleMainBgUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({ text: 'Please select an image file', type: 'error' });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('main_bg', file);
+
+    setLoading(true);
+    try {
+      const response = await axios.post(`${API_URL}/personalisation/main-bg`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (response.data.success) {
+        setPersonalisation(prev => ({ ...prev, main_bg: response.data.personalisation.main_bg }));
+        setMainBgPreview(response.data.personalisation.main_bg);
+        setMessage({ text: 'Background image uploaded successfully', type: 'success' });
+        if (refresh) {
+          refresh();
+        }
+      }
+    } catch (error) {
+      setMessage({ text: error.response?.data?.message || 'Failed to upload background image', type: 'error' });
+    } finally {
+      setLoading(false);
+      e.target.value = '';
+    }
+  };
+
   const handleResetDefault = async () => {
     if (window.confirm('Are you sure you want to reset all personalisation settings to default values?')) {
       const defaultValues = {
         logo: null,
+        main_bg: null,
         header_title: '',
         header_color: '#ffffff',
         footer_title: '',
@@ -135,6 +178,7 @@ function Personalise() {
         if (response.data.success) {
           setPersonalisation(defaultValues);
           setLogoPreview(null);
+          setMainBgPreview(null);
           setMessage({ text: 'Settings reset to default values', type: 'success' });
           if (refresh) {
             refresh();
@@ -259,6 +303,30 @@ function Personalise() {
                 type="file"
                 accept="image/*"
                 onChange={handleLogoUpload}
+                disabled={loading}
+                style={{ display: 'none' }}
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className="personalise-section">
+          <h2 className="section-title">Login Page Background</h2>
+          <div className="logo-section">
+            <div className="logo-preview-container">
+              {mainBgPreview ? (
+                <img src={mainBgPreview} alt="Background" className="logo-preview" />
+              ) : (
+                <div className="logo-placeholder">No background uploaded</div>
+              )}
+            </div>
+            <label className="upload-button">
+              <Upload size={20} />
+              <span>Upload Background</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleMainBgUpload}
                 disabled={loading}
                 style={{ display: 'none' }}
               />

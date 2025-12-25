@@ -257,6 +257,18 @@
   min-height: 18px;
 }
 
+.error-message-general {
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
 .forgot-password-link {
   color: var(--login-color, #dc2626);
   font-size: 14px;

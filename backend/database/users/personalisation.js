@@ -10,6 +10,8 @@ const storage = multer.diskStorage({
       uploadPath = path.join(__dirname, '../../uploads/logo');
     } else if (file.fieldname === 'carousel') {
       uploadPath = path.join(__dirname, '../../uploads/personalisation/images');
+    } else if (file.fieldname === 'main_bg') {
+      uploadPath = path.join(__dirname, '../../uploads/personalisation/background');
     }
     try {
       await fs.mkdir(uploadPath, { recursive: true });
@@ -40,7 +42,8 @@ const upload = multer({
 
 const uploadFields = upload.fields([
   { name: 'logo', maxCount: 1 },
-  { name: 'carousel', maxCount: 10 }
+  { name: 'carousel', maxCount: 10 },
+  { name: 'main_bg', maxCount: 1 }
 ]);
 
 const getPersonalisation = async (req, res) => {
@@ -51,8 +54,8 @@ const getPersonalisation = async (req, res) => {
 
     if (rows.length === 0) {
       const [insertResult] = await pool.execute(
-        `INSERT INTO personalisation (id, logo, header_title, header_color, footer_title, footer_color, login_color, profile_bg, active_nav_color, button_color) 
-         VALUES (1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)`
+        `INSERT INTO personalisation (id, logo, main_bg, header_title, header_color, footer_title, footer_color, login_color, profile_bg, active_nav_color, button_color) 
+         VALUES (1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)`
       );
       
       const [newRows] = await pool.execute(
@@ -81,6 +84,7 @@ const getPersonalisation = async (req, res) => {
 const updatePersonalisation = async (req, res) => {
   try {
     const {
+      main_bg,
       header_title,
       header_color,
       footer_title,
@@ -94,6 +98,10 @@ const updatePersonalisation = async (req, res) => {
     const updates = [];
     const values = [];
 
+    if (main_bg !== undefined) {
+      updates.push('main_bg = ?');
+      values.push(main_bg);
+    }
     if (header_title !== undefined) {
       updates.push('header_title = ?');
       values.push(header_title);
@@ -334,10 +342,63 @@ const deleteCarouselImage = async (req, res) => {
   }
 };
 
+const uploadMainBg = async (req, res) => {
+  uploadFields(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message
+      });
+    }
+
+    if (!req.files || !req.files['main_bg']) {
+      return res.status(400).json({
+        success: false,
+        message: 'Background image file is required'
+      });
+    }
+
+    try {
+      const bgFile = req.files['main_bg'][0];
+      const bgPath = `/uploads/personalisation/background/${bgFile.filename}`;
+
+      const [rows] = await pool.execute('SELECT main_bg FROM personalisation WHERE id = 1');
+      if (rows.length > 0 && rows[0].main_bg) {
+        const oldBgPath = path.join(__dirname, '../../uploads/personalisation/background', path.basename(rows[0].main_bg));
+        try {
+          await fs.unlink(oldBgPath);
+        } catch (unlinkError) {
+          console.error('Error deleting old background:', unlinkError);
+        }
+      }
+
+      await pool.execute(
+        'UPDATE personalisation SET main_bg = ? WHERE id = 1',
+        [bgPath]
+      );
+
+      const [updatedRows] = await pool.execute('SELECT * FROM personalisation WHERE id = 1');
+
+      res.json({
+        success: true,
+        message: 'Background image uploaded successfully',
+        personalisation: updatedRows[0]
+      });
+    } catch (error) {
+      console.error('Upload background error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error uploading background image'
+      });
+    }
+  });
+};
+
 module.exports = {
   getPersonalisation,
   updatePersonalisation,
   uploadLogo,
+  uploadMainBg,
   getCarousel,
   addCarouselImage,
   updateCarouselPosition,

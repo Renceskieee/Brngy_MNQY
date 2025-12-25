@@ -14,6 +14,7 @@ export const usePersonalisation = () => {
 export const PersonalisationProvider = ({ children }) => {
   const [personalisation, setPersonalisation] = useState({
     logo: null,
+    main_bg: null,
     header_title: '',
     header_color: '#ffffff',
     footer_title: '',
@@ -36,6 +37,7 @@ export const PersonalisationProvider = ({ children }) => {
         const data = response.data.personalisation;
         setPersonalisation({
           logo: data.logo || null,
+          main_bg: data.main_bg || null,
           header_title: data.header_title || '',
           header_color: data.header_color || '#ffffff',
           footer_title: data.footer_title || '',
