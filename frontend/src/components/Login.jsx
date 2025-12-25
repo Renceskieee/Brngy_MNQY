@@ -4,6 +4,7 @@ import axios from 'axios';
 import OTPmodal from './modals/OTPmodal';
 import ForgotPassword from './forms/ForgotPassword';
 import Messages from './shared/Messages';
+import { usePersonalisation } from '../contexts/PersonalisationContext';
 import '../assets/style/Login.css';
 import { Eye, EyeClosed } from 'lucide-react';
 
@@ -11,6 +12,7 @@ const API_URL = '/api';
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
+  const { personalisation } = usePersonalisation();
   const [formData, setFormData] = useState({
     position: '',
     username: '',
@@ -30,9 +32,23 @@ function Login({ onLogin }) {
 
   useEffect(() => {
     const fetchLoginImages = async () => {
-      const defaultImage = '/uploads/personalisation/images/default.jpg';
-      setLoginImages([defaultImage]);
-      setCurrentImageIndex(0);
+      try {
+        const response = await axios.get(`${API_URL}/carousel`);
+        if (response.data.success && response.data.carousel.length > 0) {
+          const images = response.data.carousel.map(item => item.picture);
+          setLoginImages(images);
+          setCurrentImageIndex(0);
+        } else {
+          const defaultImage = '/uploads/personalisation/images/default.jpg';
+          setLoginImages([defaultImage]);
+          setCurrentImageIndex(0);
+        }
+      } catch (error) {
+        console.error('Error fetching carousel images:', error);
+        const defaultImage = '/uploads/personalisation/images/default.jpg';
+        setLoginImages([defaultImage]);
+        setCurrentImageIndex(0);
+      }
     };
     fetchLoginImages();
   }, []);
@@ -126,13 +142,15 @@ function Login({ onLogin }) {
     <div className="login-page">
       <header className="app-header login-header">
         <div className="header-content">
-          <img
-            src="/uploads/logo/SK-NBBS_logo.png"
-            alt="SK Logo"
-            className="header-logo"
-            onError={(e) => { e.target.style.display = 'none'; }}
-          />
-          <h1 className="header-title">Sangguniang Kabataan – NBBS Dagat-Dagatan</h1>
+          {personalisation?.logo && (
+            <img
+              src={personalisation.logo}
+              alt="Logo"
+              className="header-logo"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+          )}
+          <h1 className="header-title">{personalisation?.header_title || 'Sangguniang Kabataan – NBBS Dagat-Dagatan'}</h1>
         </div>
       </header>
 
@@ -229,7 +247,6 @@ function Login({ onLogin }) {
                   </button>
                 </div>
 
-                {/* submit errors are handled globally by the Messages popup; local submit-error is suppressed */}
 
                 <button
                   type="submit"
@@ -245,7 +262,7 @@ function Login({ onLogin }) {
       </div>
 
       <footer className="app-footer login-footer">
-        <p>© SK Barangay Information System 2025</p>
+        <p>{personalisation?.footer_title || '© SK Barangay Information System 2025'}</p>
       </footer>
 
       {showOTP && (

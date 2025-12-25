@@ -3,7 +3,7 @@ import { MonitorCog, UserRoundPlus, UserRoundCog, UserRound } from 'lucide-react
 import CreateAccount from '../forms/CreateAccount';
 import '../../assets/style/SettingsAdmin.css';
 
-function SettingsAdmin() {
+function SettingsAdmin({ setActivePage }) {
   const [activeModal, setActiveModal] = useState(null);
 
   const settingsCards = [
@@ -49,6 +49,10 @@ function SettingsAdmin() {
               onClick={() => {
                 if (card.id === 'create-account') {
                   setActiveModal('create-account');
+                } else if (card.id === 'personalisation') {
+                  if (setActivePage) {
+                    setActivePage('personalise');
+                  }
                 }
               }}
             >

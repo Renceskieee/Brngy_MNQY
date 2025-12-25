@@ -7,6 +7,7 @@ require('dotenv').config();
 const { login, verifyOTP, resendOTP, requestPasswordReset, confirmPasswordReset } = require('./database/auth');
 const createAccount = require('./database/users/createAccount');
 const userSettings = require('./database/users/settings');
+const personalisation = require('./database/users/personalisation');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -34,6 +35,14 @@ app.get('/api/users/:id', userSettings.getUserById);
 app.put('/api/users/:id', userSettings.updateUser);
 app.put('/api/users/:id/reset-password', userSettings.resetPassword);
 app.delete('/api/users/:id', userSettings.deleteUser);
+
+app.get('/api/personalisation', personalisation.getPersonalisation);
+app.put('/api/personalisation', personalisation.updatePersonalisation);
+app.post('/api/personalisation/logo', personalisation.uploadLogo);
+app.get('/api/carousel', personalisation.getCarousel);
+app.post('/api/carousel', personalisation.addCarouselImage);
+app.put('/api/carousel/:id/position', personalisation.updateCarouselPosition);
+app.delete('/api/carousel/:id', personalisation.deleteCarouselImage);
 
 app.use((err, req, res, next) => {
   console.error('Error:', err);

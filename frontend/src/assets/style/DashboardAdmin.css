@@ -6,7 +6,7 @@
 }
 
 .app-header {
-  background: #dc2626;
+  background: var(--header-bg-color, #dc2626);
   padding: 15px 30px;
   display: flex;
   align-items: center;
@@ -48,7 +48,7 @@
 }
 
 .app-footer {
-  background: #dc2626;
+  background: var(--footer-bg-color, #dc2626);
   color: white;
   text-align: center;
   padding: 15px;

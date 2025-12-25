@@ -13,7 +13,7 @@
 }
 
 .app-header {
-  background: #dc2626;
+  background: var(--header-bg-color, #dc2626);
   padding: 15px 30px;
   display: flex;
   align-items: center;
@@ -143,7 +143,7 @@
 .login-title {
   font-size: 28px;
   font-weight: 700;
-  color: #dc2626;
+  color: var(--login-color, #dc2626);
   margin-bottom: 30px;
   text-align: center;
 }
@@ -181,7 +181,7 @@
 .form-select:focus,
 .form-input:focus {
   outline: none;
-  border-color: #dc2626;
+  border-color: var(--login-color, #dc2626);
   background: white;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
@@ -281,7 +281,7 @@
 
 .login-button {
   padding: 14px;
-  background: #dc2626;
+  background: var(--login-color, #dc2626);
   color: white;
   border: none;
   border-radius: 8px;
@@ -305,7 +305,7 @@
 }
 
 .login-footer {
-  background: #dc2626;
+  background: var(--footer-bg-color, #dc2626);
   color: white;
   text-align: center;
   padding: 15px;

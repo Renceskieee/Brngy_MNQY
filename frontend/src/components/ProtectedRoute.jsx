@@ -11,17 +11,14 @@ function ProtectedRoute({ children, requiredRole }) {
 
   const user = JSON.parse(userData);
 
-  // Check if route requires specific role
   if (requiredRole === 'admin' && user.position !== 'admin') {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Check if admin tries to access staff dashboard - redirect to admin dashboard
   if (location.pathname === '/dashboard' && user.position === 'admin') {
     return <Navigate to="/dashboard-admin" replace />;
   }
 
-  // Check if staff tries to access admin dashboard - redirect to staff dashboard
   if (location.pathname === '/dashboard-admin' && user.position !== 'admin') {
     return <Navigate to="/dashboard" replace />;
   }

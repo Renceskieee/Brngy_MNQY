@@ -232,7 +232,6 @@ function CreateAccount({ onClose }) {
             </div>
           )}
 
-          {/* success message handled by global Messages component; do not show inline success */}
 
           <button
             type="submit"

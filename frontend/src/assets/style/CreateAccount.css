@@ -227,7 +227,7 @@
 
 .create-account-button {
   padding: 14px;
-  background: #dc2626;
+  background: var(--button-color, #dc2626);
   color: white;
   border: none;
   border-radius: 8px;
