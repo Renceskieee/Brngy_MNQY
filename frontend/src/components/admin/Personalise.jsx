@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Upload, X, Trash2, MoveUp, MoveDown, Save } from 'lucide-react';
+import { Upload, X, Trash2, MoveUp, MoveDown, Save, RotateCcw } from 'lucide-react';
 import Messages from '../shared/Messages';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import '../../assets/style/Personalise.css';
@@ -112,6 +112,39 @@ function Personalise() {
     } finally {
       setLoading(false);
       e.target.value = '';
+    }
+  };
+
+  const handleResetDefault = async () => {
+    if (window.confirm('Are you sure you want to reset all personalisation settings to default values?')) {
+      const defaultValues = {
+        logo: null,
+        header_title: '',
+        header_color: '#ffffff',
+        footer_title: '',
+        footer_color: '#f3f4f6',
+        login_color: '#dc2626',
+        profile_bg: '#e5e7eb',
+        active_nav_color: '#dc2626',
+        button_color: '#dc2626'
+      };
+      
+      setSaving(true);
+      try {
+        const response = await axios.put(`${API_URL}/personalisation`, defaultValues);
+        if (response.data.success) {
+          setPersonalisation(defaultValues);
+          setLogoPreview(null);
+          setMessage({ text: 'Settings reset to default values', type: 'success' });
+          if (refresh) {
+            refresh();
+          }
+        }
+      } catch (error) {
+        setMessage({ text: error.response?.data?.message || 'Failed to reset settings', type: 'error' });
+      } finally {
+        setSaving(false);
+      }
     }
   };
 
@@ -442,6 +475,14 @@ function Personalise() {
         </div>
 
         <div className="personalise-actions">
+          <button
+            className="reset-button"
+            onClick={handleResetDefault}
+            disabled={saving || loading}
+          >
+            <RotateCcw size={20} />
+            <span>Default / Reset</span>
+          </button>
           <button
             className="save-button"
             onClick={handleSavePersonalisation}

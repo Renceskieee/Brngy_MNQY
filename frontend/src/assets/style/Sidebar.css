@@ -95,10 +95,6 @@
   width: 100%;
 }
 
-.sidebar-nav-item:hover {
-  background: #f5f5f5;
-}
-
 .sidebar-nav-item.active {
   background: var(--active-nav-color, #dc2626);
   color: white;
@@ -182,18 +178,9 @@
   color: #333;
 }
 
-.logout-modal-cancel:hover {
-  background: #d0d0d0;
-}
 
 .logout-modal-confirm {
-  background: #dc2626;
+  background: var(--button-color, #dc2626);
   color: white;
-}
-
-.logout-modal-confirm:hover {
-  background: #b91c1c;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 

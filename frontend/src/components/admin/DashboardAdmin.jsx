@@ -4,6 +4,7 @@ import HomeAdmin from './HomeAdmin';
 import SettingsAdmin from './SettingsAdmin';
 import Personalise from './Personalise';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
+import { Copyright } from 'lucide-react';
 import '../../assets/style/DashboardAdmin.css';
 
 function DashboardAdmin({ user, onLogout }) {
@@ -66,7 +67,10 @@ function Footer() {
   const { personalisation } = usePersonalisation();
   return (
     <footer className="app-footer">
-      <p>{personalisation?.footer_title || '© SK Barangay Information System 2025'}</p>
+      <p>
+        <Copyright size={14} style={{ display: 'inline', marginRight: '4px' }} />
+        {personalisation?.footer_title || 'SK Barangay Information System 2025'}
+      </p>
     </footer>
   );
 }

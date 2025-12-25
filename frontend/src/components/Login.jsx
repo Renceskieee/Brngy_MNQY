@@ -6,7 +6,7 @@ import ForgotPassword from './forms/ForgotPassword';
 import Messages from './shared/Messages';
 import { usePersonalisation } from '../contexts/PersonalisationContext';
 import '../assets/style/Login.css';
-import { Eye, EyeClosed } from 'lucide-react';
+import { Eye, EyeClosed, Copyright } from 'lucide-react';
 
 const API_URL = '/api';
 
@@ -262,7 +262,10 @@ function Login({ onLogin }) {
       </div>
 
       <footer className="app-footer login-footer">
-        <p>{personalisation?.footer_title || '© SK Barangay Information System 2025'}</p>
+        <p>
+          <Copyright size={14} style={{ display: 'inline', marginRight: '4px' }} />
+          {personalisation?.footer_title || 'SK Barangay Information System 2025'}
+        </p>
       </footer>
 
       {showOTP && (

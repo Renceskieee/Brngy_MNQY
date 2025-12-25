@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import Home from './Home';
 import Settings from './Settings';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
+import { Copyright } from 'lucide-react';
 import '../../assets/style/Dashboard.css';
 
 function Dashboard({ user, onLogout }) {
@@ -63,7 +64,10 @@ function Footer() {
   const { personalisation } = usePersonalisation();
   return (
     <footer className="app-footer">
-      <p>{personalisation?.footer_title || '© SK Barangay Information System 2025'}</p>
+      <p>
+        <Copyright size={14} style={{ display: 'inline', marginRight: '4px' }} />
+        {personalisation?.footer_title || 'SK Barangay Information System 2025'}
+      </p>
     </footer>
   );
 }
