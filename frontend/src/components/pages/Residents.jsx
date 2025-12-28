@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Eye, Edit, Trash2, Search, X } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import ResidentForm from '../forms/ResidentForm';
 import Messages from '../shared/Messages';
 import '../../assets/style/Residents.css';
@@ -17,6 +17,8 @@ function Residents() {
   const [viewResident, setViewResident] = useState(null);
   const [deleteResident, setDeleteResident] = useState(null);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchResidents();
@@ -34,7 +36,13 @@ function Residents() {
       });
       setFilteredResidents(filtered);
     }
+    setCurrentPage(1);
   }, [searchTerm, residents]);
+
+  const totalPages = Math.ceil(filteredResidents.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentResidents = filteredResidents.slice(startIndex, endIndex);
 
   const fetchResidents = async () => {
     setLoading(true);
@@ -104,7 +112,10 @@ function Residents() {
     if (!deleteResident) return;
 
     try {
-      const response = await axios.delete(`${API_URL}/residents/${deleteResident.id}`);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const response = await axios.delete(`${API_URL}/residents/${deleteResident.id}`, {
+        data: { userId: user.id }
+      });
       if (response.data.success) {
         setMessage({ text: 'Resident deleted successfully', type: 'success' });
         fetchResidents();
@@ -162,14 +173,14 @@ function Residents() {
               </tr>
             </thead>
             <tbody>
-              {filteredResidents.length === 0 ? (
+              {currentResidents.length === 0 ? (
                 <tr>
                   <td colSpan="2" className="empty-state">
                     {searchTerm ? 'No residents found matching your search' : 'No residents found. Add a new resident to get started.'}
                   </td>
                 </tr>
               ) : (
-                filteredResidents.map((resident) => (
+                currentResidents.map((resident) => (
                   <tr key={resident.id}>
                     <td>
                       <div className="resident-name-cell">
@@ -209,6 +220,30 @@ function Residents() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {filteredResidents.length > itemsPerPage && (
+        <div className="pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft size={18} />
+            <span>Previous</span>
+          </button>
+          <div className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </div>
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+          >
+            <span>Next</span>
+            <ChevronRight size={18} />
+          </button>
         </div>
       )}
 

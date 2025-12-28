@@ -343,12 +343,24 @@ const deleteResident = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const [existing] = await pool.execute('SELECT id FROM residents WHERE id = ?', [id]);
+    const [existing] = await pool.execute(
+      'SELECT id, f_name, m_name, l_name, suffix FROM residents WHERE id = ?',
+      [id]
+    );
     if (existing.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'Resident not found'
       });
+    }
+
+    const resident = existing[0];
+    const userId = req.body.userId || req.user?.userId || null;
+    
+    if (userId) {
+      const fullName = `${resident.l_name}, ${resident.f_name}${resident.m_name ? ' ' + resident.m_name : ''}${resident.suffix && resident.suffix !== 'NA' ? ' ' + resident.suffix : ''}`;
+      const description = `Deleted resident: ${fullName}`;
+      await history.createHistory(userId, id, description);
     }
 
     await pool.execute('DELETE FROM residents WHERE id = ?', [id]);

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Home from './Home';
 import Settings from './Settings';
+import Residents from '../pages/Residents';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import { Copyright } from 'lucide-react';
 import '../../assets/style/Dashboard.css';
@@ -13,6 +14,8 @@ function Dashboard({ user, onLogout }) {
     switch (activePage) {
       case 'dashboard':
         return <Home />;
+      case 'residents':
+        return <Residents />;
       case 'settings':
         return <Settings />;
       default:
