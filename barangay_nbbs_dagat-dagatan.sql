@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 25, 2025 at 07:49 AM
+-- Generation Time: Dec 28, 2025 at 04:54 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,23 @@ CREATE TABLE `carousel` (
 INSERT INTO `carousel` (`id`, `picture`, `position`, `posted_at`) VALUES
 (2, '/uploads/personalisation/images/carousel-1766636186725-314149602.jpg', 3, '2025-12-25 04:16:26'),
 (3, '/uploads/personalisation/images/carousel-1766636190716-534270392.jpg', 2, '2025-12-25 04:16:30'),
-(4, '/uploads/personalisation/images/carousel-1766636197294-357738198.jpg', 1, '2025-12-25 04:16:37');
+(4, '/uploads/personalisation/images/carousel-1766636197294-357738198.jpg', 1, '2025-12-25 04:16:37'),
+(6, '/uploads/personalisation/images/carousel-1766647589055-259286283.jpeg', 5, '2025-12-25 07:26:29'),
+(7, '/uploads/personalisation/images/carousel-1766647603575-556339110.jpg', 6, '2025-12-25 07:26:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `history`
+--
+
+CREATE TABLE `history` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `resident_id` int(11) NOT NULL,
+  `description` text NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -69,7 +85,29 @@ CREATE TABLE `personalisation` (
 --
 
 INSERT INTO `personalisation` (`id`, `logo`, `main_bg`, `header_title`, `header_color`, `footer_title`, `footer_color`, `login_color`, `profile_bg`, `active_nav_color`, `button_color`, `updated_at`) VALUES
-(1, '/uploads/logo/logo-1766635917696-604757120.png', NULL, 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFC300', 'SK Barangay Information System 2025', '#FFC300', '#000000', '#ECECEC', '#FF1818', '#FF1818', '2025-12-25 06:21:19');
+(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFC300', 'SK Barangay Information System 2025', '#FFC300', '#000000', '#ECECEC', '#FFC300', '#FFC300', '2025-12-25 08:06:42');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `residents`
+--
+
+CREATE TABLE `residents` (
+  `id` int(11) NOT NULL,
+  `f_name` varchar(100) NOT NULL,
+  `m_name` varchar(100) DEFAULT NULL,
+  `l_name` varchar(100) NOT NULL,
+  `suffix` enum('NA','Jr.','Sr.','II','III','IV') DEFAULT 'NA',
+  `sex` enum('male','female') NOT NULL,
+  `birthdate` date NOT NULL,
+  `civil_status` enum('single','married','widowed','separated','divorced') NOT NULL,
+  `contact_no` varchar(20) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -97,7 +135,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `employee_id`, `password`, `first_name`, `last_name`, `email`, `contact_number`, `profile_picture`, `position`, `status`, `created_at`, `updated_at`) VALUES
-(1, '224-09160M', '$2b$10$VcqS5NenIhz1KYsZtqaOJe4hlwf/ifutdC7wU.aYxD2xlITHUrgcS', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', NULL, 'admin', 'active', '2025-12-12 06:45:59', '2025-12-19 08:28:49'),
+(1, '224-09160M', '$2b$10$PTUjK5buOrA9IY45vyFhH.E/cXH3FFRxG8lFOS/rdGuYWqUsnxKUK', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', NULL, 'admin', 'active', '2025-12-12 06:45:59', '2025-12-25 08:05:23'),
 (2, '224-09159M', '$2b$10$9DooDXwNMs.CgzqC17S1oO6B1r8DDDtvlIHVWkSPbC/7VxbVV86Hu', 'Angela Tanya', 'Navarrosa', 'quiniano.infotech@gmail.com', '9942611480', NULL, 'staff', 'active', '2025-12-12 06:59:37', '2025-12-19 07:49:40'),
 (3, '224-09127M', '$2b$10$ZXQXYdD1FrT5PeZbP3s.LejOyPRgVNyAbmOOVsxe80BiXQh/TC2di', 'Laurence', 'Quiniano', 'quiniano.lp@gmail.com', '9685408094', NULL, 'staff', 'active', '2025-12-12 09:34:10', '2025-12-12 09:34:10'),
 (4, '224-09162M', '$2b$10$jOyISqnx6L1.6UJ/FnXuTOYEm63MvRkZU.5jjA2khC2NDENcF9mgW', 'Laurence Paul', 'Quiniano', 'laurencequiniano74@gmail.com', '9156128497', NULL, 'staff', 'active', '2025-12-12 09:46:28', '2025-12-12 09:46:28'),
@@ -114,10 +152,26 @@ ALTER TABLE `carousel`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `history`
+--
+ALTER TABLE `history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_history_user` (`user_id`),
+  ADD KEY `fk_history_resident` (`resident_id`);
+
+--
 -- Indexes for table `personalisation`
 --
 ALTER TABLE `personalisation`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `residents`
+--
+ALTER TABLE `residents`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `contact_no` (`contact_no`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `users`
@@ -134,13 +188,36 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carousel`
 --
 ALTER TABLE `carousel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `history`
+--
+ALTER TABLE `history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `residents`
+--
+ALTER TABLE `residents`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `history`
+--
+ALTER TABLE `history`
+  ADD CONSTRAINT `fk_history_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_history_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -28,6 +28,7 @@ function Personalise() {
   const [logoPreview, setLogoPreview] = useState(null);
   const [mainBgPreview, setMainBgPreview] = useState(null);
   const [carouselPreview, setCarouselPreview] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   useEffect(() => {
     if (contextPersonalisation && contextPersonalisation.header_color) {
@@ -242,20 +243,28 @@ function Personalise() {
     }
   };
 
-  const handleDeleteCarousel = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this carousel image?')) {
-      return;
-    }
+  const handleDeleteCarousel = (id) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDeleteCarousel = async () => {
+    if (!deleteConfirmId) return;
 
     try {
-      const response = await axios.delete(`${API_URL}/carousel/${id}`);
+      const response = await axios.delete(`${API_URL}/carousel/${deleteConfirmId}`);
       if (response.data.success) {
         fetchCarousel();
         setMessage({ text: 'Carousel image deleted successfully', type: 'success' });
       }
     } catch (error) {
       setMessage({ text: error.response?.data?.message || 'Failed to delete image', type: 'error' });
+    } finally {
+      setDeleteConfirmId(null);
     }
+  };
+
+  const cancelDeleteCarousel = () => {
+    setDeleteConfirmId(null);
   };
 
   const handleMoveCarousel = async (id, direction) => {
@@ -568,6 +577,23 @@ function Personalise() {
           type={message.type}
           onClose={() => setMessage({ text: '', type: '' })}
         />
+      )}
+
+      {deleteConfirmId && (
+        <div className="logout-modal-overlay">
+          <div className="logout-modal">
+            <h3 className="logout-modal-title">Confirm Delete</h3>
+            <p className="logout-modal-message">Are you sure you want to delete this carousel image?</p>
+            <div className="logout-modal-actions">
+              <button className="logout-modal-cancel" onClick={cancelDeleteCarousel}>
+                Cancel
+              </button>
+              <button className="logout-modal-confirm" onClick={confirmDeleteCarousel}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

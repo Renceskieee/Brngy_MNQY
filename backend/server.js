@@ -8,6 +8,8 @@ const { login, verifyOTP, resendOTP, requestPasswordReset, confirmPasswordReset 
 const createAccount = require('./database/users/createAccount');
 const userSettings = require('./database/users/settings');
 const personalisation = require('./database/users/personalisation');
+const residents = require('./database/users/residents');
+const history = require('./database/users/history');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -44,6 +46,15 @@ app.get('/api/carousel', personalisation.getCarousel);
 app.post('/api/carousel', personalisation.addCarouselImage);
 app.put('/api/carousel/:id/position', personalisation.updateCarouselPosition);
 app.delete('/api/carousel/:id', personalisation.deleteCarouselImage);
+
+app.get('/api/residents', residents.getAllResidents);
+app.get('/api/residents/count', residents.getResidentsCount);
+app.get('/api/residents/:id', residents.getResidentById);
+app.post('/api/residents', residents.createResident);
+app.put('/api/residents/:id', residents.updateResident);
+app.delete('/api/residents/:id', residents.deleteResident);
+
+app.get('/api/history', history.getRecentHistory);
 
 app.use((err, req, res, next) => {
   console.error('Error:', err);

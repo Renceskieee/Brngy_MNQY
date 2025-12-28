@@ -3,6 +3,7 @@ import SidebarAdmin from './SidebarAdmin';
 import HomeAdmin from './HomeAdmin';
 import SettingsAdmin from './SettingsAdmin';
 import Personalise from './Personalise';
+import Residents from '../pages/Residents';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import { Copyright } from 'lucide-react';
 import '../../assets/style/DashboardAdmin.css';
@@ -14,6 +15,8 @@ function DashboardAdmin({ user, onLogout }) {
     switch (activePage) {
       case 'dashboard':
         return <HomeAdmin />;
+      case 'residents':
+        return <Residents />;
       case 'settings':
         return <SettingsAdmin setActivePage={setActivePage} />;
       case 'personalise':
