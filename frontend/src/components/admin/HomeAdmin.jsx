@@ -50,10 +50,22 @@ function HomeAdmin() {
   };
 
   const getResidentName = (activity) => {
-    if (!activity.resident_f_name) return 'Unknown Resident';
-    const suffix = activity.resident_suffix && activity.resident_suffix !== 'NA' ? ` ${activity.resident_suffix}` : '';
-    const mName = activity.resident_m_name ? ` ${activity.resident_m_name}` : '';
-    return `${activity.resident_l_name}, ${activity.resident_f_name}${mName}${suffix}`;
+    if (activity.resident_f_name) {
+      const suffix = activity.resident_suffix && activity.resident_suffix !== 'NA' ? ` ${activity.resident_suffix}` : '';
+      const mName = activity.resident_m_name ? ` ${activity.resident_m_name}` : '';
+      return `${activity.resident_l_name}, ${activity.resident_f_name}${mName}${suffix}`;
+    }
+    
+    if (activity.description) {
+      if (activity.description.includes('Deleted resident: ')) {
+        return activity.description.replace('Deleted resident: ', '');
+      }
+      if (activity.description.includes('Added new resident: ')) {
+        return activity.description.replace('Added new resident: ', '');
+      }
+    }
+    
+    return 'Unknown Resident';
   };
 
   const getUserName = (activity) => {

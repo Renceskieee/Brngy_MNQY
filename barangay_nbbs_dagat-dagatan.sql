@@ -54,7 +54,7 @@ INSERT INTO `carousel` (`id`, `picture`, `position`, `posted_at`) VALUES
 CREATE TABLE `history` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `resident_id` int(11) NOT NULL,
+  `resident_id` int(11) DEFAULT NULL,
   `description` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -216,7 +216,7 @@ ALTER TABLE `users`
 -- Constraints for table `history`
 --
 ALTER TABLE `history`
-  ADD CONSTRAINT `fk_history_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_history_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
