@@ -5,7 +5,10 @@
   flex-direction: column;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
   padding: 20px 0;
-  flex-shrink: 0;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  bottom: 60px;
   overflow-y: auto;
 }
 

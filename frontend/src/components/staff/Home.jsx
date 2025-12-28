@@ -4,7 +4,7 @@ import '../../assets/style/Home.css';
 
 const API_URL = '/api';
 
-function HomeStaff() {
+function Home() {
   const [residentCount, setResidentCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,13 +62,13 @@ function HomeStaff() {
   };
 
   return (
-    <div className="home-admin">
-      <div className="home-admin-header">
-        <h1 className="home-admin-title">Dashboard</h1>
-        <p className="home-admin-subtitle">Welcome to the Admin Dashboard</p>
+    <div className="home-staff">
+      <div className="home-staff-header">
+        <h1 className="home-staff-title">Dashboard</h1>
+        <p className="home-staff-subtitle">Welcome to the Staff Dashboard</p>
       </div>
 
-      <div className="home-admin-content">
+      <div className="home-staff-content">
         <div className="stats-section">
           <div className="stat-card">
             <div className="stat-icon">👥</div>
@@ -112,4 +112,4 @@ function HomeStaff() {
   );
 }
 
-export default HomeStaff;
+export default Home;
