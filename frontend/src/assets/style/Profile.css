@@ -43,11 +43,6 @@
   transition: all 0.3s ease;
 }
 
-.profile-option-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  border-color: #d1d5db;
-}
 
 .profile-option-icon {
   margin-bottom: 15px;
@@ -116,10 +111,6 @@
   transition: all 0.3s ease;
 }
 
-.profile-section-close:hover {
-  background: #f5f5f5;
-  color: #333;
-}
 
 .profile-section-title {
   font-size: 24px;

@@ -65,10 +65,6 @@
   transition: all 0.3s ease;
 }
 
-.recent-activities-close:hover {
-  background: #f3f4f6;
-  color: #111827;
-}
 
 .recent-activities-content {
   display: flex;
@@ -89,10 +85,6 @@
   transition: all 0.2s ease;
 }
 
-.activity-item:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
-}
 
 .activity-content {
   display: flex;

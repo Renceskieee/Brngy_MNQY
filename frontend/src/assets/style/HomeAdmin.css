@@ -45,10 +45,6 @@
   transition: all 0.3s ease;
 }
 
-.stat-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
 
 .stat-icon {
   font-size: 48px;
@@ -93,9 +89,6 @@
   transition: all 0.3s ease;
 }
 
-.activities-section:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
 .section-title {
   font-size: 20px;
@@ -119,10 +112,6 @@
   transition: all 0.2s ease;
 }
 
-.activity-item:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
-}
 
 .activity-content {
   display: flex;

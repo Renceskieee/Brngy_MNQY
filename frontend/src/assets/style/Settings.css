@@ -30,10 +30,6 @@
   transition: all 0.3s ease;
 }
 
-.settings-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
 
 .settings-card-icon {
   margin-bottom: 15px;

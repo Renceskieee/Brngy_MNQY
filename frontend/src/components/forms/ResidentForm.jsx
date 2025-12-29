@@ -25,13 +25,21 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
 
   useEffect(() => {
     if (resident) {
+      const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
       setFormData({
         f_name: resident.f_name || '',
         m_name: resident.m_name || '',
         l_name: resident.l_name || '',
         suffix: resident.suffix || 'NA',
         sex: resident.sex || '',
-        birthdate: resident.birthdate || '',
+        birthdate: formatDateForInput(resident.birthdate),
         civil_status: resident.civil_status || '',
         contact_no: resident.contact_no || '',
         email: resident.email || '',

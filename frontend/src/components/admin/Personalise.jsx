@@ -158,8 +158,14 @@ function Personalise() {
     }
   };
 
+  const [showResetModal, setShowResetModal] = useState(false);
+
   const handleResetDefault = async () => {
-    if (window.confirm('Are you sure you want to reset all personalisation settings to default values?')) {
+    setShowResetModal(true);
+  };
+
+  const confirmResetDefault = async () => {
+    setShowResetModal(false);
       const defaultValues = {
         logo: null,
         main_bg: null,
@@ -190,7 +196,10 @@ function Personalise() {
       } finally {
         setSaving(false);
       }
-    }
+  };
+
+  const cancelResetDefault = () => {
+    setShowResetModal(false);
   };
 
   const handleSavePersonalisation = async () => {
@@ -589,6 +598,23 @@ function Personalise() {
                 Cancel
               </button>
               <button className="logout-modal-confirm" onClick={confirmDeleteCarousel}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showResetModal && (
+        <div className="logout-modal-overlay">
+          <div className="logout-modal">
+            <h3 className="logout-modal-title">Confirm Reset</h3>
+            <p className="logout-modal-message">Are you sure you want to reset all personalisation settings to default values?</p>
+            <div className="logout-modal-actions">
+              <button className="logout-modal-cancel" onClick={cancelResetDefault}>
+                Cancel
+              </button>
+              <button className="logout-modal-confirm" onClick={confirmResetDefault}>
                 Confirm
               </button>
             </div>

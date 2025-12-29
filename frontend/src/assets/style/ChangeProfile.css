@@ -62,10 +62,6 @@
   transition: all 0.3s ease;
 }
 
-.change-profile-close:hover {
-  background: #f5f5f5;
-  color: #333;
-}
 
 .change-profile-content {
   display: flex;
@@ -130,14 +126,8 @@
 }
 
 .upload-button {
-  background: #5463FF;
+  background: var(--button-color, #dc2626);
   color: white;
-}
-
-.upload-button:hover {
-  background: #4352e6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(84, 99, 255, 0.3);
 }
 
 .remove-button {
@@ -145,21 +135,9 @@
   color: white;
 }
 
-.remove-button:hover:not(:disabled) {
-  background: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
 .save-button {
   background: #10b981;
   color: white;
-}
-
-.save-button:hover:not(:disabled) {
-  background: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .upload-button:disabled,
@@ -175,5 +153,73 @@
   text-align: center;
   margin: 0;
   font-family: 'Poppins', sans-serif;
+}
+
+.logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.logout-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.logout-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 12px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logout-modal-message {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+  font-family: 'Poppins', sans-serif;
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.logout-modal-cancel,
+.logout-modal-confirm {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-modal-cancel {
+  background: #e5e5e5;
+  color: #333;
+}
+
+.logout-modal-confirm {
+  background: var(--button-color, #dc2626);
+  color: white;
 }
 

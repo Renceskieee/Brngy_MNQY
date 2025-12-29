@@ -41,10 +41,6 @@
   transition: all 0.3s ease;
 }
 
-.add-household-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
 
 .households-search {
   margin-bottom: 24px;
@@ -97,10 +93,6 @@
   transition: all 0.2s ease;
 }
 
-.clear-search:hover {
-  background: #f3f4f6;
-  color: #111827;
-}
 
 .households-table-container {
   background: #ffffff;
@@ -133,9 +125,6 @@
   transition: background 0.2s ease;
 }
 
-.households-table tbody tr:hover {
-  background: #f9fafb;
-}
 
 .households-table tbody tr:last-child {
   border-bottom: none;
@@ -188,19 +177,9 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.action-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .view-btn {
   color: #2563eb;
   border-color: #93c5fd;
-}
-
-.view-btn:hover {
-  background: #eff6ff;
-  border-color: #2563eb;
 }
 
 .edit-btn {
@@ -208,19 +187,9 @@
   border-color: #86efac;
 }
 
-.edit-btn:hover {
-  background: #f0fdf4;
-  border-color: #16a34a;
-}
-
 .delete-btn {
   color: #dc2626;
   border-color: #fca5a5;
-}
-
-.delete-btn:hover {
-  background: #fef2f2;
-  border-color: #dc2626;
 }
 
 .empty-state {
@@ -306,10 +275,6 @@
   transition: all 0.3s ease;
 }
 
-.view-modal-close:hover {
-  background: #f3f4f6;
-  color: #111827;
-}
 
 .view-modal-content {
   display: flex;
@@ -418,17 +383,9 @@
   color: #333;
 }
 
-.delete-modal-cancel:hover {
-  background: #d1d5db;
-}
-
 .delete-modal-confirm {
   background: var(--button-color, #dc2626);
   color: white;
-}
-
-.delete-modal-confirm:hover {
-  opacity: 0.9;
 }
 
 .pagination {
@@ -459,10 +416,6 @@
   transition: all 0.2s ease;
 }
 
-.pagination-btn:hover:not(:disabled) {
-  background: #f3f4f6;
-  border-color: #9ca3af;
-}
 
 .pagination-btn:disabled {
   opacity: 0.5;

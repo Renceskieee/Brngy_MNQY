@@ -29,8 +29,8 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
         fetchHouseholdDetails(household.id);
       } else if (household.members) {
         setMembers(household.members.map(m => ({
-          resident_id: m.resident_id,
-          role: m.role
+          resident_id: m.resident_id ? String(m.resident_id) : '',
+          role: m.role || 'member'
         })));
       }
     }
@@ -41,8 +41,8 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
       const response = await axios.get(`${API_URL}/households/${id}`);
       if (response.data.success && response.data.household.members) {
         setMembers(response.data.household.members.map(m => ({
-          resident_id: m.resident_id,
-          role: m.role
+          resident_id: m.resident_id ? String(m.resident_id) : '',
+          role: m.role || 'member'
         })));
       }
     } catch (error) {
@@ -272,7 +272,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
                       <div className="form-group member-resident">
                         <label className="form-label">Resident *</label>
                         <select
-                          value={member.resident_id}
+                          value={member.resident_id ? String(member.resident_id) : ''}
                           onChange={(e) => handleMemberChange(index, 'resident_id', e.target.value)}
                           className={`form-select ${errors[`member_${index}`] ? 'error' : ''}`}
                         >
@@ -282,7 +282,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
                             const mName = resident.m_name ? ` ${resident.m_name}` : '';
                             const fullName = `${resident.l_name}, ${resident.f_name}${mName}${suffix}`;
                             return (
-                              <option key={resident.id} value={resident.id}>
+                              <option key={resident.id} value={String(resident.id)}>
                                 {fullName}
                               </option>
                             );
