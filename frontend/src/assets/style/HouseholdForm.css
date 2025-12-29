@@ -227,7 +227,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr auto;
   gap: 12px;
-  align-items: end;
+  align-items: start;
 }
 
 .member-resident {
@@ -250,7 +250,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   height: 44px;
-  align-self: end;
+  align-self: center;
 }
 
 .remove-member-btn:hover {

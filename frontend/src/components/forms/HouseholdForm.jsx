@@ -25,7 +25,6 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
         household_name: household.household_name || '',
         address: household.address || ''
       });
-      // Fetch full household details if we only have basic info
       if (!household.members && household.id) {
         fetchHouseholdDetails(household.id);
       } else if (household.members) {
@@ -89,7 +88,11 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
 
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...members];
-    updatedMembers[index][field] = value;
+    if (field === 'resident_id') {
+      updatedMembers[index][field] = value === '' ? '' : parseInt(value);
+    } else {
+      updatedMembers[index][field] = value;
+    }
     setMembers(updatedMembers);
   };
 
@@ -104,7 +107,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
       newErrors.address = 'Address is required';
     }
 
-    if (household && members.length > 0) {
+    if (members.length > 0) {
       for (let i = 0; i < members.length; i++) {
         if (!members[i].resident_id) {
           newErrors[`member_${i}`] = 'Please select a resident';
@@ -114,7 +117,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
         }
       }
 
-      const residentIds = members.map(m => m.resident_id).filter(id => id);
+      const residentIds = members.map(m => parseInt(m.resident_id)).filter(id => id);
       const uniqueIds = new Set(residentIds);
       if (residentIds.length !== uniqueIds.size) {
         newErrors.members = 'Duplicate residents are not allowed';
@@ -187,12 +190,13 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
     return `${resident.l_name}, ${resident.f_name}${mName}${suffix}`;
   };
 
-  const getAvailableResidentsForSelect = () => {
+  const getAvailableResidentsForSelect = (currentResidentId) => {
     const usedResidentIds = members.map(m => parseInt(m.resident_id)).filter(id => id);
     return availableResidents.filter(r => {
+      if (currentResidentId && parseInt(currentResidentId) === r.id) return true;
       if (household && household.members) {
-        const existingMember = household.members.find(m => m.resident_id === r.id);
-        return !usedResidentIds.includes(r.id) || existingMember;
+        const existingMember = household.members.find(m => parseInt(m.resident_id) === r.id);
+        return !usedResidentIds.includes(r.id) || !!existingMember;
       }
       return !usedResidentIds.includes(r.id);
     });
@@ -273,7 +277,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
                           className={`form-select ${errors[`member_${index}`] ? 'error' : ''}`}
                         >
                           <option value="">Select resident</option>
-                          {getAvailableResidentsForSelect().map(resident => {
+                          {getAvailableResidentsForSelect(member.resident_id).map(resident => {
                             const suffix = resident.suffix && resident.suffix !== 'NA' ? ` ${resident.suffix}` : '';
                             const mName = resident.m_name ? ` ${resident.m_name}` : '';
                             const fullName = `${resident.l_name}, ${resident.f_name}${mName}${suffix}`;
