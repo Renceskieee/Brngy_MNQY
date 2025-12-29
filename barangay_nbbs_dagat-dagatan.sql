@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 28, 2025 at 04:54 AM
+-- Generation Time: Dec 29, 2025 at 07:16 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,8 +55,46 @@ CREATE TABLE `history` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `resident_id` int(11) DEFAULT NULL,
+  `household_id` int(11) DEFAULT NULL,
   `description` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `history`
+--
+
+INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `description`, `timestamp`) VALUES
+(1, 1, NULL, NULL, 'Deleted resident: Chua, Michael Tan', '2025-12-28 05:32:28'),
+(2, 1, NULL, NULL, 'Deleted resident: Uy, Jasmine Lee', '2025-12-28 05:32:42'),
+(3, 1, 28, NULL, 'Added new resident: Navarrosa, Angela Tanya Galera', '2025-12-29 05:54:46');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `households`
+--
+
+CREATE TABLE `households` (
+  `id` int(11) NOT NULL,
+  `household_name` varchar(150) NOT NULL,
+  `address` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `household_members`
+--
+
+CREATE TABLE `household_members` (
+  `id` int(11) NOT NULL,
+  `household_id` int(11) NOT NULL,
+  `resident_id` int(11) NOT NULL,
+  `role` enum('head','member','dependent') NOT NULL DEFAULT 'member',
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -85,7 +123,7 @@ CREATE TABLE `personalisation` (
 --
 
 INSERT INTO `personalisation` (`id`, `logo`, `main_bg`, `header_title`, `header_color`, `footer_title`, `footer_color`, `login_color`, `profile_bg`, `active_nav_color`, `button_color`, `updated_at`) VALUES
-(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFC300', 'SK Barangay Information System 2025', '#FFC300', '#000000', '#ECECEC', '#FFC300', '#FFC300', '2025-12-25 08:06:42');
+(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFC300', 'SK Barangay Information System 2025', '#FFC300', '#000000', '#ECECEC', '#5463FF', '#5463FF', '2025-12-28 05:26:13');
 
 -- --------------------------------------------------------
 
@@ -107,6 +145,51 @@ CREATE TABLE `residents` (
   `address` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `residents`
+--
+
+INSERT INTO `residents` (`id`, `f_name`, `m_name`, `l_name`, `suffix`, `sex`, `birthdate`, `civil_status`, `contact_no`, `email`, `address`, `created_at`, `updated_at`) VALUES
+(1, 'Juan', 'Santos', 'Dela Cruz', 'NA', 'male', '1990-01-05', 'single', '09180000001', 'resident01@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(2, 'Maria', 'Lopez', 'Reyes', 'NA', 'female', '1988-02-10', 'married', '09180000002', 'resident02@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(3, 'Jose', 'Garcia', 'Mendoza', 'Jr.', 'male', '1995-03-15', 'single', '09180000003', 'resident03@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(4, 'Ana', 'Torres', 'Villanueva', 'NA', 'female', '1992-04-20', 'single', '09180000004', 'resident04@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(5, 'Mark', 'Cruz', 'Santos', 'NA', 'male', '1985-05-25', 'married', '09180000005', 'resident05@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(6, 'Grace', 'Flores', 'Navarro', 'NA', 'female', '1998-06-01', 'single', '09180000006', 'resident06@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(7, 'Paul', 'Andres', 'Lim', 'NA', 'male', '1991-07-07', 'single', '09180000007', 'resident07@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(8, 'Christine', 'Mae', 'Aquino', 'NA', 'female', '1987-08-12', 'married', '09180000008', 'resident08@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(9, 'Daniel', 'Reyes', 'Cortez', 'II', 'male', '2000-09-18', 'single', '09180000009', 'resident09@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(10, 'Elaine', 'Joy', 'Pascual', 'NA', 'female', '1994-10-22', 'single', '09180000010', 'resident10@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(13, 'Ramon', 'Diaz', 'Castillo', 'Sr.', 'male', '1975-01-14', 'married', '09180000013', 'resident13@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(14, 'Sofia', 'Anne', 'Morales', 'NA', 'female', '2001-02-19', 'single', '09180000014', 'resident14@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(15, 'Kevin', 'James', 'Ortega', 'NA', 'male', '1993-03-24', 'single', '09180000015', 'resident15@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(16, 'Patricia', 'Rose', 'Valdez', 'NA', 'female', '1989-04-29', 'married', '09180000016', 'resident16@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(17, 'Leonard', 'Paul', 'Quizon', 'NA', 'male', '1997-05-06', 'single', '09180000017', 'resident17@email.com', 'Purok 6, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(18, 'Monica', 'Faith', 'Ramos', 'NA', 'female', '1990-06-11', 'widowed', '09180000018', 'resident18@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(19, 'Arvin', 'Kyle', 'Bautista', 'NA', 'male', '1999-07-16', 'single', '09180000019', 'resident19@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(20, 'Liza', 'Mae', 'Fernandez', 'NA', 'female', '1986-08-21', 'separated', '09180000020', 'resident20@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(21, 'Noel', 'Ryan', 'Salazar', 'NA', 'male', '1992-09-01', 'single', '09180000021', 'resident21@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(22, 'Angela', 'Joy', 'Cabrera', 'NA', 'female', '1994-10-02', 'single', '09180000022', 'resident22@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(23, 'Dennis', 'Mark', 'Rosales', 'NA', 'male', '1987-11-03', 'married', '09180000023', 'resident23@email.com', 'Purok 6, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(24, 'Camille', 'Grace', 'Luna', 'NA', 'female', '1998-12-04', 'single', '09180000024', 'resident24@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(25, 'Bryan', 'Paul', 'Ilagan', 'NA', 'male', '1991-01-05', 'single', '09180000025', 'resident25@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(26, 'Roland', 'Miguel', 'Peralta', 'NA', 'male', '1984-09-14', 'married', '09180000099', 'resident99@email.com', 'Purok 6, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(27, 'Aileen', 'Joy', 'Samson', 'NA', 'female', '1990-10-15', 'single', '09180000100', 'resident100@email.com', 'Purok 7, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
+(28, 'Angela Tanya', 'Galera', 'Navarrosa', 'NA', 'female', '2003-10-31', 'single', '09942611480', 'navarrosa.at.bsinfotech@gmail.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-29 05:54:46', '2025-12-29 05:55:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `time_log`
+--
+
+CREATE TABLE `time_log` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `logged_in` timestamp NOT NULL DEFAULT current_timestamp(),
+  `logged_out` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -160,6 +243,20 @@ ALTER TABLE `history`
   ADD KEY `fk_history_resident` (`resident_id`);
 
 --
+-- Indexes for table `households`
+--
+ALTER TABLE `households`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `household_members`
+--
+ALTER TABLE `household_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_resident` (`resident_id`),
+  ADD KEY `fk_household_members_household` (`household_id`);
+
+--
 -- Indexes for table `personalisation`
 --
 ALTER TABLE `personalisation`
@@ -172,6 +269,13 @@ ALTER TABLE `residents`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `contact_no` (`contact_no`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `time_log`
+--
+ALTER TABLE `time_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_time_log_user` (`user_id`);
 
 --
 -- Indexes for table `users`
@@ -194,12 +298,30 @@ ALTER TABLE `carousel`
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `households`
+--
+ALTER TABLE `households`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `household_members`
+--
+ALTER TABLE `household_members`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `residents`
 --
 ALTER TABLE `residents`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT for table `time_log`
+--
+ALTER TABLE `time_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -218,6 +340,19 @@ ALTER TABLE `users`
 ALTER TABLE `history`
   ADD CONSTRAINT `fk_history_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `household_members`
+--
+ALTER TABLE `household_members`
+  ADD CONSTRAINT `fk_household_members_household` FOREIGN KEY (`household_id`) REFERENCES `households` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_household_members_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `time_log`
+--
+ALTER TABLE `time_log`
+  ADD CONSTRAINT `fk_time_log_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
