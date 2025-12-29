@@ -98,27 +98,25 @@
 
 .profile-section-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
   margin-bottom: 24px;
 }
 
-.profile-section-back {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.profile-section-close {
   background: transparent;
   border: none;
   cursor: pointer;
   color: #666;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   transition: all 0.3s ease;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
 }
 
-.profile-section-back:hover {
+.profile-section-close:hover {
   background: #f5f5f5;
   color: #333;
 }

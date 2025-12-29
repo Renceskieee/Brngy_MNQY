@@ -76,8 +76,8 @@ function RecentActivities({ onClose }) {
   };
 
   return (
-    <div className="recent-activities-overlay" onClick={onClose}>
-      <div className="recent-activities-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="recent-activities-overlay">
+      <div className="recent-activities-modal">
         <div className="recent-activities-header">
           <h2 className="recent-activities-title">All Activities</h2>
           <button className="recent-activities-close" onClick={onClose}>

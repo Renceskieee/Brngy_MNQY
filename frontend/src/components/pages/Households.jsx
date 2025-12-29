@@ -261,8 +261,8 @@ function Households() {
       )}
 
       {viewHousehold && (
-        <div className="view-modal-overlay" onClick={() => setViewHousehold(null)}>
-          <div className="view-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="view-modal-overlay">
+          <div className="view-modal">
             <div className="view-modal-header">
               <h2 className="view-modal-title">Household Details</h2>
               <button className="view-modal-close" onClick={() => setViewHousehold(null)}>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 29, 2025 at 08:46 AM
+-- Generation Time: Dec 29, 2025 at 09:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -249,6 +249,15 @@ CREATE TABLE `time_log` (
   `logged_out` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `time_log`
+--
+
+INSERT INTO `time_log` (`id`, `user_id`, `logged_in`, `logged_out`) VALUES
+(1, 2, '2025-12-29 08:05:55', '2025-12-29 00:08:03'),
+(2, 2, '2025-12-29 08:14:13', '2025-12-29 00:18:14'),
+(3, 2, '2025-12-29 08:21:20', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -275,7 +284,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `employee_id`, `password`, `first_name`, `last_name`, `email`, `contact_number`, `profile_picture`, `position`, `status`, `created_at`, `updated_at`) VALUES
-(1, '224-09160M', '$2b$10$GBrZHG8p5iy8eDWvpBsFnO/DSvn1a9Hqe.bMtGWl.YAGwfEOzihme', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', '/uploads/profile/profile-1766993628938-968448186.png', 'admin', 'active', '2025-12-12 06:45:59', '2025-12-29 07:33:49'),
+(1, '224-09160M', '$2b$10$GBrZHG8p5iy8eDWvpBsFnO/DSvn1a9Hqe.bMtGWl.YAGwfEOzihme', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', '/uploads/profile/profile-1766995571609-535811446.png', 'admin', 'active', '2025-12-12 06:45:59', '2025-12-29 08:06:11'),
 (2, '224-09159M', '$2b$10$9DooDXwNMs.CgzqC17S1oO6B1r8DDDtvlIHVWkSPbC/7VxbVV86Hu', 'Angela Tanya', 'Navarrosa', 'quiniano.infotech@gmail.com', '9942611480', NULL, 'staff', 'active', '2025-12-12 06:59:37', '2025-12-19 07:49:40'),
 (3, '224-09127M', '$2b$10$ZXQXYdD1FrT5PeZbP3s.LejOyPRgVNyAbmOOVsxe80BiXQh/TC2di', 'Laurence', 'Quiniano', 'quiniano.lp@gmail.com', '9685408094', NULL, 'staff', 'active', '2025-12-12 09:34:10', '2025-12-12 09:34:10'),
 (4, '224-09162M', '$2b$10$jOyISqnx6L1.6UJ/FnXuTOYEm63MvRkZU.5jjA2khC2NDENcF9mgW', 'Laurence Paul', 'Quiniano', 'laurencequiniano74@gmail.com', '9156128497', NULL, 'staff', 'active', '2025-12-12 09:46:28', '2025-12-12 09:46:28'),
@@ -379,7 +388,7 @@ ALTER TABLE `residents`
 -- AUTO_INCREMENT for table `time_log`
 --
 ALTER TABLE `time_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`

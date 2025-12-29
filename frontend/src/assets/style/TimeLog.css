@@ -1,0 +1,101 @@
+.time-log-page {
+  padding: 24px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.time-log-header {
+  margin-bottom: 24px;
+}
+
+.time-log-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.time-log-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.time-log-table-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.time-log-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.time-log-table thead {
+  background: #f9fafb;
+}
+
+.time-log-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  font-family: 'Poppins', sans-serif;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.time-log-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s ease;
+}
+
+.time-log-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.time-log-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.time-log-table td {
+  padding: 16px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  color: #111827;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #9ca3af;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .time-log-page {
+    padding: 16px;
+  }
+
+  .time-log-table {
+    font-size: 12px;
+  }
+
+  .time-log-table th,
+  .time-log-table td {
+    padding: 12px 8px;
+  }
+}
+

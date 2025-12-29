@@ -229,6 +229,15 @@ const verifyOTP = async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    try {
+      await pool.execute(
+        'INSERT INTO time_log (user_id) VALUES (?)',
+        [user.id]
+      );
+    } catch (logError) {
+      console.error('Time log creation error:', logError);
+    }
+
     otpStore.delete(email);
 
     res.json({

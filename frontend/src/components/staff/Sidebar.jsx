@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -13,6 +13,17 @@ import '../../assets/style/Sidebar.css';
 
 function Sidebar({ activePage, setActivePage, user, onLogout }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState(user);
+
+  useEffect(() => {
+    setCurrentUser(user);
+    const handleProfileUpdate = () => {
+      const updatedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      setCurrentUser(updatedUser);
+    };
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
+  }, [user]);
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { id: 'residents', icon: Users, label: 'Residents' },
@@ -44,23 +55,33 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
     <aside className="sidebar">
       <div className="sidebar-profile">
         <div className="sidebar-avatar">
-          {user?.profile_picture ? (
-            <img 
-              src={`/uploads/profile/${user.profile_picture}`} 
-              alt="Profile" 
-              onError={(e) => {
-                e.target.src = '/uploads/profile/default.png';
-              }}
-            />
+          {currentUser?.profile_picture ? (
+            <>
+              <img 
+                src={currentUser.profile_picture.startsWith('/uploads/') 
+                  ? currentUser.profile_picture 
+                  : `/uploads/profile/${currentUser.profile_picture}`} 
+                alt="Profile"
+                style={{ display: 'block' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  const placeholder = e.target.nextElementSibling;
+                  if (placeholder) placeholder.style.display = 'flex';
+                }}
+              />
+              <div className="avatar-placeholder" style={{ display: 'none' }}>
+                {currentUser?.first_name?.[0]}{currentUser?.last_name?.[0]}
+              </div>
+            </>
           ) : (
             <div className="avatar-placeholder">
-              {user?.first_name?.[0]}{user?.last_name?.[0]}
+              {currentUser?.first_name?.[0]}{currentUser?.last_name?.[0]}
             </div>
           )}
         </div>
         <div className="sidebar-user-info">
           <p className="sidebar-user-name">
-            {user?.first_name} {user?.last_name}
+            {currentUser?.first_name} {currentUser?.last_name}
           </p>
           <p className="sidebar-user-role">(Staff)</p>
         </div>

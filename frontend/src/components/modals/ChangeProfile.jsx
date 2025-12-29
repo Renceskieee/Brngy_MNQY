@@ -63,11 +63,16 @@ function ChangeProfile({ user, onClose }) {
       if (response.data.success) {
         setMessage({ text: 'Profile picture updated successfully', type: 'success' });
         setProfilePicture(null);
-        if (response.data.user?.profile_picture) {
-          setPreview(response.data.user.profile_picture);
+        const profilePath = response.data.user?.profile_picture;
+        if (profilePath) {
+          setPreview(profilePath);
+          const updatedUser = JSON.parse(localStorage.getItem('user') || '{}');
+          updatedUser.profile_picture = profilePath;
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          window.dispatchEvent(new Event('profileUpdated'));
         }
         setTimeout(() => {
-          window.location.reload();
+          if (onClose) onClose();
         }, 2000);
       }
     } catch (error) {
@@ -91,8 +96,12 @@ function ChangeProfile({ user, onClose }) {
         setMessage({ text: 'Profile picture removed successfully', type: 'success' });
         setPreview(null);
         setProfilePicture(null);
+        const updatedUser = JSON.parse(localStorage.getItem('user') || '{}');
+        updatedUser.profile_picture = null;
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        window.dispatchEvent(new Event('profileUpdated'));
         setTimeout(() => {
-          window.location.reload();
+          if (onClose) onClose();
         }, 2000);
       }
     } catch (error) {
@@ -104,8 +113,8 @@ function ChangeProfile({ user, onClose }) {
   };
 
   return (
-    <div className="change-profile-overlay" onClick={onClose}>
-      <div className="change-profile-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="change-profile-overlay">
+      <div className="change-profile-modal">
         <div className="change-profile-header">
           <h2 className="change-profile-title">Update Profile Picture</h2>
           <button className="change-profile-close" onClick={onClose}>
@@ -119,7 +128,7 @@ function ChangeProfile({ user, onClose }) {
               <img src={preview} alt="Profile Preview" />
             ) : (
               <div className="profile-picture-placeholder">
-                <UserCircle size={64} />
+                {user?.first_name?.[0]}{user?.last_name?.[0]}
               </div>
             )}
           </div>

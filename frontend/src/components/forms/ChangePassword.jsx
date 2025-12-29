@@ -94,7 +94,6 @@ function ChangePassword({ userId, onClose }) {
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to change password';
-      setErrors({ submit: errorMessage });
       setMessage({ text: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
@@ -184,12 +183,6 @@ function ChangePassword({ userId, onClose }) {
             <span className="error-message">{errors.confirm_password}</span>
           )}
         </div>
-
-        {errors.submit && (
-          <div className="submit-error">
-            <span>{errors.submit}</span>
-          </div>
-        )}
 
         <button
           type="submit"

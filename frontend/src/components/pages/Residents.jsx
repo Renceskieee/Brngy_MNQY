@@ -259,8 +259,8 @@ function Residents() {
       )}
 
       {viewResident && (
-        <div className="view-modal-overlay" onClick={() => setViewResident(null)}>
-          <div className="view-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="view-modal-overlay">
+          <div className="view-modal">
             <div className="view-modal-header">
               <h2 className="view-modal-title">Resident Details</h2>
               <button className="view-modal-close" onClick={() => setViewResident(null)}>

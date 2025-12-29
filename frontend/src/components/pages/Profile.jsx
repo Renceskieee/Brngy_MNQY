@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, UserCircle, ArrowLeft } from 'lucide-react';
+import { Lock, UserCircle, X } from 'lucide-react';
 import ChangePassword from '../forms/ChangePassword';
 import ChangeProfile from '../modals/ChangeProfile';
 import '../../assets/style/Profile.css';
@@ -48,14 +48,13 @@ function Profile({ user }) {
         <div className="profile-section-overlay">
           <div className="profile-section-modal">
             <div className="profile-section-header">
+              <h2 className="profile-section-title">Change Password</h2>
               <button
-                className="profile-section-back"
+                className="profile-section-close"
                 onClick={() => setActiveSection(null)}
               >
-                <ArrowLeft size={20} />
-                <span>Back</span>
+                <X size={24} />
               </button>
-              <h2 className="profile-section-title">Change Password</h2>
             </div>
             <ChangePassword
               userId={user?.id}

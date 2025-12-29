@@ -104,19 +104,21 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
       newErrors.address = 'Address is required';
     }
 
-    for (let i = 0; i < members.length; i++) {
-      if (!members[i].resident_id) {
-        newErrors[`member_${i}`] = 'Please select a resident';
+    if (household && members.length > 0) {
+      for (let i = 0; i < members.length; i++) {
+        if (!members[i].resident_id) {
+          newErrors[`member_${i}`] = 'Please select a resident';
+        }
+        if (!members[i].role) {
+          newErrors[`member_role_${i}`] = 'Please select a role';
+        }
       }
-      if (!members[i].role) {
-        newErrors[`member_role_${i}`] = 'Please select a role';
-      }
-    }
 
-    const residentIds = members.map(m => m.resident_id).filter(id => id);
-    const uniqueIds = new Set(residentIds);
-    if (residentIds.length !== uniqueIds.size) {
-      newErrors.members = 'Duplicate residents are not allowed';
+      const residentIds = members.map(m => m.resident_id).filter(id => id);
+      const uniqueIds = new Set(residentIds);
+      if (residentIds.length !== uniqueIds.size) {
+        newErrors.members = 'Duplicate residents are not allowed';
+      }
     }
 
     setErrors(newErrors);
@@ -137,7 +139,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       const requestData = {
         ...formData,
-        members: members.filter(m => m.resident_id),
+        members: household ? members.filter(m => m.resident_id) : [],
         userId: user.id
       };
 
@@ -198,7 +200,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
 
   return (
     <div className="household-form-overlay">
-      <div className="household-form-modal">
+      <div className="household-form-modal" onClick={(e) => e.stopPropagation()}>
         <div className="household-form-header">
           <div className="household-form-title-row">
             <h2 className="household-form-title">{household ? 'Update Household' : 'Add New Household'}</h2>
@@ -238,26 +240,27 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
             {errors.address && <span className="error-message">{errors.address}</span>}
           </div>
 
-          <div className="members-section">
-            <div className="members-header">
-              <h3 className="members-title">Household Members</h3>
-              <button
-                type="button"
-                className="add-member-btn"
-                onClick={handleAddMember}
-              >
-                <Plus size={18} />
-                <span>Add Member</span>
-              </button>
-            </div>
+          {household && (
+            <div className="members-section">
+              <div className="members-header">
+                <h3 className="members-title">Household Members</h3>
+                <button
+                  type="button"
+                  className="add-member-btn"
+                  onClick={handleAddMember}
+                >
+                  <Plus size={18} />
+                  <span>Add Member</span>
+                </button>
+              </div>
 
-            {errors.members && (
-              <div className="error-message">{errors.members}</div>
-            )}
+              {errors.members && (
+                <div className="error-message">{errors.members}</div>
+              )}
 
-            {members.length === 0 ? (
-              <p className="no-members-message">No members added yet. Click "Add Member" to add residents to this household.</p>
-            ) : (
+              {members.length === 0 ? (
+                <p className="no-members-message">No members added yet. Click "Add Member" to add residents to this household.</p>
+              ) : (
               <div className="members-list">
                 {members.map((member, index) => (
                   <div key={index} className="member-item">
@@ -313,8 +316,9 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
           <p className="form-instruction">
             Please review all entered details before {household ? 'updating' : 'creating'} the household.

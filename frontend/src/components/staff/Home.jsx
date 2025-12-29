@@ -1,23 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  ArcElement,
   Tooltip,
   Legend
 } from 'chart.js';
+import { Users, Home as HomeIcon } from 'lucide-react';
 import RecentActivities from '../modals/RecentActivities';
 import '../../assets/style/Home.css';
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  ArcElement,
   Tooltip,
   Legend
 );
@@ -125,11 +120,10 @@ function Home() {
     labels: ['Male', 'Female'],
     datasets: [
       {
-        label: 'Residents by Sex',
         data: [sexDistribution.male, sexDistribution.female],
         backgroundColor: ['#3b82f6', '#ec4899'],
-        borderColor: ['#2563eb', '#db2777'],
-        borderWidth: 1
+        borderColor: ['#ffffff', '#ffffff'],
+        borderWidth: 2
       }
     ]
   };
@@ -139,21 +133,25 @@ function Home() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false
+        position: 'bottom',
+        labels: {
+          padding: 15,
+          font: {
+            family: 'Poppins',
+            size: 14
+          }
+        }
       },
       tooltip: {
         callbacks: {
           label: function(context) {
-            return `${context.label}: ${context.parsed.y} residents`;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+            return `${context.label}: ${context.parsed} residents (${percentage}%)`;
           }
-        }
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 1
+        },
+        font: {
+          family: 'Poppins'
         }
       }
     }
@@ -164,7 +162,9 @@ function Home() {
       <div className="home-staff-content">
         <div className="stats-section">
           <div className="stat-card">
-            <div className="stat-icon">👥</div>
+            <div className="stat-icon">
+              <Users size={48} />
+            </div>
             <div className="stat-info">
               <div className="stat-label">Total Residents</div>
               <div className="stat-value">
@@ -173,7 +173,9 @@ function Home() {
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon">🏠</div>
+            <div className="stat-icon">
+              <HomeIcon size={48} />
+            </div>
             <div className="stat-info">
               <div className="stat-label">Total Households</div>
               <div className="stat-value">
@@ -189,7 +191,7 @@ function Home() {
             {loading ? (
               <div className="loading-state">Loading chart...</div>
             ) : (
-              <Bar data={chartData} options={chartOptions} />
+              <Pie data={chartData} options={chartOptions} />
             )}
           </div>
         </div>
