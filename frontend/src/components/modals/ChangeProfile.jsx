@@ -14,7 +14,6 @@ function ChangeProfile({ user, onClose }) {
 
   useEffect(() => {
     if (user?.profile_picture) {
-      // Handle both full path and relative path
       if (user.profile_picture.startsWith('/uploads/')) {
         setPreview(user.profile_picture);
       } else {

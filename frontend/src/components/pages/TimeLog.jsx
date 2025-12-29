@@ -75,7 +75,7 @@ function TimeLog() {
                     <td>{log.employee_id}</td>
                     <td>{log.first_name} {log.last_name}</td>
                     <td>{formatDate(log.logged_in)}</td>
-                    <td>{formatDate(log.logged_out)}</td>
+                    <td>{log.logged_out ? formatDate(log.logged_out) : '-'}</td>
                   </tr>
                 ))
               )}

@@ -44,8 +44,8 @@ const updateTimeLog = async (req, res) => {
     }
 
     await pool.execute(
-      'UPDATE time_log SET logged_out = ? WHERE id = ?',
-      [logged_out || new Date(), id]
+      'UPDATE time_log SET logged_out = CURRENT_TIMESTAMP WHERE id = ?',
+      [id]
     );
 
     res.json({
