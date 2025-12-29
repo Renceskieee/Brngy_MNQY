@@ -3,6 +3,8 @@ import Sidebar from './Sidebar';
 import Home from './Home';
 import Settings from './Settings';
 import Residents from '../pages/Residents';
+import Households from '../pages/Households';
+import Profile from '../pages/Profile';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import { Copyright } from 'lucide-react';
 import '../../assets/style/Dashboard.css';
@@ -16,8 +18,12 @@ function Dashboard({ user, onLogout }) {
         return <Home />;
       case 'residents':
         return <Residents />;
+      case 'households':
+        return <Households />;
       case 'settings':
-        return <Settings />;
+        return <Settings setActivePage={setActivePage} />;
+      case 'profile':
+        return <Profile user={user} />;
       default:
         return <Home />;
     }

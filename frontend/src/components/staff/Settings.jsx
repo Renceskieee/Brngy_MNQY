@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { UserRound } from 'lucide-react';
 import '../../assets/style/Settings.css';
 
-function Settings() {
+function Settings({ setActivePage }) {
   const [activeModal, setActiveModal] = useState(null);
 
   const settingsCards = [
@@ -29,7 +29,9 @@ function Settings() {
               className="settings-card"
               onClick={() => {
                 if (card.id === 'profile') {
-                  setActiveModal('profile');
+                  if (setActivePage) {
+                    setActivePage('profile');
+                  }
                 }
               }}
             >

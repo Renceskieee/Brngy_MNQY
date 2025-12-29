@@ -1,13 +1,36 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import RecentActivities from '../modals/RecentActivities';
 import '../../assets/style/HomeAdmin.css';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const API_URL = '/api';
 
 function HomeAdmin() {
   const [residentCount, setResidentCount] = useState(0);
+  const [householdCount, setHouseholdCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
+  const [sexDistribution, setSexDistribution] = useState({ male: 0, female: 0 });
   const [loading, setLoading] = useState(true);
+  const [showActivitiesModal, setShowActivitiesModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -16,17 +39,32 @@ function HomeAdmin() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [countResponse, historyResponse] = await Promise.all([
+      const [countResponse, householdCountResponse, historyResponse, residentsResponse] = await Promise.all([
         axios.get(`${API_URL}/residents/count`),
-        axios.get(`${API_URL}/history?limit=10`)
+        axios.get(`${API_URL}/households/count`),
+        axios.get(`${API_URL}/history?limit=5`),
+        axios.get(`${API_URL}/residents`)
       ]);
 
       if (countResponse.data.success) {
         setResidentCount(countResponse.data.count);
       }
 
+      if (householdCountResponse.data.success) {
+        setHouseholdCount(householdCountResponse.data.count);
+      }
+
       if (historyResponse.data.success) {
         setRecentActivities(historyResponse.data.history);
+      }
+
+      if (residentsResponse.data.success) {
+        const residents = residentsResponse.data.residents;
+        const distribution = {
+          male: residents.filter(r => r.sex === 'male').length,
+          female: residents.filter(r => r.sex === 'female').length
+        };
+        setSexDistribution(distribution);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -49,11 +87,15 @@ function HomeAdmin() {
     return date.toLocaleDateString('en-US', options);
   };
 
-  const getResidentName = (activity) => {
+  const getActivityName = (activity) => {
     if (activity.resident_f_name) {
       const suffix = activity.resident_suffix && activity.resident_suffix !== 'NA' ? ` ${activity.resident_suffix}` : '';
       const mName = activity.resident_m_name ? ` ${activity.resident_m_name}` : '';
       return `${activity.resident_l_name}, ${activity.resident_f_name}${mName}${suffix}`;
+    }
+    
+    if (activity.household_name) {
+      return activity.household_name;
     }
     
     if (activity.description) {
@@ -63,9 +105,15 @@ function HomeAdmin() {
       if (activity.description.includes('Added new resident: ')) {
         return activity.description.replace('Added new resident: ', '');
       }
+      if (activity.description.includes('Deleted household: ')) {
+        return activity.description.replace('Deleted household: ', '');
+      }
+      if (activity.description.includes('Added new household: ')) {
+        return activity.description.replace('Added new household: ', '');
+      }
     }
     
-    return 'Unknown Resident';
+    return 'N/A';
   };
 
   const getUserName = (activity) => {
@@ -73,13 +121,46 @@ function HomeAdmin() {
     return `${activity.user_first_name} ${activity.user_last_name}`;
   };
 
+  const chartData = {
+    labels: ['Male', 'Female'],
+    datasets: [
+      {
+        label: 'Residents by Sex',
+        data: [sexDistribution.male, sexDistribution.female],
+        backgroundColor: ['#3b82f6', '#ec4899'],
+        borderColor: ['#2563eb', '#db2777'],
+        borderWidth: 1
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `${context.label}: ${context.parsed.y} residents`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1
+        }
+      }
+    }
+  };
+
   return (
     <div className="home-admin">
-      <div className="home-admin-header">
-        <h1 className="home-admin-title">Dashboard</h1>
-        <p className="home-admin-subtitle">Welcome to the Admin Dashboard</p>
-      </div>
-
       <div className="home-admin-content">
         <div className="stats-section">
           <div className="stat-card">
@@ -91,9 +172,29 @@ function HomeAdmin() {
               </div>
             </div>
           </div>
+          <div className="stat-card">
+            <div className="stat-icon">🏠</div>
+            <div className="stat-info">
+              <div className="stat-label">Total Households</div>
+              <div className="stat-value">
+                {loading ? 'Loading...' : householdCount.toLocaleString()}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="activities-section">
+        <div className="chart-section">
+          <h2 className="section-title">Sex Distribution</h2>
+          <div className="chart-container">
+            {loading ? (
+              <div className="loading-state">Loading chart...</div>
+            ) : (
+              <Bar data={chartData} options={chartOptions} />
+            )}
+          </div>
+        </div>
+
+        <div className="activities-section" onClick={() => setShowActivitiesModal(true)} style={{ cursor: 'pointer' }}>
           <h2 className="section-title">Recent Activities</h2>
           {loading ? (
             <div className="loading-state">Loading activities...</div>
@@ -108,7 +209,7 @@ function HomeAdmin() {
                       <strong>{getUserName(activity)}</strong> {activity.description}
                     </div>
                     <div className="activity-resident">
-                      Resident: {getResidentName(activity)}
+                      {activity.household_name ? `Household: ${activity.household_name}` : `Resident: ${getActivityName(activity)}`}
                     </div>
                     <div className="activity-time">
                       {formatDate(activity.timestamp)}
@@ -120,6 +221,12 @@ function HomeAdmin() {
           )}
         </div>
       </div>
+
+      {showActivitiesModal && (
+        <RecentActivities
+          onClose={() => setShowActivitiesModal(false)}
+        />
+      )}
     </div>
   );
 }

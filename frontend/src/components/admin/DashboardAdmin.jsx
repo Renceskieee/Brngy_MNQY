@@ -4,6 +4,8 @@ import HomeAdmin from './HomeAdmin';
 import SettingsAdmin from './SettingsAdmin';
 import Personalise from './Personalise';
 import Residents from '../pages/Residents';
+import Households from '../pages/Households';
+import Profile from '../pages/Profile';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import { Copyright } from 'lucide-react';
 import '../../assets/style/DashboardAdmin.css';
@@ -17,10 +19,14 @@ function DashboardAdmin({ user, onLogout }) {
         return <HomeAdmin />;
       case 'residents':
         return <Residents />;
+      case 'households':
+        return <Households />;
       case 'settings':
         return <SettingsAdmin setActivePage={setActivePage} />;
       case 'personalise':
         return <Personalise />;
+      case 'profile':
+        return <Profile user={user} />;
       default:
         return <HomeAdmin />;
     }

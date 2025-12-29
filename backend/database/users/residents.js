@@ -204,7 +204,7 @@ const createResident = async (req, res) => {
     if (userId) {
       const fullName = `${l_name.trim()}, ${f_name.trim()}${m_name ? ' ' + m_name.trim() : ''}${suffix && suffix !== 'NA' ? ' ' + suffix : ''}`;
       const description = `Added new resident: ${fullName}`;
-      await history.createHistory(userId, result.insertId, description);
+      await history.createHistory(userId, result.insertId, null, description);
     }
 
     res.json({
@@ -360,7 +360,7 @@ const deleteResident = async (req, res) => {
     if (userId) {
       const fullName = `${resident.l_name}, ${resident.f_name}${resident.m_name ? ' ' + resident.m_name : ''}${resident.suffix && resident.suffix !== 'NA' ? ' ' + resident.suffix : ''}`;
       const description = `Deleted resident: ${fullName}`;
-      await history.createHistory(userId, id, description);
+      await history.createHistory(userId, id, null, description);
     }
 
     await pool.execute('DELETE FROM residents WHERE id = ?', [id]);

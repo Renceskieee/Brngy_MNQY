@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MonitorCog, UserRoundPlus, UserRoundCog, UserRound } from 'lucide-react';
+import { MonitorCog, UserRoundPlus, UserRoundCog, UserRound, Clock } from 'lucide-react';
 import CreateAccount from '../forms/CreateAccount';
 import '../../assets/style/SettingsAdmin.css';
 
@@ -30,6 +30,12 @@ function SettingsAdmin({ setActivePage }) {
       icon: UserRound,
       title: 'Profile',
       description: 'Update your profile picture and change your password.'
+    },
+    {
+      id: 'time-log',
+      icon: Clock,
+      title: 'Time Log',
+      description: 'View and manage user login and logout times.'
     }
   ];
 
@@ -52,6 +58,14 @@ function SettingsAdmin({ setActivePage }) {
                 } else if (card.id === 'personalisation') {
                   if (setActivePage) {
                     setActivePage('personalise');
+                  }
+                } else if (card.id === 'profile') {
+                  if (setActivePage) {
+                    setActivePage('profile');
+                  }
+                } else if (card.id === 'time-log') {
+                  if (setActivePage) {
+                    setActivePage('time-log');
                   }
                 }
               }}

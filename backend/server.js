@@ -10,6 +10,8 @@ const userSettings = require('./database/users/settings');
 const personalisation = require('./database/users/personalisation');
 const residents = require('./database/users/residents');
 const history = require('./database/users/history');
+const households = require('./database/users/households');
+const timeLog = require('./database/users/time_log');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -55,6 +57,22 @@ app.put('/api/residents/:id', residents.updateResident);
 app.delete('/api/residents/:id', residents.deleteResident);
 
 app.get('/api/history', history.getRecentHistory);
+
+app.get('/api/households', households.getAllHouseholds);
+app.get('/api/households/count', households.getHouseholdsCount);
+app.get('/api/households/:id', households.getHouseholdById);
+app.post('/api/households', households.createHousehold);
+app.put('/api/households/:id', households.updateHousehold);
+app.delete('/api/households/:id', households.deleteHousehold);
+
+app.post('/api/users/:id/profile-picture', userSettings.uploadProfilePicture);
+app.delete('/api/users/:id/profile-picture', userSettings.removeProfilePicture);
+app.put('/api/users/:id/change-password', userSettings.changePassword);
+
+app.get('/api/time-logs', timeLog.getTimeLogs);
+app.get('/api/time-logs/:id', timeLog.getTimeLogById);
+app.post('/api/time-logs', timeLog.createTimeLog);
+app.put('/api/time-logs/:id', timeLog.updateTimeLog);
 
 app.use((err, req, res, next) => {
   console.error('Error:', err);

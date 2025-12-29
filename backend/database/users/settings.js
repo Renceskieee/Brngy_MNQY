@@ -1,5 +1,8 @@
 const pool = require('../config');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
 
 const getAllUsers = async (req, res) => {
   try {
@@ -180,11 +183,209 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const profileStorage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '../../uploads/profile');
+    try {
+      await fs.mkdir(uploadPath, { recursive: true });
+      cb(null, uploadPath);
+    } catch (error) {
+      cb(error);
+    }
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const profileUpload = multer({
+  storage: profileStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed'));
+  }
+});
+
+const uploadProfilePicture = async (req, res) => {
+  profileUpload.single('profile_picture')(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Profile picture file is required'
+      });
+    }
+
+    try {
+      const { id } = req.params;
+      const [users] = await pool.execute('SELECT profile_picture FROM users WHERE id = ?', [id]);
+      
+      if (users.length === 0) {
+        if (req.file) {
+          const filePath = path.join(__dirname, '../../uploads/profile', req.file.filename);
+          try {
+            await fs.unlink(filePath);
+          } catch (unlinkError) {
+            console.error('Error deleting uploaded file:', unlinkError);
+          }
+        }
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      const oldProfilePicture = users[0].profile_picture;
+      if (oldProfilePicture) {
+        const oldFilePath = path.join(__dirname, '../../uploads/profile', path.basename(oldProfilePicture));
+        try {
+          await fs.unlink(oldFilePath);
+        } catch (unlinkError) {
+          console.error('Error deleting old profile picture:', unlinkError);
+        }
+      }
+
+      const profilePath = `/uploads/profile/${req.file.filename}`;
+      await pool.execute(
+        'UPDATE users SET profile_picture = ? WHERE id = ?',
+        [profilePath, id]
+      );
+
+      const [updated] = await pool.execute(
+        'SELECT id, employee_id, first_name, last_name, email, profile_picture FROM users WHERE id = ?',
+        [id]
+      );
+
+      res.json({
+        success: true,
+        message: 'Profile picture updated successfully',
+        user: updated[0]
+      });
+    } catch (error) {
+      console.error('Upload profile picture error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Server error uploading profile picture'
+      });
+    }
+  });
+};
+
+const removeProfilePicture = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [users] = await pool.execute('SELECT profile_picture FROM users WHERE id = ?', [id]);
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const oldProfilePicture = users[0].profile_picture;
+    if (oldProfilePicture) {
+      const oldFilePath = path.join(__dirname, '../../uploads/profile', path.basename(oldProfilePicture));
+      try {
+        await fs.unlink(oldFilePath);
+      } catch (unlinkError) {
+        console.error('Error deleting old profile picture:', unlinkError);
+      }
+    }
+
+    await pool.execute(
+      'UPDATE users SET profile_picture = NULL WHERE id = ?',
+      [id]
+    );
+
+    res.json({
+      success: true,
+      message: 'Profile picture removed successfully'
+    });
+  } catch (error) {
+    console.error('Remove profile picture error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error removing profile picture'
+    });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { current_password, new_password } = req.body;
+
+    if (!current_password || !new_password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password and new password are required'
+      });
+    }
+
+    if (new_password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    const [users] = await pool.execute('SELECT password FROM users WHERE id = ?', [id]);
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    const isValidPassword = await bcrypt.compare(current_password, users[0].password);
+    if (!isValidPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(new_password, 10);
+    await pool.execute(
+      'UPDATE users SET password = ? WHERE id = ?',
+      [hashedPassword, id]
+    );
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error changing password'
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   updateUser,
   resetPassword,
-  deleteUser
+  deleteUser,
+  uploadProfilePicture,
+  removeProfilePicture,
+  changePassword
 };
 
