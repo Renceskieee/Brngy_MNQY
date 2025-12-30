@@ -130,7 +130,7 @@
 }
 
 .upload-button {
-  background: var(--button-color, #dc2626);
+  background: var(--button-color, #5463FF);
   color: white;
 }
 
@@ -159,7 +159,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.logout-modal-overlay {
+.delete-confirm-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -173,7 +173,7 @@
   backdrop-filter: blur(4px);
 }
 
-.logout-modal {
+.delete-confirm-modal {
   background: white;
   border-radius: 12px;
   padding: 30px;
@@ -183,7 +183,7 @@
   animation: modalSlideIn 0.3s ease-out;
 }
 
-.logout-modal-title {
+.delete-confirm-title {
   font-size: 20px;
   font-weight: 700;
   color: #333;
@@ -191,7 +191,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.logout-modal-message {
+.delete-confirm-message {
   font-size: 14px;
   color: #666;
   margin: 0 0 24px 0;
@@ -199,14 +199,14 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.logout-modal-actions {
+.delete-confirm-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
 }
 
-.logout-modal-cancel,
-.logout-modal-confirm {
+.delete-confirm-cancel,
+.delete-confirm-confirm {
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
@@ -217,13 +217,12 @@
   transition: all 0.3s ease;
 }
 
-.logout-modal-cancel {
+.delete-confirm-cancel {
   background: #e5e5e5;
   color: #333;
 }
 
-.logout-modal-confirm {
-  background: var(--button-color, #dc2626);
+.delete-confirm-confirm {
+  background: var(--button-color, #5463FF);
   color: white;
 }
-

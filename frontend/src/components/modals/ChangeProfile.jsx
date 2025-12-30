@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, Upload, Trash2, UserCircle } from 'lucide-react';
+import { X, Upload, Trash2 } from 'lucide-react';
 import Messages from '../shared/Messages';
 import '../../assets/style/ChangeProfile.css';
 
@@ -11,6 +11,7 @@ function ChangeProfile({ user, onClose }) {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (user?.profile_picture) {
@@ -19,6 +20,8 @@ function ChangeProfile({ user, onClose }) {
       } else {
         setPreview(`/uploads/profile/${user.profile_picture}`);
       }
+    } else {
+      setPreview(null);
     }
   }, [user]);
 
@@ -82,11 +85,12 @@ function ChangeProfile({ user, onClose }) {
     }
   };
 
-  const handleRemove = async () => {
-    if (!window.confirm('Are you sure you want to remove your profile picture?')) {
-      return;
-    }
+  const handleRemoveClick = () => {
+    setShowDeleteConfirm(true);
+  };
 
+  const confirmRemove = async () => {
+    setShowDeleteConfirm(false);
     setLoading(true);
     try {
       const response = await axios.delete(`${API_URL}/users/${user.id}/profile-picture`);
@@ -109,6 +113,10 @@ function ChangeProfile({ user, onClose }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const cancelRemove = () => {
+    setShowDeleteConfirm(false);
   };
 
   return (
@@ -145,10 +153,10 @@ function ChangeProfile({ user, onClose }) {
               />
             </label>
 
-            {preview && (
+            {preview && !profilePicture && (
               <button
                 className="remove-button"
-                onClick={handleRemove}
+                onClick={handleRemoveClick}
                 disabled={loading}
               >
                 <Trash2 size={18} />
@@ -180,9 +188,27 @@ function ChangeProfile({ user, onClose }) {
           />
         )}
       </div>
+
+      {showDeleteConfirm && (
+        <div className="delete-confirm-overlay">
+          <div className="delete-confirm-modal">
+            <h3 className="delete-confirm-title">Confirm Remove</h3>
+            <p className="delete-confirm-message">
+              Are you sure you want to remove this profile picture?
+            </p>
+            <div className="delete-confirm-actions">
+              <button className="delete-confirm-cancel" onClick={cancelRemove}>
+                Cancel
+              </button>
+              <button className="delete-confirm-confirm" onClick={confirmRemove}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default ChangeProfile;
-
