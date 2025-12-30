@@ -80,10 +80,25 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
 
   const handleAddMember = () => {
     setMembers([...members, { resident_id: '', role: 'member' }]);
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors.members;
+      delete newErrors.submit;
+      return newErrors;
+    });
   };
 
   const handleRemoveMember = (index) => {
     setMembers(members.filter((_, i) => i !== index));
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach(key => {
+        if (key.startsWith('member_') || key === 'members' || key === 'submit') {
+          delete newErrors[key];
+        }
+      });
+      return newErrors;
+    });
   };
 
   const handleMemberChange = (index, field, value) => {
@@ -94,6 +109,25 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
       updatedMembers[index][field] = value;
     }
     setMembers(updatedMembers);
+    
+    if (field === 'resident_id' && errors[`member_${index}`]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[`member_${index}`];
+        delete newErrors.members;
+        delete newErrors.submit;
+        return newErrors;
+      });
+    }
+    
+    if (field === 'role' && errors[`member_role_${index}`]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[`member_role_${index}`];
+        delete newErrors.submit;
+        return newErrors;
+      });
+    }
   };
 
   const validateForm = () => {
@@ -357,4 +391,3 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
 }
 
 export default HouseholdForm;
-
