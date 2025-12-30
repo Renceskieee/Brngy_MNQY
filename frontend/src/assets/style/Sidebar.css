@@ -10,6 +10,7 @@
   left: 0;
   bottom: 60px;
   overflow-y: auto;
+  z-index: 98;
 }
 
 .sidebar-profile {
@@ -119,7 +120,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 9999;
   backdrop-filter: blur(4px);
 }
 
@@ -131,6 +132,8 @@
   width: 90%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
+  position: relative;
+  z-index: 10000;
 }
 
 @keyframes modalSlideIn {
@@ -183,9 +186,7 @@
   color: #333;
 }
 
-
 .logout-modal-confirm {
   background: var(--button-color, #dc2626);
   color: white;
 }
-
