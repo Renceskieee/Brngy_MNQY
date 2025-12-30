@@ -41,8 +41,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .create-account-title-row {
@@ -57,13 +58,6 @@
   color: #333;
   margin: 0;
   font-family: 'Poppins', sans-serif;
-}
-
-.create-account-divider {
-  border: none;
-  border-top: 2px solid #e5e5e5;
-  width: 100%;
-  margin: 8px 0 0 0;
 }
 
 .create-account-close {

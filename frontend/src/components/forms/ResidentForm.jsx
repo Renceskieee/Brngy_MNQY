@@ -156,7 +156,6 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
         <div className="create-account-header">
           <div className="create-account-title-row">
             <h2 className="create-account-title">{resident ? 'Update Resident' : 'Add New Resident'}</h2>
-            <hr className="create-account-divider" />
           </div>
           <button className="create-account-close" onClick={onClose}>
             <X size={24} />

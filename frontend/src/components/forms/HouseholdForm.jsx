@@ -243,7 +243,6 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
         <div className="household-form-header">
           <div className="household-form-title-row">
             <h2 className="household-form-title">{household ? 'Update Household' : 'Add New Household'}</h2>
-            <hr className="household-form-divider" />
           </div>
           <button className="household-form-close" onClick={onClose}>
             <X size={24} />

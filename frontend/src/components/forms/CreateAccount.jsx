@@ -120,7 +120,6 @@ function CreateAccount({ onClose }) {
         <div className="create-account-header">
           <div className="create-account-title-row">
             <h2 className="create-account-title">Create Account</h2>
-            <hr className="create-account-divider" />
           </div>
           <button className="create-account-close" onClick={onClose}>
             <X size={24} />
