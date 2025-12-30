@@ -130,7 +130,7 @@
 }
 
 .upload-button {
-  background: var(--button-color, #5463FF);
+  background: #5463FF;
   color: white;
 }
 
