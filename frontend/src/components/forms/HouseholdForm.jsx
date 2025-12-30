@@ -155,6 +155,7 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
       const uniqueIds = new Set(residentIds);
       if (residentIds.length !== uniqueIds.size) {
         newErrors.members = 'Duplicate residents are not allowed';
+        setMessage({ text: 'Duplicate residents are not allowed', type: 'error' });
       }
     }
 
@@ -291,10 +292,6 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
                   <span>Add Member</span>
                 </button>
               </div>
-
-              {errors.members && (
-                <div className="error-message">{errors.members}</div>
-              )}
 
               {members.length === 0 ? (
                 <p className="no-members-message">No members added yet. Click "Add Member" to add residents to this household.</p>
