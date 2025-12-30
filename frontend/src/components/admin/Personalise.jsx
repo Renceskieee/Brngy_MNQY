@@ -314,7 +314,7 @@ function Personalise() {
                 <div className="logo-placeholder">No logo uploaded</div>
               )}
             </div>
-            <label className="upload-button">
+            <label className="pupload-button">
               <Upload size={20} />
               <span>Upload Logo</span>
               <input
@@ -338,7 +338,7 @@ function Personalise() {
                 <div className="logo-placeholder">No background uploaded</div>
               )}
             </div>
-            <label className="upload-button">
+            <label className="pupload-button">
               <Upload size={20} />
               <span>Upload Background</span>
               <input
@@ -511,7 +511,7 @@ function Personalise() {
           <h2 className="section-title">Carousel Management</h2>
           <p className="section-description">Manage images displayed on the Login page</p>
           
-          <label className="upload-button">
+          <label className="pupload-button">
             <Upload size={20} />
             <span>Add Carousel Image</span>
             <input
@@ -570,7 +570,7 @@ function Personalise() {
             <span>Reset</span>
           </button>
           <button
-            className="save-button"
+            className="psave-button"
             onClick={handleSavePersonalisation}
             disabled={saving || loading}
           >

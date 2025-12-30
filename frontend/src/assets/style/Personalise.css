@@ -80,7 +80,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
-.upload-button {
+.pupload-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -252,12 +252,12 @@
   cursor: not-allowed;
 }
 
-.save-button {
+.psave-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: var(--button-color, #dc2626);
+  background: #10b981;
   color: #ffffff;
   border: none;
   border-radius: 6px;
