@@ -80,6 +80,10 @@
   align-self: flex-start;
 }
 
+.create-account-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
 
 .create-account-form {
   display: flex;

@@ -62,6 +62,10 @@
   transition: all 0.3s ease;
 }
 
+.change-profile-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
 
 .change-profile-content {
   display: flex;

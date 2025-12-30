@@ -79,6 +79,10 @@
   align-self: flex-start;
 }
 
+.household-form-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
 
 .household-form {
   display: flex;

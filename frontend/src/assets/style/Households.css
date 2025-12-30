@@ -275,6 +275,10 @@
   transition: all 0.3s ease;
 }
 
+.view-modal-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
 
 .view-modal-content {
   display: flex;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Eye, EyeOff } from 'lucide-react';
+import { EyeClosed, Eye } from 'lucide-react';
 import Messages from '../shared/Messages';
 import '../../assets/style/ChangePassword.css';
 
@@ -122,7 +122,7 @@ function ChangePassword({ userId, onClose }) {
               className="password-toggle"
               onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
             >
-              {showPasswords.current ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPasswords.current ? <Eye size={18} /> : <EyeClosed size={18} />}
             </button>
           </div>
           {errors.current_password && (
@@ -149,7 +149,7 @@ function ChangePassword({ userId, onClose }) {
               className="password-toggle"
               onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
             >
-              {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPasswords.new ? <Eye size={18} /> : <EyeClosed size={18} />}
             </button>
           </div>
           {errors.new_password && (
@@ -176,7 +176,7 @@ function ChangePassword({ userId, onClose }) {
               className="password-toggle"
               onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
             >
-              {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPasswords.confirm ? <Eye size={18} /> : <EyeClosed size={18} />}
             </button>
           </div>
           {errors.confirm_password && (
