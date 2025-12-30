@@ -93,6 +93,8 @@
   font-weight: 500;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
+  width: fit-content;
+  white-space: nowrap;
 }
 
 .upload-button:disabled {

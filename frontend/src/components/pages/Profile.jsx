@@ -25,7 +25,7 @@ function Profile({ user }) {
             </div>
             <h3 className="profile-option-title">Change Password</h3>
             <p className="profile-option-description">
-              Update your account password for better security
+              Update your account password for better security.
             </p>
           </div>
 
@@ -38,7 +38,7 @@ function Profile({ user }) {
             </div>
             <h3 className="profile-option-title">Update Profile Picture</h3>
             <p className="profile-option-description">
-              Change or remove your profile picture
+              Change or remove your profile picture.
             </p>
           </div>
         </div>
