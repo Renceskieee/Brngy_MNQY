@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lock, UserCircle, X } from 'lucide-react';
 import ChangePassword from '../forms/ChangePassword';
 import ChangeProfile from '../modals/ChangeProfile';
@@ -6,6 +6,24 @@ import '../../assets/style/Profile.css';
 
 function Profile({ user }) {
   const [activeSection, setActiveSection] = useState(null);
+  const [currentUser, setCurrentUser] = useState(user);
+
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      const updatedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      setCurrentUser(updatedUser);
+    };
+
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
 
   return (
     <div className="profile-page">
@@ -57,7 +75,7 @@ function Profile({ user }) {
               </button>
             </div>
             <ChangePassword
-              userId={user?.id}
+              userId={currentUser?.id}
               onClose={() => setActiveSection(null)}
             />
           </div>
@@ -66,7 +84,7 @@ function Profile({ user }) {
 
       {activeSection === 'change-profile' && (
         <ChangeProfile
-          user={user}
+          user={currentUser}
           onClose={() => setActiveSection(null)}
         />
       )}
@@ -75,4 +93,3 @@ function Profile({ user }) {
 }
 
 export default Profile;
-

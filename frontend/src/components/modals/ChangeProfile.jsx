@@ -14,16 +14,19 @@ function ChangeProfile({ user, onClose }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
-    if (user?.profile_picture) {
-      if (user.profile_picture.startsWith('/uploads/')) {
-        setPreview(user.profile_picture);
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const currentProfilePicture = currentUser.profile_picture;
+
+    if (currentProfilePicture) {
+      if (currentProfilePicture.startsWith('/uploads/')) {
+        setPreview(currentProfilePicture);
       } else {
-        setPreview(`/uploads/profile/${user.profile_picture}`);
+        setPreview(`/uploads/profile/${currentProfilePicture}`);
       }
     } else {
       setPreview(null);
     }
-  }, [user]);
+  }, [user]); 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -99,10 +102,13 @@ function ChangeProfile({ user, onClose }) {
         setMessage({ text: 'Profile picture removed successfully', type: 'success' });
         setPreview(null);
         setProfilePicture(null);
+        
         const updatedUser = JSON.parse(localStorage.getItem('user') || '{}');
         updatedUser.profile_picture = null;
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        
         window.dispatchEvent(new Event('profileUpdated'));
+        
         setTimeout(() => {
           if (onClose) onClose();
         }, 2000);
