@@ -5,6 +5,7 @@ import SettingsAdmin from './SettingsAdmin';
 import Personalise from './Personalise';
 import Residents from '../pages/Residents';
 import Households from '../pages/Households';
+import Incidents from '../pages/Incidents';
 import Profile from '../pages/Profile';
 import TimeLog from '../pages/TimeLog';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
@@ -22,6 +23,8 @@ function DashboardAdmin({ user, onLogout }) {
         return <Residents />;
       case 'households':
         return <Households />;
+      case 'incidents':
+        return <Incidents />;
       case 'settings':
         return <SettingsAdmin setActivePage={setActivePage} />;
       case 'personalise':

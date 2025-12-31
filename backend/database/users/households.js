@@ -255,6 +255,12 @@ const updateHousehold = async (req, res) => {
 
       const [updated] = await pool.execute('SELECT * FROM households WHERE id = ?', [id]);
 
+      const userId = req.body.userId || req.user?.userId || null;
+      if (userId) {
+        const description = `Updated household: ${household_name.trim()}`;
+        await history.createHistory(userId, null, id, description);
+      }
+
       res.json({
         success: true,
         message: 'Household updated successfully',

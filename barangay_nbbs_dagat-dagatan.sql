@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 29, 2025 at 09:22 AM
+-- Generation Time: Dec 31, 2025 at 01:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,11 +39,11 @@ CREATE TABLE `carousel` (
 --
 
 INSERT INTO `carousel` (`id`, `picture`, `position`, `posted_at`) VALUES
-(2, '/uploads/personalisation/images/carousel-1766636186725-314149602.jpg', 3, '2025-12-25 04:16:26'),
-(3, '/uploads/personalisation/images/carousel-1766636190716-534270392.jpg', 2, '2025-12-25 04:16:30'),
-(4, '/uploads/personalisation/images/carousel-1766636197294-357738198.jpg', 1, '2025-12-25 04:16:37'),
-(6, '/uploads/personalisation/images/carousel-1766647589055-259286283.jpeg', 5, '2025-12-25 07:26:29'),
-(7, '/uploads/personalisation/images/carousel-1766647603575-556339110.jpg', 6, '2025-12-25 07:26:43');
+(8, '/uploads/personalisation/images/carousel-1767069426209-859812134.jpg', 4, '2025-12-30 04:37:06'),
+(9, '/uploads/personalisation/images/carousel-1767069433188-906290602.jpg', 5, '2025-12-30 04:37:13'),
+(10, '/uploads/personalisation/images/carousel-1767069441701-104487202.jpg', 6, '2025-12-30 04:37:21'),
+(11, '/uploads/personalisation/images/carousel-1767069458659-455285850.jpg', 4, '2025-12-30 04:37:38'),
+(12, '/uploads/personalisation/images/carousel-1767069463068-958621693.jpg', 5, '2025-12-30 04:37:43');
 
 -- --------------------------------------------------------
 
@@ -56,6 +56,7 @@ CREATE TABLE `history` (
   `user_id` int(11) NOT NULL,
   `resident_id` int(11) DEFAULT NULL,
   `household_id` int(11) DEFAULT NULL,
+  `incident_id` int(11) DEFAULT NULL,
   `description` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -64,13 +65,9 @@ CREATE TABLE `history` (
 -- Dumping data for table `history`
 --
 
-INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `description`, `timestamp`) VALUES
-(1, 1, NULL, NULL, 'Deleted resident: Chua, Michael Tan', '2025-12-28 05:32:28'),
-(2, 1, NULL, NULL, 'Deleted resident: Uy, Jasmine Lee', '2025-12-28 05:32:42'),
-(3, 1, 28, NULL, 'Added new resident: Navarrosa, Angela Tanya Galera', '2025-12-29 05:54:46'),
-(4, 1, NULL, 1, 'Added new household: Navarrosa Residence', '2025-12-29 07:03:06'),
-(5, 1, NULL, 1, 'Deleted household: Navarrosa Residence', '2025-12-29 07:03:58'),
-(6, 1, NULL, 2, 'Added new household: Navarrosa Residence', '2025-12-29 07:05:09');
+INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `incident_id`, `description`, `timestamp`) VALUES
+(7, 1, NULL, NULL, NULL, 'Added new household: Navarrosa Residence', '2025-12-31 12:03:14'),
+(8, 2, NULL, NULL, NULL, 'Deleted household: Navarrosa Residence', '2025-12-31 12:03:41');
 
 -- --------------------------------------------------------
 
@@ -91,22 +88,10 @@ CREATE TABLE `households` (
 --
 
 INSERT INTO `households` (`id`, `household_name`, `address`, `created_at`, `updated_at`) VALUES
-(1, 'Reyes Family', 'Blk 1 Lot 2 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(2, 'Navarrosa Family', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-29 07:05:09', '2025-12-29 07:21:30'),
-(3, 'Cruz Family', 'Blk 3 Lot 8 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(4, 'Garcia Family', 'Blk 4 Lot 1 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(5, 'Dela Rosa Family', 'Blk 5 Lot 3 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(6, 'Mendoza Family', 'Blk 6 Lot 4 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(7, 'Flores Family', 'Blk 7 Lot 6 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(8, 'Ramos Family', 'Blk 8 Lot 7 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(9, 'Aquino Family', 'Blk 9 Lot 9 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(10, 'Navarro Family', 'Blk 10 Lot 2 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(11, 'Torres Family', 'Blk 11 Lot 1 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(12, 'Castillo Family', 'Blk 12 Lot 5 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(13, 'Villanueva Family', 'Blk 13 Lot 3 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(14, 'Morales Family', 'Blk 14 Lot 4 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(15, 'Padilla Family', 'Blk 15 Lot 6 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12'),
-(16, 'Santos Family', 'Blk 2 Lot 5 Dagat-Dagatan', '2025-12-29 07:21:12', '2025-12-29 07:21:12');
+(17, 'Dela Cruz Household', 'Block 12, Lot 4, Phase 1, NBBS Dagat-Dagatan', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
+(18, 'Bautista Household', '142 Kapak St., NBBS Dagat-Dagatan', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
+(19, 'Garcia Household', 'Block 5, Phase 2, Area 1', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
+(20, 'Mendoza Household', '22 Dalagang Bukid St.', '2025-12-30 05:01:20', '2025-12-30 05:01:20');
 
 -- --------------------------------------------------------
 
@@ -127,12 +112,39 @@ CREATE TABLE `household_members` (
 --
 
 INSERT INTO `household_members` (`id`, `household_id`, `resident_id`, `role`, `added_at`) VALUES
-(3, 2, 28, 'member', '2025-12-29 07:21:30'),
-(4, 9, 8, 'dependent', '2025-12-29 07:27:16'),
-(9, 1, 29, 'head', '2025-12-29 07:28:43'),
-(10, 1, 30, 'member', '2025-12-29 07:28:43'),
-(11, 1, 2, 'member', '2025-12-29 07:28:43'),
-(12, 1, 31, 'member', '2025-12-29 07:28:43');
+(19, 18, 53, 'head', '2025-12-30 05:02:04'),
+(20, 18, 54, 'member', '2025-12-30 05:02:04'),
+(21, 17, 52, 'member', '2025-12-30 05:03:23'),
+(22, 17, 50, 'member', '2025-12-30 05:03:23'),
+(23, 17, 49, 'head', '2025-12-30 05:03:23'),
+(24, 17, 51, 'member', '2025-12-30 05:03:23'),
+(25, 19, 56, 'member', '2025-12-30 05:05:00'),
+(26, 19, 57, 'member', '2025-12-30 05:05:00'),
+(27, 19, 55, 'head', '2025-12-30 05:05:00'),
+(28, 19, 58, 'member', '2025-12-30 05:05:00'),
+(29, 20, 60, 'member', '2025-12-30 05:05:25'),
+(30, 20, 59, 'head', '2025-12-30 05:05:25');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `incidents`
+--
+
+CREATE TABLE `incidents` (
+  `id` int(11) NOT NULL,
+  `reference_number` varchar(50) NOT NULL,
+  `incident_type` varchar(100) NOT NULL,
+  `location` text NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `complainant` varchar(150) NOT NULL,
+  `respondent` varchar(150) NOT NULL,
+  `description` text NOT NULL,
+  `status` enum('pending','ongoing','resolved','dismissed') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -160,7 +172,7 @@ CREATE TABLE `personalisation` (
 --
 
 INSERT INTO `personalisation` (`id`, `logo`, `main_bg`, `header_title`, `header_color`, `footer_title`, `footer_color`, `login_color`, `profile_bg`, `active_nav_color`, `button_color`, `updated_at`) VALUES
-(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFC300', 'SK Barangay Information System 2025', '#FFC300', '#000000', '#ECECEC', '#5463FF', '#5463FF', '2025-12-28 05:26:13');
+(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#79C9C5', 'SK Barangay Information System 2025', '#79C9C5', '#000000', '#FFE2AF', '#79C9C5', '#3F9AAE', '2025-12-30 11:55:27');
 
 -- --------------------------------------------------------
 
@@ -189,52 +201,56 @@ CREATE TABLE `residents` (
 --
 
 INSERT INTO `residents` (`id`, `f_name`, `m_name`, `l_name`, `suffix`, `sex`, `birthdate`, `civil_status`, `contact_no`, `email`, `address`, `created_at`, `updated_at`) VALUES
-(1, 'Juan', 'Santos', 'Dela Cruz', 'NA', 'male', '1990-01-05', 'single', '09180000001', 'resident01@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(2, 'Maria', 'Lopez', 'Reyes', 'NA', 'female', '1988-02-10', 'married', '09180000002', 'resident02@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(3, 'Jose', 'Garcia', 'Mendoza', 'Jr.', 'male', '1995-03-15', 'single', '09180000003', 'resident03@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(4, 'Ana', 'Torres', 'Villanueva', 'NA', 'female', '1992-04-20', 'single', '09180000004', 'resident04@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(5, 'Mark', 'Cruz', 'Santos', 'NA', 'male', '1985-05-25', 'married', '09180000005', 'resident05@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(6, 'Grace', 'Flores', 'Navarro', 'NA', 'female', '1998-06-01', 'single', '09180000006', 'resident06@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(7, 'Paul', 'Andres', 'Lim', 'NA', 'male', '1991-07-07', 'single', '09180000007', 'resident07@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(8, 'Christine', 'Mae', 'Aquino', 'NA', 'female', '1987-08-12', 'married', '09180000008', 'resident08@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(9, 'Daniel', 'Reyes', 'Cortez', 'II', 'male', '2000-09-18', 'single', '09180000009', 'resident09@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(10, 'Elaine', 'Joy', 'Pascual', 'NA', 'female', '1994-10-22', 'single', '09180000010', 'resident10@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(13, 'Ramon', 'Diaz', 'Castillo', 'Sr.', 'male', '1975-01-14', 'married', '09180000013', 'resident13@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(14, 'Sofia', 'Anne', 'Morales', 'NA', 'female', '2001-02-19', 'single', '09180000014', 'resident14@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(15, 'Kevin', 'James', 'Ortega', 'NA', 'male', '1993-03-24', 'single', '09180000015', 'resident15@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(16, 'Patricia', 'Rose', 'Valdez', 'NA', 'female', '1989-04-29', 'married', '09180000016', 'resident16@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(17, 'Leonard', 'Paul', 'Quizon', 'NA', 'male', '1997-05-06', 'single', '09180000017', 'resident17@email.com', 'Purok 6, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(18, 'Monica', 'Faith', 'Ramos', 'NA', 'female', '1990-06-11', 'widowed', '09180000018', 'resident18@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(19, 'Arvin', 'Kyle', 'Bautista', 'NA', 'male', '1999-07-16', 'single', '09180000019', 'resident19@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(20, 'Liza', 'Mae', 'Fernandez', 'NA', 'female', '1986-08-21', 'separated', '09180000020', 'resident20@email.com', 'Purok 3, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(21, 'Noel', 'Ryan', 'Salazar', 'NA', 'male', '1992-09-01', 'single', '09180000021', 'resident21@email.com', 'Purok 4, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(22, 'Angela', 'Joy', 'Cabrera', 'NA', 'female', '1994-10-02', 'single', '09180000022', 'resident22@email.com', 'Purok 5, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(23, 'Dennis', 'Mark', 'Rosales', 'NA', 'male', '1987-11-03', 'married', '09180000023', 'resident23@email.com', 'Purok 6, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(24, 'Camille', 'Grace', 'Luna', 'NA', 'female', '1998-12-04', 'single', '09180000024', 'resident24@email.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(25, 'Bryan', 'Paul', 'Ilagan', 'NA', 'male', '1991-01-05', 'single', '09180000025', 'resident25@email.com', 'Purok 2, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(26, 'Roland', 'Miguel', 'Peralta', 'NA', 'male', '1984-09-14', 'married', '09180000099', 'resident99@email.com', 'Purok 6, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(27, 'Aileen', 'Joy', 'Samson', 'NA', 'female', '1990-10-15', 'single', '09180000100', 'resident100@email.com', 'Purok 7, Barangay Dagat-Dagatan', '2025-12-28 05:31:47', '2025-12-28 05:31:47'),
-(28, 'Angela Tanya', 'Galera', 'Navarrosa', 'NA', 'female', '2003-10-31', 'single', '09942611480', 'navarrosa.at.bsinfotech@gmail.com', 'Purok 1, Barangay Dagat-Dagatan', '2025-12-29 05:54:46', '2025-12-29 05:55:05'),
-(29, 'Juan', 'Santos', 'Reyes', 'NA', 'male', '1978-03-12', 'married', '09170000001', 'juan.reyes@mail.com', 'Blk 1 Lot 2 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(30, 'Maria', 'Lopez', 'Reyes', 'NA', 'female', '1980-07-19', 'married', '09170000002', 'maria.reyes@mail.com', 'Blk 1 Lot 2 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(31, 'Paolo', 'Maria', 'Reyes', 'NA', 'male', '2006-01-25', 'single', '09170000003', 'paolo.reyes@mail.com', 'Blk 1 Lot 2 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(32, 'Carlos', 'Diaz', 'Santos', 'NA', 'male', '1975-05-10', 'married', '09170000004', 'carlos.santos@mail.com', 'Blk 2 Lot 5 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(33, 'Ana', 'Cruz', 'Santos', 'NA', 'female', '1979-09-02', 'married', '09170000005', 'ana.santos@mail.com', 'Blk 2 Lot 5 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(34, 'Miguel', 'Ana', 'Santos', 'NA', 'male', '2008-06-18', 'single', '09170000006', 'miguel.santos@mail.com', 'Blk 2 Lot 5 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(35, 'Roberto', 'Gomez', 'Cruz', 'NA', 'male', '1972-11-14', 'married', '09170000007', 'roberto.cruz@mail.com', 'Blk 3 Lot 8 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(36, 'Elena', 'Reyes', 'Cruz', 'NA', 'female', '1974-02-20', 'married', '09170000008', 'elena.cruz@mail.com', 'Blk 3 Lot 8 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(37, 'Antonio', 'Perez', 'Garcia', 'NA', 'male', '1981-08-09', 'married', '09170000009', 'antonio.garcia@mail.com', 'Blk 4 Lot 1 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(38, 'Liza', 'Flores', 'Garcia', 'NA', 'female', '1983-12-01', 'married', '09170000010', 'liza.garcia@mail.com', 'Blk 4 Lot 1 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(39, 'Angela', 'Liza', 'Garcia', 'NA', 'female', '2010-05-11', 'single', '09170000011', 'angela.garcia@mail.com', 'Blk 4 Lot 1 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(40, 'Pedro', 'Ramos', 'Dela Rosa', 'NA', 'male', '1976-04-22', 'married', '09170000012', 'pedro.delarosa@mail.com', 'Blk 5 Lot 3 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(41, 'Grace', 'Lim', 'Dela Rosa', 'NA', 'female', '1979-10-15', 'married', '09170000013', 'grace.delarosa@mail.com', 'Blk 5 Lot 3 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(42, 'Marco', 'Villanueva', 'Mendoza', 'NA', 'male', '1985-01-08', 'married', '09170000014', 'marco.mendoza@mail.com', 'Blk 6 Lot 4 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(43, 'Jenna', 'Torres', 'Mendoza', 'NA', 'female', '1987-03-27', 'married', '09170000015', 'jenna.mendoza@mail.com', 'Blk 6 Lot 4 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(44, 'Kyle', 'Marco', 'Mendoza', 'NA', 'male', '2012-09-30', 'single', '09170000016', 'kyle.mendoza@mail.com', 'Blk 6 Lot 4 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(45, 'Rafael', 'Aquino', 'Flores', 'NA', 'male', '1980-06-05', 'married', '09170000017', 'rafael.flores@mail.com', 'Blk 7 Lot 6 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(46, 'Nina', 'Santos', 'Flores', 'NA', 'female', '1982-11-23', 'married', '09170000018', 'nina.flores@mail.com', 'Blk 7 Lot 6 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(47, 'Jose', 'Navarro', 'Ramos', 'NA', 'male', '1974-02-17', 'married', '09170000019', 'jose.ramos@mail.com', 'Blk 8 Lot 7 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47'),
-(48, 'Cathy', 'Lopez', 'Ramos', 'NA', 'female', '1977-07-28', 'married', '09170000020', 'cathy.ramos@mail.com', 'Blk 8 Lot 7 Dagat-Dagatan', '2025-12-29 07:26:47', '2025-12-29 07:26:47');
+(49, 'Ricardo', 'Pineda', 'Dela Cruz', 'Sr.', 'male', '1975-05-12', 'married', '09171234567', 'ricardo.dc@email.com', 'Block 12, Lot 4, Phase 1, NBBS Dagat-Dagatan', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(50, 'Maria', 'Santos', 'Dela Cruz', 'NA', 'female', '1978-08-20', 'married', '09171234568', 'maria.dc@email.com', 'Block 12, Lot 4, Phase 1, NBBS Dagat-Dagatan', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(51, 'Ricardo', 'Santos', 'Dela Cruz', 'Jr.', 'male', '2005-01-15', 'single', '09171234569', 'ricardojr.dc@email.com', 'Block 12, Lot 4, Phase 1, NBBS Dagat-Dagatan', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(52, 'Angelica', 'Santos', 'Dela Cruz', 'NA', 'female', '2008-11-30', 'single', NULL, NULL, 'Block 12, Lot 4, Phase 1, NBBS Dagat-Dagatan', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(53, 'Antonio', 'Gomez', 'Bautista', 'NA', 'male', '1960-03-25', 'widowed', '09182223344', 'antonio.b@email.com', '142 Kapak St., NBBS Dagat-Dagatan', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(54, 'Elena', 'Bautista', 'Bautista', 'NA', 'female', '1985-07-10', 'single', '09182223345', 'elena.b@email.com', '142 Kapak St., NBBS Dagat-Dagatan', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(55, 'Roberto', 'Luna', 'Garcia', 'III', 'male', '1982-12-05', 'married', '09205556677', 'roberto.g3@email.com', 'Block 5, Phase 2, Area 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(56, 'Cynthia', 'Reyes', 'Garcia', 'NA', 'female', '1984-02-14', 'married', '09205556678', 'cynthia.g@email.com', 'Block 5, Phase 2, Area 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(57, 'Mateo', 'Reyes', 'Garcia', 'NA', 'male', '2012-06-20', 'single', NULL, NULL, 'Block 5, Phase 2, Area 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(58, 'Sofia', 'Reyes', 'Garcia', 'NA', 'female', '2015-09-12', 'single', NULL, NULL, 'Block 5, Phase 2, Area 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(59, 'Juanito', 'Castro', 'Mendoza', 'NA', 'male', '1990-10-10', 'married', '09459998877', 'juan.mendoza@email.com', '22 Dalagang Bukid St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(60, 'Clarissa', 'Villanueva', 'Mendoza', 'NA', 'female', '1992-04-05', 'married', '09459998878', 'clari.m@email.com', '22 Dalagang Bukid St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(61, 'Mark', 'Anthony', 'Villanueva', 'NA', 'male', '1995-01-22', 'single', '09151112233', 'mark.v@email.com', 'Block 2, Lot 10, Phase 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(62, 'Teresa', 'May', 'Aquino', 'NA', 'female', '1988-11-03', 'separated', '09164445566', 'tess.aquino@email.com', 'Block 8, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(63, 'Fernando', 'Luis', 'Pascual', 'Sr.', 'male', '1955-06-18', 'married', '09227778899', 'ferdie.p@email.com', '45 Lapu-Lapu Avenue', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(64, 'Lourdes', 'Cruz', 'Pascual', 'NA', 'female', '1958-02-28', 'married', '09227778800', 'lourdes.p@email.com', '45 Lapu-Lapu Avenue', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(65, 'Jose', 'Rizalino', 'Mercado', 'NA', 'male', '1998-12-30', 'single', '09331239876', 'jose.merc@email.com', 'Block 1, Lot 1, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(66, 'Grace', 'Poe', 'Llamanzares', 'NA', 'female', '1970-09-03', 'married', '09085551234', 'grace.p@email.com', '12 Tambak St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(67, 'Rodrigo', 'Roa', 'Duterte', 'NA', 'male', '1945-03-28', 'separated', '09096667788', 'digong@email.com', 'Block 15, Area 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(68, 'Leni', 'Gerona', 'Robredo', 'NA', 'female', '1965-04-23', 'widowed', '09170001122', 'leni.r@email.com', 'Block 3, Phase 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(69, 'Ferdinand', 'Romualdez', 'Marcos', 'Jr.', 'male', '1957-09-13', 'married', '09183334455', 'bongbong@email.com', 'Block 7, Lot 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(70, 'Imelda', 'Remedios', 'Marcos', 'NA', 'female', '1929-07-02', 'widowed', '09183334456', 'imelda.m@email.com', 'Block 7, Lot 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(71, 'Manuel', 'Luis', 'Quezon', 'III', 'male', '1970-05-30', 'married', '09192228833', 'mlq3@email.com', 'Block 4, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(72, 'Corazon', 'Sumulong', 'Cojuangco', 'NA', 'female', '1933-01-25', 'widowed', '09158889900', 'cory.c@email.com', '101 Agusan St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(73, 'Benigno', 'Simeon', 'Aquino', 'III', 'male', '1960-02-08', 'single', '09158889901', 'pnoy@email.com', '101 Agusan St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(74, 'Gloria', 'Macapagal', 'Arroyo', 'NA', 'female', '1947-04-05', 'married', '09167773322', 'gma@email.com', 'Block 9, Phase 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(75, 'Joseph', 'Ejercito', 'Estrada', 'NA', 'male', '1937-04-19', 'married', '09176664433', 'erap@email.com', 'Block 2, Area 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(76, 'Francisco', 'Balagtas', 'Baltazar', 'NA', 'male', '1985-04-02', 'single', '09281112244', 'kiko.b@email.com', '12 Florante St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(77, 'Melchora', 'Aquino', 'Ramos', 'NA', 'female', '1940-01-06', 'widowed', '09395556677', 'tandangsora@email.com', '88 Banahaw St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(78, 'Andres', 'Castañeda', 'Bonifacio', 'NA', 'male', '1992-11-30', 'married', '09478889900', 'supremo@email.com', 'Block 11, Phase 4', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(79, 'Gregoria', 'De Jesus', 'Bonifacio', 'NA', 'female', '1994-05-09', 'married', '09478889901', 'orian@email.com', 'Block 11, Phase 4', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(80, 'Emilio', 'Famy', 'Aguinaldo', 'NA', 'male', '1950-03-22', 'married', '09562223344', 'miong@email.com', 'Block 6, Area 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(81, 'Apolinario', 'Mabini', 'Maranan', 'NA', 'male', '1964-07-23', 'single', '09663334455', 'mabini.a@email.com', 'Block 1, Phase 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(82, 'Marcelo', 'Hilario', 'Del Pilar', 'NA', 'male', '1980-08-30', 'married', '09774445566', 'plaridel@email.com', 'Block 10, Lot 5', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(83, 'Juan', 'Luna', 'Novicio', 'NA', 'male', '1975-10-23', 'married', '09985556677', 'jluna@email.com', 'Block 14, Phase 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(84, 'Antonio', 'Luna', 'Novicio', 'NA', 'male', '1978-10-29', 'single', '09985556678', 'aluna@email.com', 'Block 14, Phase 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(85, 'Gabriela', 'Cariño', 'Silang', 'NA', 'female', '1982-03-19', 'widowed', '09121110099', 'gabriela.s@email.com', 'Block 3, Area 4', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(86, 'Teresa', 'Ferreiro', 'Magbanua', 'NA', 'female', '1970-10-13', 'married', '09132221100', 'teresa.m@email.com', 'Block 5, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(87, 'Lapu', 'Lapu', 'Dimagiba', 'NA', 'male', '1990-01-01', 'single', '09143332211', 'lapu2@email.com', 'Mactan St. Ext.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(88, 'Sultan', 'Kudarat', 'Nasiruddin', 'NA', 'male', '1960-05-05', 'married', '09154443322', 'sultan.k@email.com', 'Block 20, Phase 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(89, 'Hadji', 'Butu', 'Abdul', 'NA', 'male', '1975-02-15', 'married', '09165554433', 'hadji.b@email.com', 'Block 21, Phase 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(90, 'Teodora', 'Alonzo', 'Realonda', 'NA', 'female', '1945-11-09', 'widowed', '09176665544', 'teodora.r@email.com', 'Block 1, Lot 1, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(91, 'Paciano', 'Rizal', 'Mercado', 'NA', 'male', '1955-03-07', 'single', '09187776655', 'paciano.m@email.com', 'Block 1, Lot 1, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(92, 'Trinidad', 'Rizal', 'Mercado', 'NA', 'female', '1962-06-06', 'single', '09198887766', 'trini.m@email.com', 'Block 1, Lot 1, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(93, 'Geronima', 'Pecson', 'Tomacruz', 'NA', 'female', '1972-12-19', 'married', '09209998877', 'geronima.p@email.com', 'Block 18, Area 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(94, 'Fe', 'Del Mundo', 'Villanueva', 'NA', 'female', '1951-11-27', 'single', '09210009988', 'fedelmundo@email.com', 'Block 22, Phase 4', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(95, 'Carlos', 'Pena', 'Romulo', 'NA', 'male', '1949-01-14', 'married', '09221110099', 'cpromulo@email.com', 'Block 25, Area 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(96, 'Ramon', 'Fierros', 'Magsaysay', 'NA', 'male', '1953-08-31', 'married', '09232221100', 'ramon.m@email.com', 'Block 30, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(97, 'Luz', 'Banzon', 'Magsaysay', 'NA', 'female', '1955-06-25', 'widowed', '09232221101', 'luz.m@email.com', 'Block 30, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(98, 'Sergio', 'Suico', 'Osmeña', 'Sr.', 'male', '1948-09-09', 'married', '09243332211', 'sergio.o@email.com', 'Block 2, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14');
 
 -- --------------------------------------------------------
 
@@ -254,9 +270,14 @@ CREATE TABLE `time_log` (
 --
 
 INSERT INTO `time_log` (`id`, `user_id`, `logged_in`, `logged_out`) VALUES
-(1, 2, '2025-12-29 08:05:55', '2025-12-29 00:08:03'),
-(2, 2, '2025-12-29 08:14:13', '2025-12-29 00:18:14'),
-(3, 2, '2025-12-29 08:21:20', NULL);
+(5, 2, '2025-12-30 03:08:13', '2025-12-30 04:37:51'),
+(6, 1, '2025-12-30 03:10:17', '2025-12-30 12:18:22'),
+(7, 2, '2025-12-30 04:52:21', '2025-12-30 05:22:29'),
+(8, 2, '2025-12-30 05:32:35', '2025-12-30 07:02:16'),
+(9, 2, '2025-12-31 02:41:06', '2025-12-31 02:41:33'),
+(10, 1, '2025-12-31 02:42:01', NULL),
+(11, 5, '2025-12-31 08:44:55', '2025-12-31 08:45:49'),
+(12, 2, '2025-12-31 11:41:50', NULL);
 
 -- --------------------------------------------------------
 
@@ -284,8 +305,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `employee_id`, `password`, `first_name`, `last_name`, `email`, `contact_number`, `profile_picture`, `position`, `status`, `created_at`, `updated_at`) VALUES
-(1, '224-09160M', '$2b$10$GBrZHG8p5iy8eDWvpBsFnO/DSvn1a9Hqe.bMtGWl.YAGwfEOzihme', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', '/uploads/profile/profile-1766995571609-535811446.png', 'admin', 'active', '2025-12-12 06:45:59', '2025-12-29 08:06:11'),
-(2, '224-09159M', '$2b$10$9DooDXwNMs.CgzqC17S1oO6B1r8DDDtvlIHVWkSPbC/7VxbVV86Hu', 'Angela Tanya', 'Navarrosa', 'quiniano.infotech@gmail.com', '9942611480', NULL, 'staff', 'active', '2025-12-12 06:59:37', '2025-12-19 07:49:40'),
+(1, '224-09160M', '$2b$10$EX0RSAVaKr7wL5wIilZFw.7posedKiJZpPXqpmdtKm0TG1Pz/5KAm', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', '/uploads/profile/profile-1767077847655-249564712.png', 'admin', 'active', '2025-12-12 06:45:59', '2025-12-30 06:57:27'),
+(2, '224-09159M', '$2b$10$Su3YPJ0P1lI.crNRszanEegNdr5ytPEdnROfE0JlNRw3146qXIOz2', 'Angela Tanya', 'Navarrosa', 'quiniano.infotech@gmail.com', '9942611480', NULL, 'staff', 'active', '2025-12-12 06:59:37', '2025-12-30 04:20:42'),
 (3, '224-09127M', '$2b$10$ZXQXYdD1FrT5PeZbP3s.LejOyPRgVNyAbmOOVsxe80BiXQh/TC2di', 'Laurence', 'Quiniano', 'quiniano.lp@gmail.com', '9685408094', NULL, 'staff', 'active', '2025-12-12 09:34:10', '2025-12-12 09:34:10'),
 (4, '224-09162M', '$2b$10$jOyISqnx6L1.6UJ/FnXuTOYEm63MvRkZU.5jjA2khC2NDENcF9mgW', 'Laurence Paul', 'Quiniano', 'laurencequiniano74@gmail.com', '9156128497', NULL, 'staff', 'active', '2025-12-12 09:46:28', '2025-12-12 09:46:28'),
 (5, '224-09161M', '$2b$10$x6F.uueozDp.8.BJhwQyUu3Nrcn.wUFph.BQCSmeNfl7yAjjUl.he', 'Aaliyah Paula', 'Quiniano', 'arvin.quiniano.abc@gmail.com', '9685408094', NULL, 'staff', 'active', '2025-12-19 08:31:22', '2025-12-19 08:31:22');
@@ -306,7 +327,9 @@ ALTER TABLE `carousel`
 ALTER TABLE `history`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_history_user` (`user_id`),
-  ADD KEY `fk_history_resident` (`resident_id`);
+  ADD KEY `fk_history_resident` (`resident_id`),
+  ADD KEY `fk_history_incident` (`incident_id`),
+  ADD KEY `fk_history_household` (`household_id`);
 
 --
 -- Indexes for table `households`
@@ -321,6 +344,13 @@ ALTER TABLE `household_members`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_resident` (`resident_id`),
   ADD KEY `fk_household_members_household` (`household_id`);
+
+--
+-- Indexes for table `incidents`
+--
+ALTER TABLE `incidents`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `reference_number` (`reference_number`);
 
 --
 -- Indexes for table `personalisation`
@@ -358,37 +388,43 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carousel`
 --
 ALTER TABLE `carousel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `households`
 --
 ALTER TABLE `households`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `household_members`
 --
 ALTER TABLE `household_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `incidents`
+--
+ALTER TABLE `incidents`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `residents`
 --
 ALTER TABLE `residents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `time_log`
 --
 ALTER TABLE `time_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -404,6 +440,8 @@ ALTER TABLE `users`
 -- Constraints for table `history`
 --
 ALTER TABLE `history`
+  ADD CONSTRAINT `fk_history_household` FOREIGN KEY (`household_id`) REFERENCES `households` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_history_incident` FOREIGN KEY (`incident_id`) REFERENCES `incidents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 

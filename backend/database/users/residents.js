@@ -319,6 +319,13 @@ const updateResident = async (req, res) => {
 
     const [updated] = await pool.execute('SELECT * FROM residents WHERE id = ?', [id]);
 
+    const userId = req.body.userId || req.user?.userId || null;
+    if (userId) {
+      const fullName = `${l_name.trim()}, ${f_name.trim()}${m_name ? ' ' + m_name.trim() : ''}${suffix && suffix !== 'NA' ? ' ' + suffix : ''}`;
+      const description = `Updated resident: ${fullName}`;
+      await history.createHistory(userId, id, null, description);
+    }
+
     res.json({
       success: true,
       message: 'Resident updated successfully',

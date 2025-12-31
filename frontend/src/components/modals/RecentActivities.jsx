@@ -51,6 +51,10 @@ function RecentActivities({ onClose }) {
     if (activity.household_name) {
       return activity.household_name;
     }
+
+    if (activity.incident_reference_number) {
+      return activity.incident_reference_number;
+    }
     
     if (activity.description) {
       if (activity.description.includes('Deleted resident: ')) {
@@ -59,11 +63,26 @@ function RecentActivities({ onClose }) {
       if (activity.description.includes('Added new resident: ')) {
         return activity.description.replace('Added new resident: ', '');
       }
+      if (activity.description.includes('Updated resident: ')) {
+        return activity.description.replace('Updated resident: ', '');
+      }
       if (activity.description.includes('Deleted household: ')) {
         return activity.description.replace('Deleted household: ', '');
       }
       if (activity.description.includes('Added new household: ')) {
         return activity.description.replace('Added new household: ', '');
+      }
+      if (activity.description.includes('Updated household: ')) {
+        return activity.description.replace('Updated household: ', '');
+      }
+      if (activity.description.includes('Deleted incident: ')) {
+        return activity.description.replace('Deleted incident: ', '');
+      }
+      if (activity.description.includes('Added new incident: ')) {
+        return activity.description.replace('Added new incident: ', '');
+      }
+      if (activity.description.includes('Updated incident: ')) {
+        return activity.description.replace('Updated incident: ', '');
       }
     }
     
@@ -99,7 +118,11 @@ function RecentActivities({ onClose }) {
                       <strong>{getUserName(activity)}</strong> {activity.description}
                     </div>
                     <div className="activity-resident">
-                      {activity.household_name ? `Household: ${activity.household_name}` : `Resident: ${getActivityName(activity)}`}
+                      {activity.household_name 
+                        ? `Household: ${activity.household_name}` 
+                        : activity.incident_reference_number 
+                        ? `Incident: ${activity.incident_reference_number}` 
+                        : `Resident: ${getActivityName(activity)}`}
                     </div>
                     <div className="activity-time">
                       {formatDate(activity.timestamp)}

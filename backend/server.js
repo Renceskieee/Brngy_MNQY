@@ -11,6 +11,7 @@ const personalisation = require('./database/users/personalisation');
 const residents = require('./database/users/residents');
 const history = require('./database/users/history');
 const households = require('./database/users/households');
+const incidents = require('./database/users/incidents');
 const timeLog = require('./database/users/time_log');
 
 const app = express();
@@ -64,6 +65,13 @@ app.get('/api/households/:id', households.getHouseholdById);
 app.post('/api/households', households.createHousehold);
 app.put('/api/households/:id', households.updateHousehold);
 app.delete('/api/households/:id', households.deleteHousehold);
+
+app.get('/api/incidents', incidents.getAllIncidents);
+app.get('/api/incidents/count', incidents.getIncidentsCount);
+app.get('/api/incidents/:id', incidents.getIncidentById);
+app.post('/api/incidents', incidents.createIncident);
+app.put('/api/incidents/:id', incidents.updateIncident);
+app.delete('/api/incidents/:id', incidents.deleteIncident);
 
 app.post('/api/users/:id/profile-picture', userSettings.uploadProfilePicture);
 app.delete('/api/users/:id/profile-picture', userSettings.removeProfilePicture);

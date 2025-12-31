@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Pie } from 'react-chartjs-2';
+import { Pie, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
-  Legend
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
 } from 'chart.js';
-import { Users, Home } from 'lucide-react';
+import { Users, Home, OctagonAlert } from 'lucide-react';
 import RecentActivities from '../modals/RecentActivities';
 import '../../assets/style/HomeAdmin.css';
 
 ChartJS.register(
   ArcElement,
   Tooltip,
-  Legend
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
 );
 
 const API_URL = '/api';
@@ -22,8 +28,16 @@ const API_URL = '/api';
 function HomeAdmin() {
   const [residentCount, setResidentCount] = useState(0);
   const [householdCount, setHouseholdCount] = useState(0);
+  const [incidentCount, setIncidentCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
   const [sexDistribution, setSexDistribution] = useState({ male: 0, female: 0 });
+  const [civilStatusDistribution, setCivilStatusDistribution] = useState({
+    single: 0,
+    married: 0,
+    widowed: 0,
+    separated: 0,
+    divorced: 0
+  });
   const [loading, setLoading] = useState(true);
   const [showActivitiesModal, setShowActivitiesModal] = useState(false);
 
@@ -34,9 +48,10 @@ function HomeAdmin() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [countResponse, householdCountResponse, historyResponse, residentsResponse] = await Promise.all([
+      const [countResponse, householdCountResponse, incidentCountResponse, historyResponse, residentsResponse] = await Promise.all([
         axios.get(`${API_URL}/residents/count`),
         axios.get(`${API_URL}/households/count`),
+        axios.get(`${API_URL}/incidents/count`),
         axios.get(`${API_URL}/history?limit=5`),
         axios.get(`${API_URL}/residents`)
       ]);
@@ -49,17 +64,30 @@ function HomeAdmin() {
         setHouseholdCount(householdCountResponse.data.count);
       }
 
+      if (incidentCountResponse.data.success) {
+        setIncidentCount(incidentCountResponse.data.count);
+      }
+
       if (historyResponse.data.success) {
         setRecentActivities(historyResponse.data.history);
       }
 
       if (residentsResponse.data.success) {
         const residents = residentsResponse.data.residents;
-        const distribution = {
+        const sexDist = {
           male: residents.filter(r => r.sex === 'male').length,
           female: residents.filter(r => r.sex === 'female').length
         };
-        setSexDistribution(distribution);
+        setSexDistribution(sexDist);
+
+        const civilDist = {
+          single: residents.filter(r => r.civil_status === 'single').length,
+          married: residents.filter(r => r.civil_status === 'married').length,
+          widowed: residents.filter(r => r.civil_status === 'widowed').length,
+          separated: residents.filter(r => r.civil_status === 'separated').length,
+          divorced: residents.filter(r => r.civil_status === 'divorced').length
+        };
+        setCivilStatusDistribution(civilDist);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -106,6 +134,21 @@ function HomeAdmin() {
       if (activity.description.includes('Added new household: ')) {
         return activity.description.replace('Added new household: ', '');
       }
+      if (activity.description.includes('Updated resident: ')) {
+        return activity.description.replace('Updated resident: ', '');
+      }
+      if (activity.description.includes('Updated household: ')) {
+        return activity.description.replace('Updated household: ', '');
+      }
+      if (activity.description.includes('Deleted incident: ')) {
+        return activity.description.replace('Deleted incident: ', '');
+      }
+      if (activity.description.includes('Added new incident: ')) {
+        return activity.description.replace('Added new incident: ', '');
+      }
+      if (activity.description.includes('Updated incident: ')) {
+        return activity.description.replace('Updated incident: ', '');
+      }
     }
     
     return 'N/A';
@@ -116,7 +159,7 @@ function HomeAdmin() {
     return `${activity.user_first_name} ${activity.user_last_name}`;
   };
 
-  const chartData = {
+  const sexChartData = {
     labels: ['Male', 'Female'],
     datasets: [
       {
@@ -128,7 +171,26 @@ function HomeAdmin() {
     ]
   };
 
-  const chartOptions = {
+  const civilStatusChartData = {
+    labels: ['Single', 'Married', 'Widowed', 'Separated', 'Divorced'],
+    datasets: [
+      {
+        label: 'Residents',
+        data: [
+          civilStatusDistribution.single,
+          civilStatusDistribution.married,
+          civilStatusDistribution.widowed,
+          civilStatusDistribution.separated,
+          civilStatusDistribution.divorced
+        ],
+        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+        borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
+        borderWidth: 2
+      }
+    ]
+  };
+
+  const pieChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -152,6 +214,46 @@ function HomeAdmin() {
         },
         font: {
           family: 'Poppins'
+        }
+      }
+    }
+  };
+
+  const barChartOptions = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+            return `${context.label}: ${context.parsed} residents (${percentage}%)`;
+          }
+        },
+        font: {
+          family: 'Poppins'
+        }
+      }
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          font: {
+            family: 'Poppins'
+          }
+        }
+      },
+      y: {
+        ticks: {
+          font: {
+            family: 'Poppins'
+          }
         }
       }
     }
@@ -183,16 +285,39 @@ function HomeAdmin() {
               </div>
             </div>
           </div>
+          <div className="stat-card">
+            <div className="stat-icon">
+              <OctagonAlert size={48} />
+            </div>
+            <div className="stat-info">
+              <div className="stat-label">Total Incidents</div>
+              <div className="stat-value">
+                {loading ? 'Loading...' : incidentCount.toLocaleString()}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="chart-section">
-          <h2 className="section-title">Sex Distribution</h2>
-          <div className="chart-container">
-            {loading ? (
-              <div className="loading-state">Loading chart...</div>
-            ) : (
-              <Pie data={chartData} options={chartOptions} />
-            )}
+        <div className="charts-section">
+          <div className="chart-section">
+            <h2 className="section-title">Sex Distribution</h2>
+            <div className="chart-container">
+              {loading ? (
+                <div className="loading-state">Loading chart...</div>
+              ) : (
+                <Pie data={sexChartData} options={pieChartOptions} />
+              )}
+            </div>
+          </div>
+          <div className="chart-section">
+            <h2 className="section-title">Civil Status Distribution</h2>
+            <div className="chart-container">
+              {loading ? (
+                <div className="loading-state">Loading chart...</div>
+              ) : (
+                <Bar data={civilStatusChartData} options={barChartOptions} />
+              )}
+            </div>
           </div>
         </div>
 
@@ -211,7 +336,11 @@ function HomeAdmin() {
                       <strong>{getUserName(activity)}</strong> {activity.description}
                     </div>
                     <div className="activity-resident">
-                      {activity.household_name ? `Household: ${activity.household_name}` : `Resident: ${getActivityName(activity)}`}
+                      {activity.household_name 
+                        ? `Household: ${activity.household_name}` 
+                        : activity.incident_reference_number 
+                        ? `Incident: ${activity.incident_reference_number}` 
+                        : `Resident: ${getActivityName(activity)}`}
                     </div>
                     <div className="activity-time">
                       {formatDate(activity.timestamp)}
