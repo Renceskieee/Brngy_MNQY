@@ -41,11 +41,6 @@
   transition: all 0.3s ease;
 }
 
-.add-incident-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
 .incidents-filters {
   margin-bottom: 24px;
   display: flex;
@@ -178,10 +173,6 @@
 .incidents-table tbody tr {
   border-bottom: 1px solid #e5e7eb;
   transition: background 0.2s ease;
-}
-
-.incidents-table tbody tr:hover {
-  background: #f9fafb;
 }
 
 .incidents-table tbody tr:last-child {
@@ -473,17 +464,9 @@
   color: #333;
 }
 
-.delete-modal-cancel:hover {
-  background: #d1d5db;
-}
-
 .delete-modal-confirm {
   background: var(--button-color, #dc2626);
   color: white;
-}
-
-.delete-modal-confirm:hover {
-  opacity: 0.9;
 }
 
 .pagination {
