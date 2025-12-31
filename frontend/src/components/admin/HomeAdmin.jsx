@@ -164,7 +164,7 @@ function HomeAdmin() {
     datasets: [
       {
         data: [sexDistribution.male, sexDistribution.female],
-        backgroundColor: ['#3b82f6', '#ec4899'],
+        backgroundColor: ['#79C9C5', '#F96E5B'],
         borderColor: ['#ffffff', '#ffffff'],
         borderWidth: 2
       }
@@ -183,7 +183,7 @@ function HomeAdmin() {
           civilStatusDistribution.separated,
           civilStatusDistribution.annulled
         ],
-        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+        backgroundColor: ['#3F9AAE', '#79C9C5', '#FFE2AF', '#F96E5B', '#88B0B9'],
         borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
         borderWidth: 2
       }
@@ -247,7 +247,9 @@ function HomeAdmin() {
           font: {
             family: 'Poppins'
           },
-          stepSize: 1
+          stepSize: 1,
+          minRotation: 0,
+          maxRotation: 0
         }
       },
       y: {
@@ -301,7 +303,7 @@ function HomeAdmin() {
 
         <div className="charts-section">
           <div className="chart-section">
-            <h2 className="section-title">Sex Distribution</h2>
+            <h2 className="section-title">Gender Statistics</h2>
             <div className="chart-container">
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
@@ -311,7 +313,7 @@ function HomeAdmin() {
             </div>
           </div>
           <div className="chart-section">
-            <h2 className="section-title">Civil Status Distribution</h2>
+            <h2 className="section-title">Civil Status Summary</h2>
             <div className="chart-container">
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
