@@ -73,13 +73,13 @@ const getIncidentById = async (req, res) => {
   }
 };
 
-const validateIncidentData = (data) => {
+const validateIncidentData = (data, isUpdate = false) => {
   const errors = [];
 
-  if (!data.reference_number || !data.reference_number.trim()) {
-    errors.push('Reference number is required');
-  } else if (data.reference_number.trim().length > 50) {
-    errors.push('Reference number must not exceed 50 characters');
+  if (isUpdate && data.reference_number) {
+    if (data.reference_number.trim().length > 50) {
+      errors.push('Reference number must not exceed 50 characters');
+    }
   }
 
   if (!data.incident_type || !data.incident_type.trim()) {
@@ -123,26 +123,9 @@ const validateIncidentData = (data) => {
   return errors;
 };
 
-const generateReferenceNumber = async () => {
-  try {
-    const [result] = await pool.execute(
-      'SELECT COUNT(*) as count FROM incidents WHERE YEAR(created_at) = YEAR(CURDATE())'
-    );
-    const count = result[0].count;
-    const year = new Date().getFullYear();
-    const sequence = String(count + 1).padStart(4, '0');
-    return `INC-${year}-${sequence}`;
-  } catch (error) {
-    console.error('Generate reference number error:', error);
-    const timestamp = Date.now();
-    return `INC-${timestamp}`;
-  }
-};
-
 const createIncident = async (req, res) => {
   try {
     const {
-      reference_number,
       incident_type,
       location,
       date,
@@ -153,13 +136,7 @@ const createIncident = async (req, res) => {
       status
     } = req.body;
 
-    let refNumber = reference_number;
-    if (!refNumber || !refNumber.trim()) {
-      refNumber = await generateReferenceNumber();
-    }
-
     const validationErrors = validateIncidentData({
-      reference_number: refNumber,
       incident_type,
       location,
       date,
@@ -168,7 +145,7 @@ const createIncident = async (req, res) => {
       respondent,
       description,
       status: status || 'pending'
-    });
+    }, false);
 
     if (validationErrors.length > 0) {
       return res.status(400).json({
@@ -177,22 +154,11 @@ const createIncident = async (req, res) => {
       });
     }
 
-    if (refNumber) {
-      const [existing] = await pool.execute(
-        'SELECT id FROM incidents WHERE reference_number = ?',
-        [refNumber]
-      );
-      if (existing.length > 0) {
-        refNumber = await generateReferenceNumber();
-      }
-    }
-
     const [result] = await pool.execute(
-      `INSERT INTO incidents (reference_number, incident_type, location, date, time, 
+      `INSERT INTO incidents (incident_type, location, date, time, 
        complainant, respondent, description, status) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        refNumber.trim(),
         incident_type.trim(),
         location.trim(),
         date,
@@ -210,8 +176,8 @@ const createIncident = async (req, res) => {
     );
 
     const userId = req.body.userId || req.user?.userId || null;
-    if (userId) {
-      const description = `Added new incident: ${refNumber.trim()}`;
+    if (userId && newIncident[0]) {
+      const description = `Added new incident: ${newIncident[0].reference_number}`;
       await history.createHistory(userId, null, null, description, result.insertId);
     }
 
@@ -226,7 +192,7 @@ const createIncident = async (req, res) => {
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(400).json({
         success: false,
-        message: 'Duplicate entry: Reference number already exists'
+        message: 'Duplicate entry: An error occurred while creating the incident'
       });
     }
     res.status(500).json({
@@ -251,7 +217,11 @@ const updateIncident = async (req, res) => {
       status
     } = req.body;
 
-    const [existing] = await pool.execute('SELECT id, reference_number FROM incidents WHERE id = ?', [id]);
+    const [existing] = await pool.execute(
+      'SELECT id, reference_number, status FROM incidents WHERE id = ?', 
+      [id]
+    );
+    
     if (existing.length === 0) {
       return res.status(404).json({
         success: false,
@@ -269,7 +239,7 @@ const updateIncident = async (req, res) => {
       respondent,
       description,
       status: status || existing[0].status
-    });
+    }, true);
 
     if (validationErrors.length > 0) {
       return res.status(400).json({
@@ -293,27 +263,40 @@ const updateIncident = async (req, res) => {
 
     await pool.execute(
       `UPDATE incidents SET 
-       reference_number = ?, incident_type = ?, location = ?, date = ?, time = ?, 
+       ${reference_number ? 'reference_number = ?,' : ''} 
+       incident_type = ?, location = ?, date = ?, time = ?, 
        complainant = ?, respondent = ?, description = ?, status = ? 
        WHERE id = ?`,
-      [
-        reference_number ? reference_number.trim() : existing[0].reference_number,
-        incident_type.trim(),
-        location.trim(),
-        date,
-        time,
-        complainant.trim(),
-        respondent.trim(),
-        description.trim(),
-        status || existing[0].status,
-        id
-      ]
+      reference_number 
+        ? [
+            reference_number.trim(),
+            incident_type.trim(),
+            location.trim(),
+            date,
+            time,
+            complainant.trim(),
+            respondent.trim(),
+            description.trim(),
+            status || existing[0].status,
+            id
+          ]
+        : [
+            incident_type.trim(),
+            location.trim(),
+            date,
+            time,
+            complainant.trim(),
+            respondent.trim(),
+            description.trim(),
+            status || existing[0].status,
+            id
+          ]
     );
 
     const [updated] = await pool.execute('SELECT * FROM incidents WHERE id = ?', [id]);
 
     const userId = req.body.userId || req.user?.userId || null;
-    if (userId) {
+    if (userId && updated[0]) {
       const description = `Updated incident: ${updated[0].reference_number}`;
       await history.createHistory(userId, null, null, description, id);
     }
@@ -400,4 +383,3 @@ module.exports = {
   deleteIncident,
   getIncidentsCount
 };
-

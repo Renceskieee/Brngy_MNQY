@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2025 at 02:49 PM
+-- Generation Time: Dec 31, 2025 at 03:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,7 +73,9 @@ INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `incident
 (11, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:35'),
 (12, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:41'),
 (13, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:48'),
-(14, 1, NULL, NULL, NULL, 'Deleted incident: INC-2025-0001', '2025-12-31 13:05:11');
+(14, 1, NULL, NULL, NULL, 'Deleted incident: INC-2025-0001', '2025-12-31 13:05:11'),
+(15, 1, NULL, NULL, NULL, 'Added new incident: INC-2025-000068', '2025-12-31 14:09:45'),
+(16, 1, NULL, NULL, NULL, 'Deleted incident: INC-2025-000068', '2025-12-31 14:09:57');
 
 -- --------------------------------------------------------
 
@@ -153,18 +155,35 @@ CREATE TABLE `incidents` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `incidents`
+--
+
+INSERT INTO `incidents` (`id`, `reference_number`, `incident_type`, `location`, `date`, `time`, `complainant`, `respondent`, `description`, `status`, `created_at`, `updated_at`) VALUES
+(99, 'INC-2025-000099', 'Noise Disturbance', 'House No. 12, Purok 1, Barangay Dagat-Dagatan, Caloocan City', '2025-01-05', '22:30:00', 'Juan Dela Cruz', 'Pedro Santos', 'Loud music was reported late at night causing disturbance to nearby households.', 'pending', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(100, 'INC-2025-000100', 'Physical Altercation', 'Basketball Court, Purok 2, Barangay Dagat-Dagatan', '2025-01-07', '18:15:00', 'Maria Reyes', 'Jose Mendoza', 'Verbal argument escalated into a minor physical altercation.', 'ongoing', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(101, 'INC-2025-000101', 'Domestic Dispute', 'House No. 45, Purok 3, Barangay Dagat-Dagatan', '2025-01-10', '20:00:00', 'Ana Villanueva', 'Mark Villanueva', 'Heated argument between spouses reported by neighbors.', 'pending', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(102, 'INC-2025-000102', 'Property Damage', 'Sari-sari Store, Purok 4, Barangay Dagat-Dagatan', '2025-01-12', '16:40:00', 'Grace Navarro', 'Daniel Cortez', 'Respondent allegedly damaged store property during an argument.', 'ongoing', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(103, 'INC-2025-000103', 'Public Disturbance', 'Street Corner, Purok 5, Barangay Dagat-Dagatan', '2025-01-14', '21:10:00', 'Paul Lim', 'Unknown Male', 'An intoxicated individual caused disturbance along the street.', 'dismissed', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(104, 'INC-2025-000104', 'Theft', 'House No. 78, Purok 6, Barangay Dagat-Dagatan', '2025-01-16', '03:20:00', 'Christine Aquino', 'Michael Chua', 'Personal belongings were reported missing inside the residence.', 'pending', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(105, 'INC-2025-000105', 'Verbal Abuse', 'Barangay Hall, Barangay Dagat-Dagatan', '2025-01-18', '10:30:00', 'Ramon Castillo', 'Kevin Ortega', 'Respondent verbally insulted the complainant during a barangay meeting.', 'resolved', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(106, 'INC-2025-000106', 'Boundary Dispute', 'Purok 7, Barangay Dagat-Dagatan', '2025-01-20', '09:45:00', 'Liza Fernandez', 'Patricia Valdez', 'Disagreement regarding property boundary lines.', 'ongoing', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(107, 'INC-2025-000107', 'Traffic Altercation', 'Main Road, Barangay Dagat-Dagatan', '2025-01-22', '17:50:00', 'Leonard Quizon', 'Arvin Bautista', 'Road rage incident involving motorcycles.', 'resolved', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(108, 'INC-2025-000108', 'Noise Disturbance', 'House No. 30, Purok 2, Barangay Dagat-Dagatan', '2025-01-24', '23:15:00', 'Monica Ramos', 'Elaine Pascual', 'Karaoke session continued past allowed hours.', 'pending', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(109, 'INC-2025-000109', 'Physical Injury', 'Construction Site, Purok 3, Barangay Dagat-Dagatan', '2025-01-26', '14:00:00', 'Dennis Rosales', 'Bryan Ilagan', 'Workplace disagreement resulted in minor injuries.', 'ongoing', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(110, 'INC-2025-000110', 'Harassment', 'Public Market, Barangay Dagat-Dagatan', '2025-01-28', '11:25:00', 'Sofia Morales', 'Unknown Female', 'Complainant reported repeated verbal harassment.', 'pending', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(111, 'INC-2025-000111', 'Illegal Parking', 'Barangay Road, Purok 4, Barangay Dagat-Dagatan', '2025-01-30', '08:10:00', 'Barangay Tanod', 'Roland Peralta', 'Vehicle was parked illegally causing traffic obstruction.', 'resolved', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(112, 'INC-2025-000112', 'Vandalism', 'Waiting Shed, Purok 6, Barangay Dagat-Dagatan', '2025-02-01', '01:55:00', 'Barangay Council', 'Unknown Persons', 'Graffiti found on public property.', 'pending', '2025-12-31 14:13:14', '2025-12-31 14:13:14'),
+(113, 'INC-2025-000113', 'Curfew Violation', 'Purok 1, Barangay Dagat-Dagatan', '2025-02-02', '00:30:00', 'Barangay Tanod', 'Aileen Samson', 'Minor was found outside during curfew hours.', 'resolved', '2025-12-31 14:13:14', '2025-12-31 14:13:14');
+
+--
 -- Triggers `incidents`
 --
 DELIMITER $$
-CREATE TRIGGER `trg_generate_incident_reference` AFTER INSERT ON `incidents` FOR EACH ROW BEGIN
-    UPDATE incidents
-    SET reference_number = CONCAT(
-        'INC-',
-        YEAR(NEW.created_at),
-        '-',
-        LPAD(NEW.id, 6, '0')
-    )
-    WHERE id = NEW.id;
+CREATE TRIGGER `trg_generate_incident_reference` BEFORE INSERT ON `incidents` FOR EACH ROW BEGIN
+  IF NEW.reference_number IS NULL OR NEW.reference_number = '' THEN
+    SET @next_id = (SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'incidents');
+    SET NEW.reference_number = CONCAT('INC-', YEAR(NOW()), '-', LPAD(@next_id, 6, '0'));
+  END IF;
 END
 $$
 DELIMITER ;
@@ -417,7 +436,7 @@ ALTER TABLE `carousel`
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `households`
@@ -435,7 +454,7 @@ ALTER TABLE `household_members`
 -- AUTO_INCREMENT for table `incidents`
 --
 ALTER TABLE `incidents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
 
 --
 -- AUTO_INCREMENT for table `residents`

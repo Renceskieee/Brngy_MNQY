@@ -69,6 +69,12 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
   const validateForm = () => {
     const newErrors = {};
 
+    if (incident && formData.reference_number) {
+      if (formData.reference_number.trim().length > 50) {
+        newErrors.reference_number = 'Reference number must not exceed 50 characters';
+      }
+    }
+
     if (!formData.incident_type.trim()) {
       newErrors.incident_type = 'Incident type is required';
     }
@@ -113,13 +119,22 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
       const requestData = {
-        ...formData,
+        incident_type: formData.incident_type,
+        location: formData.location,
+        date: formData.date,
+        time: formData.time,
+        complainant: formData.complainant,
+        respondent: formData.respondent,
+        description: formData.description,
+        status: formData.status,
         userId: user.id
       };
 
-      if (!incident && !formData.reference_number.trim()) {
-        requestData.reference_number = '';
+      if (incident && formData.reference_number && 
+          formData.reference_number !== incident.reference_number) {
+        requestData.reference_number = formData.reference_number;
       }
 
       let response;
@@ -130,30 +145,25 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
       }
 
       if (response.data.success) {
-        setMessage({ text: incident ? 'Incident updated successfully' : 'Incident created successfully', type: 'success' });
+        setMessage({ 
+          text: incident ? 'Incident updated successfully' : 'Incident created successfully', 
+          type: 'success' 
+        });
+        
         setTimeout(() => {
-          setFormData({
-            reference_number: '',
-            incident_type: '',
-            location: '',
-            date: '',
-            time: '',
-            complainant: '',
-            respondent: '',
-            description: '',
-            status: 'pending'
-          });
           if (onSuccess) {
             onSuccess();
           }
         }, 500);
+        
         setTimeout(() => {
           setMessage({ text: '', type: '' });
           onClose();
         }, 2000);
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || (incident ? 'Failed to update incident' : 'Failed to create incident');
+      const errorMessage = error.response?.data?.message || 
+        (incident ? 'Failed to update incident' : 'Failed to create incident');
       setErrors({ submit: errorMessage });
       setMessage({ text: errorMessage, type: 'error' });
     } finally {
@@ -176,7 +186,12 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
         <form onSubmit={handleSubmit} className="incident-form">
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="reference_number" className="form-label">Reference Number</label>
+              <label htmlFor="reference_number" className="form-label">
+                Reference Number
+                {!incident && <span style={{ fontSize: '0.85em', color: '#6b7280', marginLeft: '4px' }}>
+                  (Auto-generated)
+                </span>}
+              </label>
               <input
                 type="text"
                 id="reference_number"
@@ -184,10 +199,16 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
                 value={formData.reference_number}
                 onChange={handleChange}
                 className={`form-input ${errors.reference_number ? 'error' : ''}`}
-                placeholder="Leave empty to auto-generate"
-                disabled={!!incident}
+                placeholder={incident ? "Current reference number" : "Will be auto-generated"}
+                disabled={!incident}
+                style={!incident ? { backgroundColor: '#f3f4f6', cursor: 'not-allowed' } : {}}
               />
               {errors.reference_number && <span className="error-message">{errors.reference_number}</span>}
+              {!incident && (
+                <span style={{ fontSize: '0.75em', color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                  Reference number will be automatically generated as INC-YYYY-XXXXXX
+                </span>
+              )}
             </div>
 
             <div className="form-group">
@@ -342,4 +363,3 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
 }
 
 export default IncidentForm;
-
