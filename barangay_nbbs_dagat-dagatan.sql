@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2025 at 01:12 PM
+-- Generation Time: Dec 31, 2025 at 02:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,7 +67,13 @@ CREATE TABLE `history` (
 
 INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `incident_id`, `description`, `timestamp`) VALUES
 (7, 1, NULL, NULL, NULL, 'Added new household: Navarrosa Residence', '2025-12-31 12:03:14'),
-(8, 2, NULL, NULL, NULL, 'Deleted household: Navarrosa Residence', '2025-12-31 12:03:41');
+(8, 2, NULL, NULL, NULL, 'Deleted household: Navarrosa Residence', '2025-12-31 12:03:41'),
+(9, 1, NULL, NULL, NULL, 'Added new incident: INC-2025-0001', '2025-12-31 12:59:33'),
+(10, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:00:09'),
+(11, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:35'),
+(12, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:41'),
+(13, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:48'),
+(14, 1, NULL, NULL, NULL, 'Deleted incident: INC-2025-0001', '2025-12-31 13:05:11');
 
 -- --------------------------------------------------------
 
@@ -146,6 +152,23 @@ CREATE TABLE `incidents` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Triggers `incidents`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_generate_incident_reference` AFTER INSERT ON `incidents` FOR EACH ROW BEGIN
+    UPDATE incidents
+    SET reference_number = CONCAT(
+        'INC-',
+        YEAR(NEW.created_at),
+        '-',
+        LPAD(NEW.id, 6, '0')
+    )
+    WHERE id = NEW.id;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -188,7 +211,7 @@ CREATE TABLE `residents` (
   `suffix` enum('NA','Jr.','Sr.','II','III','IV') DEFAULT 'NA',
   `sex` enum('male','female') NOT NULL,
   `birthdate` date NOT NULL,
-  `civil_status` enum('single','married','widowed','separated','divorced') NOT NULL,
+  `civil_status` enum('single','married','widowed','separated','annulled') NOT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `email` varchar(150) DEFAULT NULL,
   `address` text DEFAULT NULL,
@@ -394,7 +417,7 @@ ALTER TABLE `carousel`
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `households`
@@ -412,7 +435,7 @@ ALTER TABLE `household_members`
 -- AUTO_INCREMENT for table `incidents`
 --
 ALTER TABLE `incidents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `residents`

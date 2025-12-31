@@ -36,7 +36,7 @@ function HomeAdmin() {
     married: 0,
     widowed: 0,
     separated: 0,
-    divorced: 0
+    annulled: 0
   });
   const [loading, setLoading] = useState(true);
   const [showActivitiesModal, setShowActivitiesModal] = useState(false);
@@ -85,7 +85,7 @@ function HomeAdmin() {
           married: residents.filter(r => r.civil_status === 'married').length,
           widowed: residents.filter(r => r.civil_status === 'widowed').length,
           separated: residents.filter(r => r.civil_status === 'separated').length,
-          divorced: residents.filter(r => r.civil_status === 'divorced').length
+          annulled: residents.filter(r => r.civil_status === 'annulled').length
         };
         setCivilStatusDistribution(civilDist);
       }
@@ -172,7 +172,7 @@ function HomeAdmin() {
   };
 
   const civilStatusChartData = {
-    labels: ['Single', 'Married', 'Widowed', 'Separated', 'Divorced'],
+    labels: ['Single', 'Married', 'Widowed', 'Separated', 'Annulled'],
     datasets: [
       {
         label: 'Residents',
@@ -181,7 +181,7 @@ function HomeAdmin() {
           civilStatusDistribution.married,
           civilStatusDistribution.widowed,
           civilStatusDistribution.separated,
-          civilStatusDistribution.divorced
+          civilStatusDistribution.annulled
         ],
         backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
         borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
@@ -231,8 +231,8 @@ function HomeAdmin() {
         callbacks: {
           label: function(context) {
             const total = context.dataset.data.reduce((a, b) => a + b, 0);
-            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
-            return `${context.label}: ${context.parsed} residents (${percentage}%)`;
+            const percentage = total > 0 ? ((context.parsed.x / total) * 100).toFixed(1) : 0;
+            return `${context.parsed.x} residents (${percentage}%)`;
           }
         },
         font: {
@@ -246,7 +246,8 @@ function HomeAdmin() {
         ticks: {
           font: {
             family: 'Poppins'
-          }
+          },
+          stepSize: 1
         }
       },
       y: {

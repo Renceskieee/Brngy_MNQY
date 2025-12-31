@@ -96,7 +96,7 @@ const validateResidentData = (data) => {
     }
   }
 
-  if (!['single', 'married', 'widowed', 'separated', 'divorced'].includes(data.civil_status)) {
+  if (!['single', 'married', 'widowed', 'separated', 'annulled'].includes(data.civil_status)) {
     errors.push('Civil status is required');
   }
 
@@ -409,4 +409,3 @@ module.exports = {
   deleteResident,
   getResidentsCount
 };
-
