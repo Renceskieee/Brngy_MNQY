@@ -340,7 +340,7 @@ function HomeAdmin() {
           {loading ? (
             <div className="loading-state">Loading activities...</div>
           ) : recentActivities.length === 0 ? (
-            <div className="empty-state">No recent activities</div>
+            <div className="empty-state">No recent activities.</div>
           ) : (
             <div className="activities-list">
               {recentActivities.map((activity) => {

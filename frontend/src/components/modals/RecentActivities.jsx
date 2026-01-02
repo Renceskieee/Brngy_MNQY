@@ -115,7 +115,7 @@ function RecentActivities({ onClose }) {
           {loading ? (
             <div className="loading-state">Loading activities...</div>
           ) : activities.length === 0 ? (
-            <div className="empty-state">No activities found</div>
+            <div className="empty-state">No activities found.</div>
           ) : (
             <div className="activities-list">
               {activities.map((activity) => {
