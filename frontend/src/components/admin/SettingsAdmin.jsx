@@ -59,6 +59,10 @@ function SettingsAdmin({ setActivePage }) {
                   if (setActivePage) {
                     setActivePage('personalise');
                   }
+                } else if (card.id === 'user-settings') {
+                  if (setActivePage) {
+                    setActivePage('users');
+                  }
                 } else if (card.id === 'profile') {
                   if (setActivePage) {
                     setActivePage('profile');

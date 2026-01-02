@@ -30,7 +30,6 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
     { id: 'households', icon: Home, label: 'Households' },
     { id: 'incidents', icon: OctagonAlert, label: 'Incidents' },
     { id: 'services', icon: Heart, label: 'Services' },
-    // { id: 'certificates', icon: Download, label: 'Certificates' },
   ];
 
   const bottomItems = [

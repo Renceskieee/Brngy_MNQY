@@ -1,0 +1,515 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Eye, Edit, KeyRound, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import Messages from '../shared/Messages';
+import '../../assets/style/Users.css';
+
+const API_URL = '/api';
+
+function Users() {
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewUser, setViewUser] = useState(null);
+  const [editUser, setEditUser] = useState(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredUsers(users);
+    } else {
+      const filtered = users.filter(user => {
+        const fullName = `${user.last_name}, ${user.first_name}`.toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        const employeeId = (user.employee_id || '').toLowerCase();
+        const search = searchTerm.toLowerCase();
+        return fullName.includes(search) || email.includes(search) || employeeId.includes(search);
+      });
+      setFilteredUsers(filtered);
+    }
+    setCurrentPage(1);
+  }, [searchTerm, users]);
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/users`);
+      if (response.data.success) {
+        setUsers(response.data.users);
+        setFilteredUsers(response.data.users);
+      }
+    } catch (error) {
+      setMessage({ text: 'Failed to fetch users', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const options = { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    };
+    return date.toLocaleDateString('en-US', options);
+  };
+
+  const getFullName = (user) => {
+    return `${user.last_name}, ${user.first_name}`;
+  };
+
+  const handleView = async (user) => {
+    try {
+      const response = await axios.get(`${API_URL}/users/${user.id}`);
+      if (response.data.success) {
+        setViewUser(response.data.user);
+      }
+    } catch (error) {
+      setMessage({ text: 'Failed to fetch user details', type: 'error' });
+    }
+  };
+
+  const handleEdit = async (user) => {
+    try {
+      const response = await axios.get(`${API_URL}/users/${user.id}`);
+      if (response.data.success) {
+        setEditUser(response.data.user);
+      }
+    } catch (error) {
+      setMessage({ text: 'Failed to fetch user details', type: 'error' });
+    }
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updateData = {
+      first_name: formData.get('first_name'),
+      last_name: formData.get('last_name'),
+      email: formData.get('email'),
+      contact_number: formData.get('contact_number') || null,
+      position: formData.get('position'),
+      status: formData.get('status')
+    };
+
+    try {
+      const response = await axios.put(`${API_URL}/users/${editUser.id}`, updateData);
+      if (response.data.success) {
+        setMessage({ text: 'User updated successfully', type: 'success' });
+        fetchUsers();
+        setEditUser(null);
+      }
+    } catch (error) {
+      setMessage({ text: error.response?.data?.message || 'Failed to update user', type: 'error' });
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      setPasswordError('Both password fields are required');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+
+    setPasswordError('');
+
+    try {
+      const response = await axios.put(`${API_URL}/users/${resetPasswordUser.id}/reset-password`, {
+        new_password: newPassword
+      });
+      if (response.data.success) {
+        setMessage({ text: 'Password reset successfully', type: 'success' });
+        setResetPasswordUser(null);
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    } catch (error) {
+      setMessage({ text: error.response?.data?.message || 'Failed to reset password', type: 'error' });
+    }
+  };
+
+  return (
+    <div className="users-page">
+      <div className="users-header">
+        <div>
+          <h1 className="users-title">Users</h1>
+          <p className="users-subtitle">Manage user accounts and permissions</p>
+        </div>
+      </div>
+
+      <div className="users-search">
+        <div className="search-wrapper">
+          <Search size={20} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search users by name, email, or employee ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+          {searchTerm && (
+            <button className="clear-search" onClick={() => setSearchTerm('')}>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="loading-state">Loading users...</div>
+      ) : (
+        <div className="users-table-container">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="3" className="empty-state">
+                    {searchTerm ? 'No users found matching your search' : 'No users found.'}
+                  </td>
+                </tr>
+              ) : (
+                currentUsers.map((user) => (
+                  <tr key={user.id}>
+                    <td>
+                      <div className="user-name-cell">
+                        <div className="user-name">{getFullName(user)}</div>
+                        {user.email && (
+                          <div className="user-email">{user.email}</div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="status-indicator">
+                        <span className={`status-dot ${user.status === 'active' ? 'active' : 'inactive'}`}></span>
+                        <span className="status-text">{user.status === 'active' ? 'Active' : 'Inactive'}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="action-btn view-btn"
+                          onClick={() => handleView(user)}
+                          title="View"
+                        >
+                          <Eye size={18} />
+                        </button>
+                        <button
+                          className="action-btn edit-btn"
+                          onClick={() => handleEdit(user)}
+                          title="Update"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button
+                          className="action-btn reset-btn"
+                          onClick={() => setResetPasswordUser(user)}
+                          title="Reset Password"
+                        >
+                          <KeyRound size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {filteredUsers.length > itemsPerPage && (
+        <div className="pagination">
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft size={18} />
+            <span>Previous</span>
+          </button>
+          <div className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </div>
+          <button
+            className="pagination-btn"
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+          >
+            <span>Next</span>
+            <ChevronRight size={18} />
+          </button>
+        </div>
+      )}
+
+      {viewUser && (
+        <div className="view-modal-overlay">
+          <div className="view-modal">
+            <div className="view-modal-header">
+              <h2 className="view-modal-title">User Details</h2>
+              <button className="view-modal-close" onClick={() => setViewUser(null)}>
+                <X size={24} />
+              </button>
+            </div>
+            <div className="view-modal-content">
+              <div className="detail-row">
+                <span className="detail-label">Employee ID:</span>
+                <span className="detail-value">{viewUser.employee_id || 'N/A'}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Full Name:</span>
+                <span className="detail-value">{getFullName(viewUser)}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Email:</span>
+                <span className="detail-value">{viewUser.email || 'N/A'}</span>
+              </div>
+              {viewUser.contact_number && (
+                <div className="detail-row">
+                  <span className="detail-label">Contact Number:</span>
+                  <span className="detail-value">{viewUser.contact_number}</span>
+                </div>
+              )}
+              <div className="detail-row">
+                <span className="detail-label">Position:</span>
+                <span className="detail-value">{viewUser.position ? viewUser.position.charAt(0).toUpperCase() + viewUser.position.slice(1) : 'N/A'}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Status:</span>
+                <span className="detail-value">
+                  <span className={`status-badge ${viewUser.status === 'active' ? 'active' : 'inactive'}`}>
+                    {viewUser.status === 'active' ? 'Active' : 'Inactive'}
+                  </span>
+                </span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Created:</span>
+                <span className="detail-value">{formatDate(viewUser.created_at)}</span>
+              </div>
+              {viewUser.updated_at && viewUser.updated_at !== viewUser.created_at && (
+                <div className="detail-row">
+                  <span className="detail-label">Last Updated:</span>
+                  <span className="detail-value">{formatDate(viewUser.updated_at)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editUser && (
+        <div className="edit-modal-overlay">
+          <div className="edit-modal">
+            <div className="edit-modal-header">
+              <h2 className="edit-modal-title">Update User</h2>
+              <button className="edit-modal-close" onClick={() => setEditUser(null)}>
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateSubmit} className="edit-modal-form">
+              <div className="form-group">
+                <label htmlFor="edit_first_name" className="form-label">First Name</label>
+                <input
+                  type="text"
+                  id="edit_first_name"
+                  name="first_name"
+                  defaultValue={editUser.first_name}
+                  className="form-input"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit_last_name" className="form-label">Last Name</label>
+                <input
+                  type="text"
+                  id="edit_last_name"
+                  name="last_name"
+                  defaultValue={editUser.last_name}
+                  className="form-input"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit_email" className="form-label">Email</label>
+                <input
+                  type="email"
+                  id="edit_email"
+                  name="email"
+                  defaultValue={editUser.email}
+                  className="form-input"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit_contact_number" className="form-label">Contact Number</label>
+                <input
+                  type="tel"
+                  id="edit_contact_number"
+                  name="contact_number"
+                  defaultValue={editUser.contact_number || ''}
+                  className="form-input"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit_position" className="form-label">Position</label>
+                <select
+                  id="edit_position"
+                  name="position"
+                  defaultValue={editUser.position}
+                  className="form-select"
+                  required
+                >
+                  <option value="admin">Admin</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit_status" className="form-label">Status</label>
+                <select
+                  id="edit_status"
+                  name="status"
+                  defaultValue={editUser.status}
+                  className="form-select"
+                  required
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+              <div className="edit-modal-actions">
+                <button type="button" className="edit-modal-cancel" onClick={() => setEditUser(null)}>
+                  Cancel
+                </button>
+                <button type="submit" className="edit-modal-submit">
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {resetPasswordUser && (
+        <div className="reset-modal-overlay">
+          <div className="reset-modal">
+            <div className="reset-modal-header">
+              <h2 className="reset-modal-title">Reset Password</h2>
+              <button className="reset-modal-close" onClick={() => {
+                setResetPasswordUser(null);
+                setNewPassword('');
+                setConfirmPassword('');
+                setPasswordError('');
+              }}>
+                <X size={24} />
+              </button>
+            </div>
+            <div className="reset-modal-content">
+              <p className="reset-modal-message">
+                Reset password for <strong>{getFullName(resetPasswordUser)}</strong>
+              </p>
+              <div className="form-group">
+                <label htmlFor="new_password" className="form-label">New Password</label>
+                <input
+                  type="password"
+                  id="new_password"
+                  value={newPassword}
+                  onChange={(e) => {
+                    setNewPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  className={`form-input ${passwordError ? 'error' : ''}`}
+                  placeholder="Enter new password"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="confirm_password" className="form-label">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirm_password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  className={`form-input ${passwordError ? 'error' : ''}`}
+                  placeholder="Confirm new password"
+                />
+              </div>
+              {passwordError && (
+                <div className="error-message">{passwordError}</div>
+              )}
+              <div className="reset-modal-actions">
+                <button
+                  type="button"
+                  className="reset-modal-cancel"
+                  onClick={() => {
+                    setResetPasswordUser(null);
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    setPasswordError('');
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="reset-modal-submit"
+                  onClick={handleResetPassword}
+                >
+                  Reset Password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {message.text && (
+        <Messages
+          message={message.text}
+          type={message.type}
+          onClose={() => setMessage({ text: '', type: '' })}
+        />
+      )}
+    </div>
+  );
+}
+
+export default Users;
+

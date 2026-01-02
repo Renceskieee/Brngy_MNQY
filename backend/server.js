@@ -13,6 +13,7 @@ const history = require('./database/users/history');
 const households = require('./database/users/households');
 const incidents = require('./database/users/incidents');
 const timeLog = require('./database/users/time_log');
+const usersAccount = require('./database/users/usersAccount');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,10 +36,10 @@ app.post('/api/auth/confirm-password-reset', confirmPasswordReset);
 
 app.post('/api/users/create-account', createAccount);
 
-app.get('/api/users', userSettings.getAllUsers);
-app.get('/api/users/:id', userSettings.getUserById);
-app.put('/api/users/:id', userSettings.updateUser);
-app.put('/api/users/:id/reset-password', userSettings.resetPassword);
+app.get('/api/users', usersAccount.getAllUsers);
+app.get('/api/users/:id', usersAccount.getUserById);
+app.put('/api/users/:id', usersAccount.updateUser);
+app.put('/api/users/:id/reset-password', usersAccount.resetPassword);
 app.delete('/api/users/:id', userSettings.deleteUser);
 
 app.get('/api/personalisation', personalisation.getPersonalisation);

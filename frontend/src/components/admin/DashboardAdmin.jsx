@@ -8,6 +8,7 @@ import Households from '../pages/Households';
 import Incidents from '../pages/Incidents';
 import Profile from '../pages/Profile';
 import TimeLog from '../pages/TimeLog';
+import Users from '../pages/Users';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import { Copyright } from 'lucide-react';
 import '../../assets/style/DashboardAdmin.css';
@@ -33,6 +34,8 @@ function DashboardAdmin({ user, onLogout }) {
         return <Profile user={user} />;
       case 'time-log':
         return <TimeLog />;
+      case 'users':
+        return <Users />;
       default:
         return <HomeAdmin />;
     }
