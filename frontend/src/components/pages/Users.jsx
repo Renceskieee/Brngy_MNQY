@@ -14,9 +14,7 @@ function Users() {
   const [viewUser, setViewUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
   const [resetPasswordUser, setResetPasswordUser] = useState(null);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -126,32 +124,12 @@ function Users() {
   };
 
   const handleResetPassword = async () => {
-    if (!newPassword || !confirmPassword) {
-      setPasswordError('Both password fields are required');
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError('Passwords do not match');
-      return;
-    }
-
-    setPasswordError('');
-
     try {
-      const response = await axios.put(`${API_URL}/users/${resetPasswordUser.id}/reset-password`, {
-        new_password: newPassword
-      });
+      const response = await axios.put(`${API_URL}/users/${resetPasswordUser.id}/reset-password`);
       if (response.data.success) {
-        setMessage({ text: 'Password reset successfully', type: 'success' });
+        setMessage({ text: 'Password reset successfully. Email sent to user.', type: 'success' });
         setResetPasswordUser(null);
-        setNewPassword('');
-        setConfirmPassword('');
+        setShowResetConfirm(false);
       }
     } catch (error) {
       setMessage({ text: error.response?.data?.message || 'Failed to reset password', type: 'error' });
@@ -218,7 +196,6 @@ function Users() {
                     <td>
                       <div className="status-indicator">
                         <span className={`status-dot ${user.status === 'active' ? 'active' : 'inactive'}`}></span>
-                        <span className="status-text">{user.status === 'active' ? 'Active' : 'Inactive'}</span>
                       </div>
                     </td>
                     <td>
@@ -239,7 +216,10 @@ function Users() {
                         </button>
                         <button
                           className="action-btn reset-btn"
-                          onClick={() => setResetPasswordUser(user)}
+                          onClick={() => {
+                            setResetPasswordUser(user);
+                            setShowResetConfirm(true);
+                          }}
                           title="Reset Password"
                         >
                           <KeyRound size={18} />
@@ -334,36 +314,42 @@ function Users() {
       )}
 
       {editUser && (
-        <div className="edit-modal-overlay">
-          <div className="edit-modal">
-            <div className="edit-modal-header">
-              <h2 className="edit-modal-title">Update User</h2>
-              <button className="edit-modal-close" onClick={() => setEditUser(null)}>
+        <div className="create-account-overlay">
+          <div className="create-account-modal">
+            <div className="create-account-header">
+              <div className="create-account-title-row">
+                <h2 className="create-account-title">Update User</h2>
+              </div>
+              <button className="create-account-close" onClick={() => setEditUser(null)}>
                 <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleUpdateSubmit} className="edit-modal-form">
-              <div className="form-group">
-                <label htmlFor="edit_first_name" className="form-label">First Name</label>
-                <input
-                  type="text"
-                  id="edit_first_name"
-                  name="first_name"
-                  defaultValue={editUser.first_name}
-                  className="form-input"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="edit_last_name" className="form-label">Last Name</label>
-                <input
-                  type="text"
-                  id="edit_last_name"
-                  name="last_name"
-                  defaultValue={editUser.last_name}
-                  className="form-input"
-                  required
-                />
+            <form onSubmit={handleUpdateSubmit} className="create-account-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="edit_first_name" className="form-label">First Name</label>
+                  <input
+                    type="text"
+                    id="edit_first_name"
+                    name="first_name"
+                    defaultValue={editUser.first_name}
+                    className="form-input"
+                    placeholder="Enter first name"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="edit_last_name" className="form-label">Last Name</label>
+                  <input
+                    type="text"
+                    id="edit_last_name"
+                    name="last_name"
+                    defaultValue={editUser.last_name}
+                    className="form-input"
+                    placeholder="Enter last name"
+                    required
+                  />
+                </div>
               </div>
               <div className="form-group">
                 <label htmlFor="edit_email" className="form-label">Email</label>
@@ -373,6 +359,7 @@ function Users() {
                   name="email"
                   defaultValue={editUser.email}
                   className="form-input"
+                  placeholder="Enter email address"
                   required
                 />
               </div>
@@ -384,117 +371,66 @@ function Users() {
                   name="contact_number"
                   defaultValue={editUser.contact_number || ''}
                   className="form-input"
+                  placeholder="Enter contact number"
                 />
               </div>
-              <div className="form-group">
-                <label htmlFor="edit_position" className="form-label">Position</label>
-                <select
-                  id="edit_position"
-                  name="position"
-                  defaultValue={editUser.position}
-                  className="form-select"
-                  required
-                >
-                  <option value="admin">Admin</option>
-                  <option value="staff">Staff</option>
-                </select>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="edit_position" className="form-label">Select position</label>
+                  <select
+                    id="edit_position"
+                    name="position"
+                    defaultValue={editUser.position}
+                    className="form-select form-select-tight"
+                    required
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="staff">Staff</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="edit_status" className="form-label">Status</label>
+                  <select
+                    id="edit_status"
+                    name="status"
+                    defaultValue={editUser.status}
+                    className="form-select form-select-tight"
+                    required
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="edit_status" className="form-label">Status</label>
-                <select
-                  id="edit_status"
-                  name="status"
-                  defaultValue={editUser.status}
-                  className="form-select"
-                  required
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-              <div className="edit-modal-actions">
-                <button type="button" className="edit-modal-cancel" onClick={() => setEditUser(null)}>
-                  Cancel
-                </button>
-                <button type="submit" className="edit-modal-submit">
-                  Update
-                </button>
-              </div>
+              <p className="form-instruction">
+                Please review all entered details before updating the user.
+              </p>
+              <button type="submit" className="create-account-button">
+                Update User
+              </button>
             </form>
           </div>
         </div>
       )}
 
-      {resetPasswordUser && (
-        <div className="reset-modal-overlay">
-          <div className="reset-modal">
-            <div className="reset-modal-header">
-              <h2 className="reset-modal-title">Reset Password</h2>
-              <button className="reset-modal-close" onClick={() => {
+      {showResetConfirm && resetPasswordUser && (
+        <div className="logout-modal-overlay">
+          <div className="logout-modal">
+            <h3 className="logout-modal-title">Confirm Reset Password</h3>
+            <p className="logout-modal-message">
+              Are you sure you want to reset the password for <strong>{getFullName(resetPasswordUser)}</strong>? 
+              The password will be reset to the default value and an email will be sent to the user.
+            </p>
+            <div className="logout-modal-actions">
+              <button className="logout-modal-cancel" onClick={() => {
+                setShowResetConfirm(false);
                 setResetPasswordUser(null);
-                setNewPassword('');
-                setConfirmPassword('');
-                setPasswordError('');
               }}>
-                <X size={24} />
+                Cancel
               </button>
-            </div>
-            <div className="reset-modal-content">
-              <p className="reset-modal-message">
-                Reset password for <strong>{getFullName(resetPasswordUser)}</strong>
-              </p>
-              <div className="form-group">
-                <label htmlFor="new_password" className="form-label">New Password</label>
-                <input
-                  type="password"
-                  id="new_password"
-                  value={newPassword}
-                  onChange={(e) => {
-                    setNewPassword(e.target.value);
-                    setPasswordError('');
-                  }}
-                  className={`form-input ${passwordError ? 'error' : ''}`}
-                  placeholder="Enter new password"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="confirm_password" className="form-label">Confirm Password</label>
-                <input
-                  type="password"
-                  id="confirm_password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    setConfirmPassword(e.target.value);
-                    setPasswordError('');
-                  }}
-                  className={`form-input ${passwordError ? 'error' : ''}`}
-                  placeholder="Confirm new password"
-                />
-              </div>
-              {passwordError && (
-                <div className="error-message">{passwordError}</div>
-              )}
-              <div className="reset-modal-actions">
-                <button
-                  type="button"
-                  className="reset-modal-cancel"
-                  onClick={() => {
-                    setResetPasswordUser(null);
-                    setNewPassword('');
-                    setConfirmPassword('');
-                    setPasswordError('');
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="reset-modal-submit"
-                  onClick={handleResetPassword}
-                >
-                  Reset Password
-                </button>
-              </div>
+              <button className="logout-modal-confirm" onClick={handleResetPassword}>
+                Confirm
+              </button>
             </div>
           </div>
         </div>

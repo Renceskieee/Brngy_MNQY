@@ -41,52 +41,59 @@ function RecentActivities({ onClose }) {
     return date.toLocaleDateString('en-US', options);
   };
 
-  const getActivityName = (activity) => {
-    if (activity.resident_f_name) {
-      const suffix = activity.resident_suffix && activity.resident_suffix !== 'NA' ? ` ${activity.resident_suffix}` : '';
-      const mName = activity.resident_m_name ? ` ${activity.resident_m_name}` : '';
-      return `${activity.resident_l_name}, ${activity.resident_f_name}${mName}${suffix}`;
-    }
-    
-    if (activity.household_name) {
-      return activity.household_name;
-    }
+  const formatActivityDescription = (activity) => {
+    const userName = getUserName(activity);
+    let action = '';
+    let entityType = '';
+    let entityValue = '';
 
     if (activity.incident_reference_number) {
-      return activity.incident_reference_number;
+      entityType = 'Incident';
+      entityValue = activity.incident_reference_number;
+      if (activity.description.includes('Added new incident:')) {
+        action = 'added an incident';
+      } else if (activity.description.includes('Updated incident:')) {
+        action = 'updated an incident';
+      } else if (activity.description.includes('Deleted incident:')) {
+        action = 'deleted an incident';
+      }
+    } else if (activity.household_name) {
+      entityType = 'Household';
+      entityValue = activity.household_name;
+      if (activity.description.includes('Added new household:')) {
+        action = 'added a household';
+      } else if (activity.description.includes('Updated household:')) {
+        action = 'updated a household';
+      } else if (activity.description.includes('Deleted household:')) {
+        action = 'deleted a household';
+      }
+    } else if (activity.resident_f_name) {
+      entityType = 'Resident';
+      const suffix = activity.resident_suffix && activity.resident_suffix !== 'NA' ? ` ${activity.resident_suffix}` : '';
+      const mName = activity.resident_m_name ? ` ${activity.resident_m_name}` : '';
+      entityValue = `${activity.resident_l_name}, ${activity.resident_f_name}${mName}${suffix}`;
+      if (activity.description.includes('Added new resident:')) {
+        action = 'added a resident';
+      } else if (activity.description.includes('Updated resident:')) {
+        action = 'updated a resident';
+      } else if (activity.description.includes('Deleted resident:')) {
+        action = 'deleted a resident';
+      }
     }
-    
-    if (activity.description) {
-      if (activity.description.includes('Deleted resident: ')) {
-        return activity.description.replace('Deleted resident: ', '');
-      }
-      if (activity.description.includes('Added new resident: ')) {
-        return activity.description.replace('Added new resident: ', '');
-      }
-      if (activity.description.includes('Updated resident: ')) {
-        return activity.description.replace('Updated resident: ', '');
-      }
-      if (activity.description.includes('Deleted household: ')) {
-        return activity.description.replace('Deleted household: ', '');
-      }
-      if (activity.description.includes('Added new household: ')) {
-        return activity.description.replace('Added new household: ', '');
-      }
-      if (activity.description.includes('Updated household: ')) {
-        return activity.description.replace('Updated household: ', '');
-      }
-      if (activity.description.includes('Deleted incident: ')) {
-        return activity.description.replace('Deleted incident: ', '');
-      }
-      if (activity.description.includes('Added new incident: ')) {
-        return activity.description.replace('Added new incident: ', '');
-      }
-      if (activity.description.includes('Updated incident: ')) {
-        return activity.description.replace('Updated incident: ', '');
-      }
+
+    if (!action) {
+      return {
+        description: `${userName} ${activity.description}`,
+        entityLine: null
+      };
     }
-    
-    return 'N/A';
+
+    return {
+      description: `${userName} ${action}.`,
+      entityLine: entityType === 'Incident' 
+        ? `${entityType} Reference Number: ${entityValue}`
+        : `${entityType}: ${entityValue}`
+    };
   };
 
   const getUserName = (activity) => {
@@ -111,25 +118,26 @@ function RecentActivities({ onClose }) {
             <div className="empty-state">No activities found</div>
           ) : (
             <div className="activities-list">
-              {activities.map((activity) => (
-                <div key={activity.id} className="activity-item">
-                  <div className="activity-content">
-                    <div className="activity-description">
-                      <strong>{getUserName(activity)}</strong> {activity.description}
-                    </div>
-                    <div className="activity-resident">
-                      {activity.household_name 
-                        ? `Household: ${activity.household_name}` 
-                        : activity.incident_reference_number 
-                        ? `Incident: ${activity.incident_reference_number}` 
-                        : `Resident: ${getActivityName(activity)}`}
-                    </div>
-                    <div className="activity-time">
-                      {formatDate(activity.timestamp)}
+              {activities.map((activity) => {
+                const formatted = formatActivityDescription(activity);
+                return (
+                  <div key={activity.id} className="activity-item">
+                    <div className="activity-content">
+                      <div className="activity-description">
+                        {formatted.description}
+                      </div>
+                      {formatted.entityLine && (
+                        <div className="activity-resident">
+                          {formatted.entityLine}
+                        </div>
+                      )}
+                      <div className="activity-time">
+                        {formatDate(activity.timestamp)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

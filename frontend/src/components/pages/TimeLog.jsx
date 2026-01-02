@@ -1,23 +1,30 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Search, X } from 'lucide-react';
 import '../../assets/style/TimeLog.css';
 
 const API_URL = '/api';
 
 function TimeLog() {
   const [timeLogs, setTimeLogs] = useState([]);
+  const [filteredLogs, setFilteredLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
 
   useEffect(() => {
     fetchTimeLogs();
-  }, [filter]);
+  }, []);
+
+  useEffect(() => {
+    filterTimeLogs();
+  }, [searchTerm, selectedMonth, selectedYear, timeLogs]);
 
   const fetchTimeLogs = async () => {
     setLoading(true);
     try {
-      const params = filter !== 'all' ? { userId: filter } : {};
-      const response = await axios.get(`${API_URL}/time-logs`, { params });
+      const response = await axios.get(`${API_URL}/time-logs`);
       if (response.data.success) {
         setTimeLogs(response.data.timeLogs);
       }
@@ -26,6 +33,46 @@ function TimeLog() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const filterTimeLogs = () => {
+    let filtered = [...timeLogs];
+
+    if (searchTerm.trim()) {
+      const search = searchTerm.toLowerCase();
+      filtered = filtered.filter(log => {
+        const name = `${log.first_name} ${log.last_name}`.toLowerCase();
+        const employeeId = (log.employee_id || '').toLowerCase();
+        return name.includes(search) || employeeId.includes(search);
+      });
+    }
+
+    if (selectedMonth) {
+      filtered = filtered.filter(log => {
+        const date = new Date(log.logged_in);
+        return (date.getMonth() + 1).toString() === selectedMonth;
+      });
+    }
+
+    if (selectedYear) {
+      filtered = filtered.filter(log => {
+        const date = new Date(log.logged_in);
+        return date.getFullYear().toString() === selectedYear;
+      });
+    }
+
+    setFilteredLogs(filtered);
+  };
+
+  const getAvailableYears = () => {
+    const years = new Set();
+    timeLogs.forEach(log => {
+      if (log.logged_in) {
+        const year = new Date(log.logged_in).getFullYear();
+        years.add(year);
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
   };
 
   const formatDate = (dateString) => {
@@ -45,8 +92,59 @@ function TimeLog() {
   return (
     <div className="time-log-page">
       <div className="time-log-header">
-        <h1 className="time-log-title">Time Log</h1>
-        <p className="time-log-subtitle">View user login and logout details</p>
+        <div>
+          <h1 className="time-log-title">Time Log</h1>
+          <p className="time-log-subtitle">View user login and logout details</p>
+        </div>
+      </div>
+
+      <div className="time-log-filters">
+        <div className="search-wrapper">
+          <Search size={20} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search by name or employee ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+          {searchTerm && (
+            <button className="clear-search" onClick={() => setSearchTerm('')}>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="filter-row">
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">All Months</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">All Years</option>
+            {getAvailableYears().map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading ? (
@@ -63,14 +161,14 @@ function TimeLog() {
               </tr>
             </thead>
             <tbody>
-              {timeLogs.length === 0 ? (
+              {filteredLogs.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="empty-state">
-                    No time logs found
+                    {searchTerm || selectedMonth || selectedYear ? 'No time logs found matching your filters' : 'No time logs found'}
                   </td>
                 </tr>
               ) : (
-                timeLogs.map((log) => (
+                filteredLogs.map((log) => (
                   <tr key={log.id}>
                     <td>{log.employee_id}</td>
                     <td>{log.first_name} {log.last_name}</td>
