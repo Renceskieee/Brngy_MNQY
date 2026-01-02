@@ -171,8 +171,8 @@ function TimeLog() {
             <tbody>
               {filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="empty-state">
-                    {searchTerm || selectedMonth || selectedYear ? 'No time logs found matching your filters' : 'No time logs found'}
+                  <td colSpan="4" className="empty-state1">
+                    {searchTerm || selectedMonth || selectedYear ? 'No time logs found matching your filters.' : 'No time logs found.'}
                   </td>
                 </tr>
               ) : (

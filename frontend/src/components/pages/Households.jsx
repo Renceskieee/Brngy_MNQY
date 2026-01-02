@@ -175,7 +175,7 @@ function Households() {
               {currentHouseholds.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="empty-state">
-                    {searchTerm ? 'No households found matching your search' : 'No households found. Add a new household to get started.'}
+                    {searchTerm ? 'No households found.' : 'No households found. Add a new household to get started.'}
                   </td>
                 </tr>
               ) : (

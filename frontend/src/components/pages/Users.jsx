@@ -180,7 +180,7 @@ function Users() {
               {currentUsers.length === 0 ? (
                 <tr>
                   <td colSpan="3" className="empty-state">
-                    {searchTerm ? 'No users found matching your search' : 'No users found.'}
+                    {searchTerm ? 'No users found matching your search.' : 'No users found.'}
                   </td>
                 </tr>
               ) : (

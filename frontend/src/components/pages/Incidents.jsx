@@ -310,7 +310,7 @@ function Incidents() {
                 <tr>
                   <td colSpan="5" className="empty-state">
                     {searchTerm || statusFilter !== 'all' || monthFilter !== 'all' || yearFilter !== 'all' 
-                      ? 'No incidents found matching your filters' 
+                      ? 'No incidents found.' 
                       : 'No incidents found. Add a new incident to get started.'}
                   </td>
                 </tr>
