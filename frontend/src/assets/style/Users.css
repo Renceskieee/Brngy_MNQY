@@ -112,10 +112,6 @@
   transition: background 0.2s ease;
 }
 
-.users-table tbody tr:hover {
-  background: #f9fafb;
-}
-
 .users-table tbody tr:last-child {
   border-bottom: none;
 }
