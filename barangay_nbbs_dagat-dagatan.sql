@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2026 at 10:00 AM
+-- Generation Time: Jan 02, 2026 at 12:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -59,6 +59,29 @@ CREATE TABLE `history` (
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `history`
+--
+
+INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `incident_id`, `service_id`, `description`, `timestamp`) VALUES
+(1, 1, NULL, 30, NULL, NULL, 'Added new household: Bonifacio Residence', '2026-01-02 09:21:46'),
+(2, 1, NULL, 30, NULL, NULL, 'Updated household: Bonifacio Residence', '2026-01-02 09:22:21'),
+(3, 1, NULL, 31, NULL, NULL, 'Added new household: Magsaysay Household', '2026-01-02 09:23:40'),
+(4, 1, NULL, 31, NULL, NULL, 'Updated household: Magsaysay Household', '2026-01-02 09:24:12'),
+(5, 1, NULL, 31, NULL, NULL, 'Updated household: Magsaysay Household', '2026-01-02 09:24:49'),
+(6, 1, NULL, 31, NULL, NULL, 'Updated household: Magsaysay Household', '2026-01-02 09:25:02'),
+(7, 1, NULL, 32, NULL, NULL, 'Added new household: Marcos Family', '2026-01-02 09:26:15'),
+(8, 1, NULL, 32, NULL, NULL, 'Updated household: Marcos Family', '2026-01-02 09:26:43'),
+(9, 1, NULL, 33, NULL, NULL, 'Added new household: Mercado Family', '2026-01-02 09:28:09'),
+(10, 1, NULL, 33, NULL, NULL, 'Updated household: Mercado Family', '2026-01-02 09:28:39'),
+(11, 1, 65, NULL, NULL, NULL, 'Updated resident: Mercado, Jose Rizal', '2026-01-02 09:28:53'),
+(12, 1, NULL, 34, NULL, NULL, 'Added new household: Novicio Family', '2026-01-02 09:29:59'),
+(13, 1, NULL, 34, NULL, NULL, 'Updated household: Novicio Family', '2026-01-02 09:30:13'),
+(14, 1, NULL, 35, NULL, NULL, 'Added new household: Pascual Family', '2026-01-02 09:30:50'),
+(15, 1, NULL, 35, NULL, NULL, 'Updated household: Pascual Family', '2026-01-02 09:31:05'),
+(16, 1, NULL, 36, NULL, NULL, 'Added new household: Villanueva Residence', '2026-01-02 09:32:07'),
+(17, 1, NULL, 36, NULL, NULL, 'Updated household: Villanueva Residence', '2026-01-02 09:32:32');
+
 -- --------------------------------------------------------
 
 --
@@ -81,7 +104,14 @@ INSERT INTO `households` (`id`, `household_name`, `address`, `created_at`, `upda
 (17, 'Dela Cruz Household', 'Block 12, Lot 4, Phase 1, NBBS Dagat-Dagatan', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
 (18, 'Bautista Household', '142 Kapak St., NBBS Dagat-Dagatan', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
 (19, 'Garcia Household', 'Block 5, Phase 2, Area 1', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
-(20, 'Mendoza Household', '22 Dalagang Bukid St.', '2025-12-30 05:01:20', '2025-12-30 05:01:20');
+(20, 'Mendoza Household', '22 Dalagang Bukid St.', '2025-12-30 05:01:20', '2025-12-30 05:01:20'),
+(30, 'Bonifacio Residence', 'Block 11, Phase 4', '2026-01-02 09:21:45', '2026-01-02 09:21:45'),
+(31, 'Magsaysay Household', 'Block 30, Phase 1', '2026-01-02 09:23:40', '2026-01-02 09:23:40'),
+(32, 'Marcos Family', 'Block 7, Lot 2', '2026-01-02 09:26:13', '2026-01-02 09:26:13'),
+(33, 'Mercado Family', 'Block 1, Lot 1, Phase 1', '2026-01-02 09:28:09', '2026-01-02 09:28:09'),
+(34, 'Novicio Family', 'Block 14, Phase 3', '2026-01-02 09:29:59', '2026-01-02 09:29:59'),
+(35, 'Pascual Family', '45 Lapu-Lapu Avenue', '2026-01-02 09:30:50', '2026-01-02 09:30:50'),
+(36, 'Villanueva Residence', 'Block 2, Lot 10, Phase 3', '2026-01-02 09:32:07', '2026-01-02 09:32:07');
 
 -- --------------------------------------------------------
 
@@ -113,7 +143,22 @@ INSERT INTO `household_members` (`id`, `household_id`, `resident_id`, `role`, `a
 (27, 19, 55, 'head', '2025-12-30 05:05:00'),
 (28, 19, 58, 'member', '2025-12-30 05:05:00'),
 (29, 20, 60, 'member', '2025-12-30 05:05:25'),
-(30, 20, 59, 'head', '2025-12-30 05:05:25');
+(30, 20, 59, 'head', '2025-12-30 05:05:25'),
+(32, 30, 78, 'member', '2026-01-02 09:22:21'),
+(33, 30, 79, 'member', '2026-01-02 09:22:21'),
+(38, 31, 97, 'member', '2026-01-02 09:25:02'),
+(39, 31, 96, 'head', '2026-01-02 09:25:02'),
+(40, 32, 69, 'member', '2026-01-02 09:26:40'),
+(41, 32, 70, 'member', '2026-01-02 09:26:43'),
+(42, 33, 65, 'member', '2026-01-02 09:28:38'),
+(43, 33, 91, 'member', '2026-01-02 09:28:38'),
+(44, 33, 92, 'member', '2026-01-02 09:28:38'),
+(45, 34, 84, 'member', '2026-01-02 09:30:13'),
+(46, 34, 83, 'member', '2026-01-02 09:30:13'),
+(47, 35, 63, 'head', '2026-01-02 09:31:04'),
+(48, 35, 64, 'member', '2026-01-02 09:31:04'),
+(49, 36, 94, 'dependent', '2026-01-02 09:32:32'),
+(50, 36, 61, 'member', '2026-01-02 09:32:32');
 
 -- --------------------------------------------------------
 
@@ -241,7 +286,7 @@ INSERT INTO `residents` (`id`, `f_name`, `m_name`, `l_name`, `suffix`, `sex`, `b
 (62, 'Teresa', 'May', 'Aquino', 'NA', 'female', '1988-11-03', 'separated', '09164445566', 'tess.aquino@email.com', 'Block 8, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
 (63, 'Fernando', 'Luis', 'Pascual', 'Sr.', 'male', '1955-06-18', 'married', '09227778899', 'ferdie.p@email.com', '45 Lapu-Lapu Avenue', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
 (64, 'Lourdes', 'Cruz', 'Pascual', 'NA', 'female', '1958-02-28', 'married', '09227778800', 'lourdes.p@email.com', '45 Lapu-Lapu Avenue', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
-(65, 'Jose', 'Rizalino', 'Mercado', 'NA', 'male', '1998-12-30', 'single', '09331239876', 'jose.merc@email.com', 'Block 1, Lot 1, Phase 1', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
+(65, 'Jose', 'Rizal', 'Mercado', 'NA', 'male', '1998-12-30', 'single', '09331239876', 'jose.merc@email.com', 'Block 1, Lot 1, Phase 1', '2025-12-30 04:58:14', '2026-01-02 09:28:53'),
 (66, 'Grace', 'Poe', 'Llamanzares', 'NA', 'female', '1970-09-03', 'married', '09085551234', 'grace.p@email.com', '12 Tambak St.', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
 (67, 'Rodrigo', 'Roa', 'Duterte', 'NA', 'male', '1945-03-28', 'separated', '09096667788', 'digong@email.com', 'Block 15, Area 3', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
 (68, 'Leni', 'Gerona', 'Robredo', 'NA', 'female', '1965-04-23', 'widowed', '09170001122', 'leni.r@email.com', 'Block 3, Phase 2', '2025-12-30 04:58:14', '2025-12-30 04:58:14'),
@@ -473,19 +518,19 @@ ALTER TABLE `carousel`
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `households`
 --
 ALTER TABLE `households`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `household_members`
 --
 ALTER TABLE `household_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `incidents`
