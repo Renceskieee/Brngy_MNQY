@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 31, 2025 at 03:39 PM
+-- Generation Time: Jan 02, 2026 at 10:00 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,11 +39,8 @@ CREATE TABLE `carousel` (
 --
 
 INSERT INTO `carousel` (`id`, `picture`, `position`, `posted_at`) VALUES
-(8, '/uploads/personalisation/images/carousel-1767069426209-859812134.jpg', 4, '2025-12-30 04:37:06'),
-(9, '/uploads/personalisation/images/carousel-1767069433188-906290602.jpg', 5, '2025-12-30 04:37:13'),
-(10, '/uploads/personalisation/images/carousel-1767069441701-104487202.jpg', 6, '2025-12-30 04:37:21'),
-(11, '/uploads/personalisation/images/carousel-1767069458659-455285850.jpg', 4, '2025-12-30 04:37:38'),
-(12, '/uploads/personalisation/images/carousel-1767069463068-958621693.jpg', 5, '2025-12-30 04:37:43');
+(13, '/uploads/personalisation/images/carousel-1767277057834-363657297.jpg', 1, '2026-01-01 14:17:37'),
+(15, '/uploads/personalisation/images/carousel-1767277065190-658462525.jpg', 3, '2026-01-01 14:17:45');
 
 -- --------------------------------------------------------
 
@@ -57,25 +54,10 @@ CREATE TABLE `history` (
   `resident_id` int(11) DEFAULT NULL,
   `household_id` int(11) DEFAULT NULL,
   `incident_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
   `description` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `history`
---
-
-INSERT INTO `history` (`id`, `user_id`, `resident_id`, `household_id`, `incident_id`, `description`, `timestamp`) VALUES
-(7, 1, NULL, NULL, NULL, 'Added new household: Navarrosa Residence', '2025-12-31 12:03:14'),
-(8, 2, NULL, NULL, NULL, 'Deleted household: Navarrosa Residence', '2025-12-31 12:03:41'),
-(9, 1, NULL, NULL, NULL, 'Added new incident: INC-2025-0001', '2025-12-31 12:59:33'),
-(10, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:00:09'),
-(11, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:35'),
-(12, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:41'),
-(13, 1, NULL, NULL, NULL, 'Updated incident: INC-2025-0001', '2025-12-31 13:04:48'),
-(14, 1, NULL, NULL, NULL, 'Deleted incident: INC-2025-0001', '2025-12-31 13:05:11'),
-(15, 1, NULL, NULL, NULL, 'Added new incident: INC-2025-000068', '2025-12-31 14:09:45'),
-(16, 1, NULL, NULL, NULL, 'Deleted incident: INC-2025-000068', '2025-12-31 14:09:57');
 
 -- --------------------------------------------------------
 
@@ -214,7 +196,7 @@ CREATE TABLE `personalisation` (
 --
 
 INSERT INTO `personalisation` (`id`, `logo`, `main_bg`, `header_title`, `header_color`, `footer_title`, `footer_color`, `login_color`, `profile_bg`, `active_nav_color`, `button_color`, `updated_at`) VALUES
-(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#79C9C5', 'SK Barangay Information System 2025', '#79C9C5', '#000000', '#FFE2AF', '#79C9C5', '#3F9AAE', '2025-12-30 11:55:27');
+(1, '/uploads/logo/logo-1766647338113-775837713.png', '/uploads/personalisation/background/main_bg-1766650002303-317238879.jpg', 'SK Barangay Information System - Brgy. Dagat-Dagatan', '#FFE52A', 'SK Barangay Information System 2025', '#FFE52A', '#000000', '#BBCB64', '#CF0F0F', '#CF0F0F', '2026-01-02 02:34:47');
 
 -- --------------------------------------------------------
 
@@ -297,6 +279,37 @@ INSERT INTO `residents` (`id`, `f_name`, `m_name`, `l_name`, `suffix`, `sex`, `b
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `services`
+--
+
+CREATE TABLE `services` (
+  `id` int(11) NOT NULL,
+  `service_name` varchar(150) NOT NULL,
+  `location` text NOT NULL,
+  `date` date NOT NULL,
+  `time` time NOT NULL,
+  `status` enum('scheduled','ongoing','completed') NOT NULL DEFAULT 'scheduled',
+  `description` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `service_beneficiaries`
+--
+
+CREATE TABLE `service_beneficiaries` (
+  `id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `resident_id` int(11) NOT NULL,
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `time_log`
 --
 
@@ -317,9 +330,18 @@ INSERT INTO `time_log` (`id`, `user_id`, `logged_in`, `logged_out`) VALUES
 (7, 2, '2025-12-30 04:52:21', '2025-12-30 05:22:29'),
 (8, 2, '2025-12-30 05:32:35', '2025-12-30 07:02:16'),
 (9, 2, '2025-12-31 02:41:06', '2025-12-31 02:41:33'),
-(10, 1, '2025-12-31 02:42:01', NULL),
+(10, 1, '2025-12-31 02:42:01', '2025-12-31 18:18:34'),
 (11, 5, '2025-12-31 08:44:55', '2025-12-31 08:45:49'),
-(12, 2, '2025-12-31 11:41:50', NULL);
+(12, 2, '2025-12-31 11:41:50', '2025-12-31 17:51:52'),
+(13, 2, '2025-12-31 18:14:30', '2025-12-31 18:17:50'),
+(14, 1, '2026-01-01 13:50:53', '2026-01-01 14:12:36'),
+(15, 1, '2026-01-01 14:13:18', '2026-01-01 14:49:51'),
+(16, 1, '2026-01-02 02:31:00', '2026-01-02 05:52:43'),
+(17, 2, '2026-01-02 02:34:22', '2026-01-02 03:33:23'),
+(18, 4, '2026-01-02 03:34:15', '2026-01-02 03:36:04'),
+(19, 4, '2026-01-02 03:36:38', '2026-01-02 03:36:45'),
+(20, 4, '2026-01-02 03:37:49', '2026-01-02 03:43:16'),
+(21, 1, '2026-01-02 05:53:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -347,11 +369,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `employee_id`, `password`, `first_name`, `last_name`, `email`, `contact_number`, `profile_picture`, `position`, `status`, `created_at`, `updated_at`) VALUES
-(1, '224-09160M', '$2b$10$EX0RSAVaKr7wL5wIilZFw.7posedKiJZpPXqpmdtKm0TG1Pz/5KAm', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '9946085013', '/uploads/profile/profile-1767077847655-249564712.png', 'admin', 'active', '2025-12-12 06:45:59', '2025-12-30 06:57:27'),
-(2, '224-09159M', '$2b$10$Su3YPJ0P1lI.crNRszanEegNdr5ytPEdnROfE0JlNRw3146qXIOz2', 'Angela Tanya', 'Navarrosa', 'quiniano.infotech@gmail.com', '9942611480', NULL, 'staff', 'active', '2025-12-12 06:59:37', '2025-12-30 04:20:42'),
-(3, '224-09127M', '$2b$10$ZXQXYdD1FrT5PeZbP3s.LejOyPRgVNyAbmOOVsxe80BiXQh/TC2di', 'Laurence', 'Quiniano', 'quiniano.lp@gmail.com', '9685408094', NULL, 'staff', 'active', '2025-12-12 09:34:10', '2025-12-12 09:34:10'),
-(4, '224-09162M', '$2b$10$jOyISqnx6L1.6UJ/FnXuTOYEm63MvRkZU.5jjA2khC2NDENcF9mgW', 'Laurence Paul', 'Quiniano', 'laurencequiniano74@gmail.com', '9156128497', NULL, 'staff', 'active', '2025-12-12 09:46:28', '2025-12-12 09:46:28'),
-(5, '224-09161M', '$2b$10$x6F.uueozDp.8.BJhwQyUu3Nrcn.wUFph.BQCSmeNfl7yAjjUl.he', 'Aaliyah Paula', 'Quiniano', 'arvin.quiniano.abc@gmail.com', '9685408094', NULL, 'staff', 'active', '2025-12-19 08:31:22', '2025-12-19 08:31:22');
+(1, '224-09160M', '$2b$10$EX0RSAVaKr7wL5wIilZFw.7posedKiJZpPXqpmdtKm0TG1Pz/5KAm', 'Laurence Paul', 'Quiniano', 'quiniano.lp.bsinfotech@gmail.com', '09946085013', '/uploads/profile/profile-1767077847655-249564712.png', 'admin', 'active', '2025-12-12 06:45:59', '2026-01-02 03:39:17'),
+(2, '224-09159M', '$2b$10$Su3YPJ0P1lI.crNRszanEegNdr5ytPEdnROfE0JlNRw3146qXIOz2', 'Angela Tanya', 'Navarrosa', 'navarrosa.at.bsinfotech@gmail.com', '09942611480', NULL, 'staff', 'active', '2025-12-12 06:59:37', '2026-01-02 03:39:13'),
+(3, '224-09127M', '$2b$10$ZXQXYdD1FrT5PeZbP3s.LejOyPRgVNyAbmOOVsxe80BiXQh/TC2di', 'Laurence', 'Quiniano', 'quiniano.lp@gmail.com', '09685408094', NULL, 'staff', 'inactive', '2025-12-12 09:34:10', '2026-01-02 03:39:10'),
+(4, '224-09162M', '$2b$10$VTc7RPxAdxIYVBJLq5SFfuBs90BG1ANyAtpGa/lcHoF0avcN6bIW2', 'Laurence Paul', 'Quiniano', 'quiniano.infotech@gmail.com', '09156128497', NULL, 'staff', 'active', '2025-12-12 09:46:28', '2026-01-02 03:38:55'),
+(5, '224-09161M', '$2b$10$z5I7I7Zl4H8LnnV7ti2r9uukB9xn1VdyVMpuMPqpaJ/pXAg5Uul72', 'Aaliyah Paula', 'Quiniano', 'quiniano.aaliyahp@gmail.com', '09685408094', NULL, 'staff', 'active', '2025-12-19 08:31:22', '2026-01-02 03:39:05');
 
 --
 -- Indexes for dumped tables
@@ -371,7 +393,8 @@ ALTER TABLE `history`
   ADD KEY `fk_history_user` (`user_id`),
   ADD KEY `fk_history_resident` (`resident_id`),
   ADD KEY `fk_history_incident` (`incident_id`),
-  ADD KEY `fk_history_household` (`household_id`);
+  ADD KEY `fk_history_household` (`household_id`),
+  ADD KEY `fk_history_service` (`service_id`);
 
 --
 -- Indexes for table `households`
@@ -409,6 +432,20 @@ ALTER TABLE `residents`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `services`
+--
+ALTER TABLE `services`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `service_beneficiaries`
+--
+ALTER TABLE `service_beneficiaries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_service_resident` (`service_id`,`resident_id`),
+  ADD KEY `fk_service_beneficiaries_resident` (`resident_id`);
+
+--
 -- Indexes for table `time_log`
 --
 ALTER TABLE `time_log`
@@ -430,43 +467,55 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `carousel`
 --
 ALTER TABLE `carousel`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `households`
 --
 ALTER TABLE `households`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `household_members`
 --
 ALTER TABLE `household_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `incidents`
 --
 ALTER TABLE `incidents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT for table `residents`
 --
 ALTER TABLE `residents`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+
+--
+-- AUTO_INCREMENT for table `services`
+--
+ALTER TABLE `services`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `service_beneficiaries`
+--
+ALTER TABLE `service_beneficiaries`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `time_log`
 --
 ALTER TABLE `time_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -485,6 +534,7 @@ ALTER TABLE `history`
   ADD CONSTRAINT `fk_history_household` FOREIGN KEY (`household_id`) REFERENCES `households` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_incident` FOREIGN KEY (`incident_id`) REFERENCES `incidents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_history_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_history_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -493,6 +543,13 @@ ALTER TABLE `history`
 ALTER TABLE `household_members`
   ADD CONSTRAINT `fk_household_members_household` FOREIGN KEY (`household_id`) REFERENCES `households` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_household_members_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `service_beneficiaries`
+--
+ALTER TABLE `service_beneficiaries`
+  ADD CONSTRAINT `fk_service_beneficiaries_resident` FOREIGN KEY (`resident_id`) REFERENCES `residents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_service_beneficiaries_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `time_log`

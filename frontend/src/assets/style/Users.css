@@ -213,7 +213,7 @@
   background: #fffbeb;
 }
 
-.empty-state {
+.users-table td.empty-state {
   text-align: center;
   padding: 40px;
   color: #9ca3af;

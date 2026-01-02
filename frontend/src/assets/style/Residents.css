@@ -188,7 +188,7 @@
   border-color: #fca5a5;
 }
 
-.empty-state {
+.residents-table td.empty-state {
   text-align: center;
   padding: 40px;
   color: #9ca3af;

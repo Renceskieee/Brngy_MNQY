@@ -148,7 +148,7 @@
   color: #111827;
 }
 
-.empty-state1 {
+.time-log-table td.empty-state {
   text-align: center;
   padding: 40px;
   color: #9ca3af;

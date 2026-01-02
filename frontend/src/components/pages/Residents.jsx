@@ -176,7 +176,7 @@ function Residents() {
               {currentResidents.length === 0 ? (
                 <tr>
                   <td colSpan="2" className="empty-state">
-                    {searchTerm ? 'No residents found.' : 'No residents found. Add a new resident to get started.'}
+                    {searchTerm ? 'No residents found matching your search.' : 'No residents found. Add a new resident to get started.'}
                   </td>
                 </tr>
               ) : (
