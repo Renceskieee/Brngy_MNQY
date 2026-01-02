@@ -3,6 +3,7 @@ import axios from 'axios';
 import { X, Info } from 'lucide-react';
 import Messages from '../shared/Messages';
 import '../../assets/style/CreateAccount.css';
+import phFlag from '../../assets/logo/philippines.png';
 
 const API_URL = '/api';
 
@@ -281,15 +282,20 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
 
           <div className="form-group">
             <label htmlFor="contact_no" className="form-label">Contact Number</label>
-            <input
-              type="tel"
-              id="contact_no"
-              name="contact_no"
-              value={formData.contact_no}
-              onChange={handleChange}
-              className={`form-input ${errors.contact_no ? 'error' : ''}`}
-              placeholder="Enter contact number"
-            />
+            <div className="phone-input-wrapper">
+              <div className="phone-flag">
+                <img src={phFlag} alt="PH" onError={(e) => { e.target.style.display = 'none'; }} />
+              </div>
+              <input
+                type="tel"
+                id="contact_no"
+                name="contact_no"
+                value={formData.contact_no}
+                onChange={handleChange}
+                className={`form-input ${errors.contact_no ? 'error' : ''}`}
+                placeholder="Enter contact number"
+              />
+            </div>
             {errors.contact_no && <span className="error-message">{errors.contact_no}</span>}
           </div>
 

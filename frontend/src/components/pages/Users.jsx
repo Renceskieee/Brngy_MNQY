@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Eye, Edit, KeyRound, Search, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Messages from '../shared/Messages';
 import '../../assets/style/Users.css';
+import phFlag from '../../assets/logo/philippines.png';
 
 const API_URL = '/api';
 
@@ -282,7 +283,7 @@ function Users() {
               </div>
               {viewUser.contact_number && (
                 <div className="detail-row">
-                  <span className="detail-label">Contact Number:</span>
+                  <span className="detail-label">Phone Number:</span>
                   <span className="detail-value">{viewUser.contact_number}</span>
                 </div>
               )}
@@ -364,15 +365,20 @@ function Users() {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="edit_contact_number" className="form-label">Contact Number</label>
-                <input
-                  type="tel"
-                  id="edit_contact_number"
-                  name="contact_number"
-                  defaultValue={editUser.contact_number || ''}
-                  className="form-input"
-                  placeholder="Enter contact number"
-                />
+                <label htmlFor="edit_contact_number" className="form-label">Phone Number</label>
+                <div className="phone-input-wrapper">
+                  <div className="phone-flag">
+                    <img src={phFlag} alt="PH" onError={(e) => { e.target.style.display = 'none'; }} />
+                  </div>
+                  <input
+                    type="tel"
+                    id="edit_contact_number"
+                    name="contact_number"
+                    defaultValue={editUser.contact_number || ''}
+                    className="form-input"
+                    placeholder="Enter phone number"
+                  />
+                </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
