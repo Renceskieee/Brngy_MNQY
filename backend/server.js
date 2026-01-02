@@ -14,6 +14,7 @@ const households = require('./database/users/households');
 const incidents = require('./database/users/incidents');
 const timeLog = require('./database/users/time_log');
 const usersAccount = require('./database/users/usersAccount');
+const services = require('./database/users/services');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -82,6 +83,16 @@ app.get('/api/time-logs', timeLog.getTimeLogs);
 app.get('/api/time-logs/:id', timeLog.getTimeLogById);
 app.post('/api/time-logs', timeLog.createTimeLog);
 app.put('/api/time-logs/:id', timeLog.updateTimeLog);
+
+app.get('/api/services', services.getAllServices);
+app.get('/api/services/count', services.getServicesCount);
+app.get('/api/services/:id', services.getServiceById);
+app.get('/api/services/:id/beneficiaries', services.getServiceBeneficiaries);
+app.post('/api/services', services.createService);
+app.put('/api/services/:id', services.updateService);
+app.delete('/api/services/:id', services.deleteService);
+app.post('/api/services/:id/beneficiaries', services.addBeneficiary);
+app.delete('/api/services/:id/beneficiaries/:beneficiaryId', services.removeBeneficiary);
 
 app.use((err, req, res, next) => {
   console.error('Error:', err);

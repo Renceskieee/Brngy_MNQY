@@ -10,7 +10,7 @@ import {
   LinearScale,
   BarElement
 } from 'chart.js';
-import { Users, Home as HomeIcon, OctagonAlert } from 'lucide-react';
+import { Users, Home as HomeIcon, OctagonAlert, Heart } from 'lucide-react';
 import RecentActivities from '../modals/RecentActivities';
 import '../../assets/style/Home.css';
 
@@ -29,6 +29,7 @@ function Home() {
   const [residentCount, setResidentCount] = useState(0);
   const [householdCount, setHouseholdCount] = useState(0);
   const [incidentCount, setIncidentCount] = useState(0);
+  const [serviceCount, setServiceCount] = useState(0);
   const [recentActivities, setRecentActivities] = useState([]);
   const [sexDistribution, setSexDistribution] = useState({ male: 0, female: 0 });
   const [civilStatusDistribution, setCivilStatusDistribution] = useState({
@@ -48,10 +49,11 @@ function Home() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [countResponse, householdCountResponse, incidentCountResponse, historyResponse, residentsResponse] = await Promise.all([
+      const [countResponse, householdCountResponse, incidentCountResponse, serviceCountResponse, historyResponse, residentsResponse] = await Promise.all([
         axios.get(`${API_URL}/residents/count`),
         axios.get(`${API_URL}/households/count`),
         axios.get(`${API_URL}/incidents/count`),
+        axios.get(`${API_URL}/services/count`),
         axios.get(`${API_URL}/history?limit=5`),
         axios.get(`${API_URL}/residents`)
       ]);
@@ -66,6 +68,10 @@ function Home() {
 
       if (incidentCountResponse.data.success) {
         setIncidentCount(incidentCountResponse.data.count);
+      }
+
+      if (serviceCountResponse.data.success) {
+        setServiceCount(serviceCountResponse.data.count);
       }
 
       if (historyResponse.data.success) {
@@ -125,6 +131,16 @@ function Home() {
         action = 'updated an incident';
       } else if (activity.description.includes('Deleted incident:')) {
         action = 'deleted an incident';
+      }
+    } else if (activity.service_name) {
+      entityType = 'Service';
+      entityValue = activity.service_name;
+      if (activity.description.includes('Added new service:')) {
+        action = 'added a service';
+      } else if (activity.description.includes('Updated service:')) {
+        action = 'updated a service';
+      } else if (activity.description.includes('Deleted service:')) {
+        action = 'deleted a service';
       }
     } else if (activity.household_name) {
       entityType = 'Household';
@@ -307,6 +323,17 @@ function Home() {
               <div className="stat-label">Total Incidents</div>
               <div className="stat-value">
                 {loading ? 'Loading...' : incidentCount.toLocaleString()}
+              </div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">
+              <Heart size={48} />
+            </div>
+            <div className="stat-info">
+              <div className="stat-label">Total Services</div>
+              <div className="stat-value">
+                {loading ? 'Loading...' : serviceCount.toLocaleString()}
               </div>
             </div>
           </div>

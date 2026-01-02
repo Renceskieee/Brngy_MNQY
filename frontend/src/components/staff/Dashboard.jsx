@@ -5,6 +5,7 @@ import Settings from './Settings';
 import Residents from '../pages/Residents';
 import Households from '../pages/Households';
 import Incidents from '../pages/Incidents';
+import Services from '../pages/Services';
 import Profile from '../pages/Profile';
 import { usePersonalisation } from '../../contexts/PersonalisationContext';
 import { Copyright } from 'lucide-react';
@@ -23,6 +24,8 @@ function Dashboard({ user, onLogout }) {
         return <Households />;
       case 'incidents':
         return <Incidents />;
+      case 'services':
+        return <Services />;
       case 'settings':
         return <Settings setActivePage={setActivePage} />;
       case 'profile':

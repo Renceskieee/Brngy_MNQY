@@ -57,6 +57,16 @@ function RecentActivities({ onClose }) {
       } else if (activity.description.includes('Deleted incident:')) {
         action = 'deleted an incident';
       }
+    } else if (activity.service_name) {
+      entityType = 'Service';
+      entityValue = activity.service_name;
+      if (activity.description.includes('Added new service:')) {
+        action = 'added a service';
+      } else if (activity.description.includes('Updated service:')) {
+        action = 'updated a service';
+      } else if (activity.description.includes('Deleted service:')) {
+        action = 'deleted a service';
+      }
     } else if (activity.household_name) {
       entityType = 'Household';
       entityValue = activity.household_name;

@@ -1,10 +1,10 @@
 const pool = require('../config');
 
-const createHistory = async (userId, residentId, householdId, description, incidentId = null) => {
+const createHistory = async (userId, residentId, householdId, description, incidentId = null, serviceId = null) => {
   try {
     await pool.execute(
-      'INSERT INTO history (user_id, resident_id, household_id, incident_id, description) VALUES (?, ?, ?, ?, ?)',
-      [userId, residentId || null, householdId || null, incidentId || null, description]
+      'INSERT INTO history (user_id, resident_id, household_id, incident_id, service_id, description) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, residentId || null, householdId || null, incidentId || null, serviceId || null, description]
     );
     return true;
   } catch (error) {
@@ -18,17 +18,19 @@ const getRecentHistory = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
 
     const [history] = await pool.execute(
-      `SELECT h.id, h.user_id, h.resident_id, h.household_id, h.incident_id, h.description, h.timestamp,
+      `SELECT h.id, h.user_id, h.resident_id, h.household_id, h.incident_id, h.service_id, h.description, h.timestamp,
        u.first_name as user_first_name, u.last_name as user_last_name,
        r.f_name as resident_f_name, r.m_name as resident_m_name, 
        r.l_name as resident_l_name, r.suffix as resident_suffix,
        hh.household_name,
-       i.reference_number as incident_reference_number
+       i.reference_number as incident_reference_number,
+       s.service_name
        FROM history h
        LEFT JOIN users u ON h.user_id = u.id
        LEFT JOIN residents r ON h.resident_id = r.id
        LEFT JOIN households hh ON h.household_id = hh.id
        LEFT JOIN incidents i ON h.incident_id = i.id
+       LEFT JOIN services s ON h.service_id = s.id
        ORDER BY h.timestamp DESC
        LIMIT ?`,
       [limit]
