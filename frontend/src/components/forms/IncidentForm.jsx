@@ -69,12 +69,6 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
   const validateForm = () => {
     const newErrors = {};
 
-    if (incident && formData.reference_number) {
-      if (formData.reference_number.trim().length > 50) {
-        newErrors.reference_number = 'Reference number must not exceed 50 characters';
-      }
-    }
-
     if (!formData.incident_type.trim()) {
       newErrors.incident_type = 'Incident type is required';
     }
@@ -131,11 +125,6 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
         status: formData.status,
         userId: user.id
       };
-
-      if (incident && formData.reference_number && 
-          formData.reference_number !== incident.reference_number) {
-        requestData.reference_number = formData.reference_number;
-      }
 
       let response;
       if (incident) {
@@ -199,9 +188,9 @@ function IncidentForm({ onClose, incident = null, onSuccess }) {
                 value={formData.reference_number}
                 onChange={handleChange}
                 className={`form-input ${errors.reference_number ? 'error' : ''}`}
-                placeholder={incident ? "Current reference number" : "Will be auto-generated"}
-                disabled={!incident}
-                style={!incident ? { backgroundColor: '#f3f4f6', cursor: 'not-allowed' } : {}}
+                placeholder={incident ? formData.reference_number : "Will be auto-generated"}
+                disabled={true}
+                style={{ backgroundColor: '#e5e7eb', cursor: 'not-allowed' }}
               />
               {errors.reference_number && <span className="error-message">{errors.reference_number}</span>}
               {!incident && (

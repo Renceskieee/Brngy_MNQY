@@ -204,11 +204,6 @@
 .services-table tbody tr {
   border-bottom: 1px solid #e5e7eb;
   transition: background 0.2s ease;
-  cursor: pointer;
-}
-
-.services-table tbody tr:hover {
-  background: #f9fafb;
 }
 
 .services-table tbody tr.selected {
