@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Eye, Edit, Trash2, Search, X, ChevronLeft, ChevronRight, FileText, Download, Users } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Search, X, ChevronLeft, ChevronRight, Printer, FileSpreadsheet, UserPlus } from 'lucide-react';
 import ServiceForm from '../forms/ServiceForm';
+import BeneficiariesForm from '../forms/BeneficiariesForm';
 import Messages from '../shared/Messages';
 import '../../assets/style/Services.css';
 import * as XLSX from 'xlsx';
@@ -17,19 +18,19 @@ function Services() {
   const [monthFilter, setMonthFilter] = useState('all');
   const [yearFilter, setYearFilter] = useState('all');
   const [showForm, setShowForm] = useState(false);
+  const [showBeneficiariesForm, setShowBeneficiariesForm] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [viewService, setViewService] = useState(null);
   const [viewBeneficiaries, setViewBeneficiaries] = useState([]);
   const [loadingBeneficiaries, setLoadingBeneficiaries] = useState(false);
   const [deleteService, setDeleteService] = useState(null);
-  const [showAddBeneficiaries, setShowAddBeneficiaries] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
     fetchServices();
-  }, []);
+  }, [statusFilter, monthFilter, yearFilter]);
 
   useEffect(() => {
     let filtered = [...services];
@@ -43,27 +44,9 @@ function Services() {
       });
     }
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(service => service.status === statusFilter);
-    }
-
-    if (monthFilter !== 'all') {
-      filtered = filtered.filter(service => {
-        const date = new Date(service.date);
-        return date.getMonth() + 1 === parseInt(monthFilter);
-      });
-    }
-
-    if (yearFilter !== 'all') {
-      filtered = filtered.filter(service => {
-        const date = new Date(service.date);
-        return date.getFullYear() === parseInt(yearFilter);
-      });
-    }
-
     setFilteredServices(filtered);
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, monthFilter, yearFilter, services]);
+  }, [searchTerm, services]);
 
   const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -73,7 +56,14 @@ function Services() {
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/services`);
+      const params = new URLSearchParams();
+      if (statusFilter !== 'all') params.append('status', statusFilter);
+      if (monthFilter !== 'all') params.append('month', monthFilter);
+      if (yearFilter !== 'all') params.append('year', yearFilter);
+      
+      const queryString = params.toString();
+      const url = queryString ? `${API_URL}/services?${queryString}` : `${API_URL}/services`;
+      const response = await axios.get(url);
       if (response.data.success) {
         setServices(response.data.services);
         setFilteredServices(response.data.services);
@@ -94,23 +84,10 @@ function Services() {
       }
     } catch (error) {
       console.error('Error fetching beneficiaries:', error);
+      setMessage({ text: 'Failed to fetch beneficiaries', type: 'error' });
     } finally {
       setLoadingBeneficiaries(false);
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    const options = { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    };
-    return date.toLocaleDateString('en-US', options);
   };
 
   const formatDateOnly = (dateString) => {
@@ -160,6 +137,11 @@ function Services() {
     await fetchBeneficiaries(service.id);
   };
 
+  const handleCloseView = () => {
+    setViewService(null);
+    setViewBeneficiaries([]);
+  };
+
   const handleEdit = (service) => {
     setSelectedService(service);
     setShowForm(true);
@@ -180,6 +162,9 @@ function Services() {
       if (response.data.success) {
         setMessage({ text: 'Service deleted successfully', type: 'success' });
         fetchServices();
+        if (viewService && viewService.id === deleteService.id) {
+          handleCloseView();
+        }
         setDeleteService(null);
       }
     } catch (error) {
@@ -187,58 +172,163 @@ function Services() {
     }
   };
 
-  const handleFormSuccess = (serviceId) => {
+  const handleFormSuccess = () => {
     fetchServices();
-    if (serviceId) {
-      setShowForm(false);
-      setShowAddBeneficiaries(true);
-      setSelectedService({ id: serviceId });
+    if (viewService) {
+      fetchBeneficiaries(viewService.id);
     }
   };
 
-  const handleExportPDF = async () => {
-    if (!viewService || viewBeneficiaries.length === 0) return;
+  const handleRemoveBeneficiary = async (beneficiaryId) => {
+    if (!viewService) return;
 
     try {
-      const { jsPDF } = await import('jspdf');
-      await import('jspdf-autotable');
-      
-      const doc = new jsPDF();
-      
-      doc.setFontSize(18);
-      doc.text('Service Beneficiaries Report', 14, 20);
-      
-      doc.setFontSize(12);
-      doc.text(`Service: ${viewService.service_name}`, 14, 30);
-      doc.text(`Date: ${formatDateOnly(viewService.date)}`, 14, 36);
-      doc.text(`Location: ${viewService.location}`, 14, 42);
-      
-      const tableData = viewBeneficiaries.map((beneficiary, index) => {
-        const suffix = beneficiary.suffix && beneficiary.suffix !== 'NA' ? ` ${beneficiary.suffix}` : '';
-        const mName = beneficiary.m_name ? ` ${beneficiary.m_name}` : '';
-        const fullName = `${beneficiary.l_name}, ${beneficiary.f_name}${mName}${suffix}`;
-        return [
-          index + 1,
-          fullName,
-          beneficiary.sex || 'N/A',
-          beneficiary.birthdate ? formatDateOnly(beneficiary.birthdate) : 'N/A',
-          beneficiary.contact_no || 'N/A',
-          ''
-        ];
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const response = await axios.delete(`${API_URL}/services/${viewService.id}/beneficiaries/${beneficiaryId}`, {
+        data: { userId: user.id }
       });
-
-      doc.autoTable({
-        startY: 50,
-        head: [['#', 'Name', 'Sex', 'Birthdate', 'Contact', 'Signature']],
-        body: tableData,
-        styles: { font: 'Poppins', fontSize: 10 },
-        headStyles: { fillColor: [220, 38, 38] }
-      });
-
-      doc.save(`Service-${viewService.service_name}-Beneficiaries.pdf`);
+      if (response.data.success) {
+        setMessage({ text: 'Beneficiary removed successfully', type: 'success' });
+        fetchBeneficiaries(viewService.id);
+      }
     } catch (error) {
-      setMessage({ text: 'PDF export failed. Please install jspdf and jspdf-autotable packages.', type: 'error' });
+      setMessage({ text: error.response?.data?.message || 'Failed to remove beneficiary', type: 'error' });
     }
+  };
+
+  const handlePrint = () => {
+    if (!viewService || viewBeneficiaries.length === 0) return;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Beneficiaries - ${viewService.service_name}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: 'Poppins', sans-serif;
+              padding: 20px;
+              color: #111827;
+            }
+            .header {
+              margin-bottom: 20px;
+              border-bottom: 2px solid #e5e7eb;
+              padding-bottom: 15px;
+            }
+            .header h1 {
+              font-size: 24px;
+              font-weight: 700;
+              margin-bottom: 10px;
+            }
+            .header-info {
+              font-size: 14px;
+              color: #6b7280;
+              line-height: 1.6;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            th {
+              background-color: #ffffff;
+              color: #000000;
+              padding: 12px;
+              text-align: left;
+              font-weight: 600;
+              font-size: 12px;
+              border: 1px solid #000000;
+            }
+            td {
+              padding: 10px 12px;
+              border: 1px solid #000000;
+              font-size: 12px;
+            }
+            tr:nth-child(even) {
+              background-color: #f9fafb;
+            }
+            .signature-col {
+              min-width: 100px;
+              height: 40px;
+            }
+            @media print {
+              body {
+                padding: 10px;
+              }
+              .header {
+                page-break-after: avoid;
+              }
+              table {
+                page-break-inside: auto;
+              }
+              tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Beneficiaries for Service: ${viewService.service_name}</h1>
+            <div class="header-info">
+              <div><strong>Location:</strong> ${viewService.location}</div>
+              <div><strong>Date:</strong> ${formatDateOnly(viewService.date)}</div>
+              <div><strong>Time:</strong> ${formatTime(viewService.time)}</div>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Full Name</th>
+                <th>Contact No.</th>
+                <th>Signature</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${viewBeneficiaries.map((beneficiary) => {
+                const suffix = beneficiary.suffix && beneficiary.suffix !== 'NA' ? ` ${beneficiary.suffix}` : '';
+                const mName = beneficiary.m_name ? ` ${beneficiary.m_name}` : '';
+                const fullName = `${beneficiary.l_name}, ${beneficiary.f_name}${mName}${suffix}`;
+                return `
+                  <tr>
+                    <td>${fullName}</td>
+                    <td>${beneficiary.contact_no || 'N/A'}</td>
+                    <td class="signature-col"></td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    document.body.appendChild(printFrame);
+    
+    const printDoc = printFrame.contentWindow.document;
+    printDoc.open();
+    printDoc.write(printContent);
+    printDoc.close();
+    
+    printFrame.contentWindow.focus();
+    setTimeout(() => {
+      printFrame.contentWindow.print();
+      document.body.removeChild(printFrame);
+    }, 250);
   };
 
   const handleExportExcel = () => {
@@ -249,20 +339,26 @@ function Services() {
       const mName = beneficiary.m_name ? ` ${beneficiary.m_name}` : '';
       const fullName = `${beneficiary.l_name}, ${beneficiary.f_name}${mName}${suffix}`;
       return {
-        '#': index + 1,
-        'Name': fullName,
-        'Sex': beneficiary.sex || 'N/A',
-        'Birthdate': beneficiary.birthdate ? formatDateOnly(beneficiary.birthdate) : 'N/A',
-        'Contact Number': beneficiary.contact_no || 'N/A',
-        'Email': beneficiary.email || 'N/A',
-        'Address': beneficiary.address || 'N/A'
+        "#": index + 1,
+        "Service Name": viewService.service_name,
+        "Location": viewService.location,
+        "Date": formatDateOnly(viewService.date),
+        "Time": formatTime(viewService.time),
+        "Status": getStatusLabel(viewService.status),
+        "Full Name": fullName,
+        "Sex": beneficiary.sex.charAt(0).toUpperCase() + beneficiary.sex.slice(1),
+        "Birthdate": formatDateOnly(beneficiary.birthdate),
+        "Civil Status": beneficiary.civil_status.charAt(0).toUpperCase() + beneficiary.civil_status.slice(1),
+        "Contact No.": beneficiary.contact_no || 'N/A',
+        "Email": beneficiary.email || 'N/A',
+        "Address": beneficiary.address || 'N/A'
       };
     });
 
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Beneficiaries');
-    XLSX.writeFile(wb, `Service-${viewService.service_name}-Beneficiaries.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "Beneficiaries");
+    XLSX.writeFile(wb, `${viewService.service_name}_beneficiaries.xlsx`);
   };
 
   const getAvailableMonths = () => {
@@ -298,10 +394,10 @@ function Services() {
     return years.sort((a, b) => b - a);
   };
 
-  const getFullName = (beneficiary) => {
-    const suffix = beneficiary.suffix && beneficiary.suffix !== 'NA' ? ` ${beneficiary.suffix}` : '';
-    const mName = beneficiary.m_name ? ` ${beneficiary.m_name}` : '';
-    return `${beneficiary.l_name}, ${beneficiary.f_name}${mName}${suffix}`;
+  const getResidentFullName = (resident) => {
+    const suffix = resident.suffix && resident.suffix !== 'NA' ? ` ${resident.suffix}` : '';
+    const mName = resident.m_name ? ` ${resident.m_name}` : '';
+    return `${resident.l_name}, ${resident.f_name}${mName}${suffix}`;
   };
 
   return (
@@ -309,7 +405,7 @@ function Services() {
       <div className="services-header">
         <div>
           <h1 className="services-title">Services</h1>
-          <p className="services-subtitle">Manage service records</p>
+          <p className="services-subtitle">Manage community services and beneficiaries</p>
         </div>
         <button className="add-service-btn" onClick={handleAdd}>
           <Plus size={20} />
@@ -382,109 +478,229 @@ function Services() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="loading-state">Loading services...</div>
-      ) : (
-        <div className="services-table-container">
-          <table className="services-table">
-            <thead>
-              <tr>
-                <th>Service Name</th>
-                <th>Location</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentServices.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="empty-state">
-                    {searchTerm || statusFilter !== 'all' || monthFilter !== 'all' || yearFilter !== 'all' 
-                      ? 'No services found.' 
-                      : 'No services found. Add a new service to get started.'}
-                  </td>
-                </tr>
-              ) : (
-                currentServices.map((service) => (
-                  <tr key={service.id}>
-                    <td>
-                      <div className="service-name-cell">
-                        <div className="service-name">{service.service_name}</div>
-                        <div 
-                          className="status-badge" 
-                          style={{ backgroundColor: getStatusColor(service.status) }}
-                        >
-                          {getStatusLabel(service.status)}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="location-cell">
-                        {service.location}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="date-cell">
-                        <div className="date-value">{formatDateOnly(service.date)}</div>
-                        <div className="time-value">{formatTime(service.time)}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="action-btn view-btn"
-                          onClick={() => handleView(service)}
-                          title="View Details"
-                        >
-                          <Eye size={18} />
-                        </button>
-                        <button
-                          className="action-btn edit-btn"
-                          onClick={() => handleEdit(service)}
-                          title="Update"
-                        >
-                          <Edit size={18} />
-                        </button>
-                        <button
-                          className="action-btn delete-btn"
-                          onClick={() => handleDeleteClick(service)}
-                          title="Delete"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
+      <div className={`services-layout ${viewService ? 'view-mode' : ''}`}>
+        <div className={`services-table-section ${viewService ? 'shrunk' : ''}`}>
+          {loading ? (
+            <div className="loading-state">Loading services...</div>
+          ) : (
+            <div className="services-table-container">
+              <table className="services-table">
+                <thead>
+                  <tr>
+                    <th>Service Name</th>
+                    {!viewService && <th>Date</th>}
+                    {!viewService && <th>Location</th>}
+                    <th>Beneficiaries</th>
+                    <th>Actions</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                </thead>
+                <tbody>
+                  {currentServices.length === 0 ? (
+                    <tr>
+                      <td colSpan={viewService ? 3 : 5} className="empty-state">
+                        {searchTerm || statusFilter !== 'all' || monthFilter !== 'all' || yearFilter !== 'all'
+                          ? 'No services found.'
+                          : 'No services found. Add a new service to get started.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    currentServices.map((service) => (
+                      <tr 
+                        key={service.id}
+                        className={viewService && viewService.id === service.id ? 'selected' : ''}
+                      >
+                        <td>
+                          <div className="service-name-cell">
+                            <div className="service-name">{service.service_name}</div>
+                            <div
+                              className="status-badge"
+                              style={{ backgroundColor: getStatusColor(service.status) }}
+                            >
+                              {getStatusLabel(service.status)}
+                            </div>
+                          </div>
+                        </td>
+                        {!viewService && (
+                          <td>
+                            <div className="date-cell">
+                              <div className="date-value">{formatDateOnly(service.date)}</div>
+                              <div className="time-value">{formatTime(service.time)}</div>
+                            </div>
+                          </td>
+                        )}
+                        {!viewService && (
+                          <td>
+                            <div className="location-cell">
+                              {service.location}
+                            </div>
+                          </td>
+                        )}
+                        <td>
+                          <div className="beneficiaries-count-cell">
+                            {service.beneficiaries_count || 0}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="action-buttons" onClick={(e) => e.stopPropagation()}>
+                            {viewService && viewService.id === service.id ? (
+                              <button
+                                className="action-btn close-btn"
+                                onClick={handleCloseView}
+                                title="Close"
+                              >
+                                <X size={18} />
+                              </button>
+                            ) : (
+                              <>
+                                <button
+                                  className="action-btn view-btn"
+                                  onClick={() => handleView(service)}
+                                  title="View Details"
+                                >
+                                  <Eye size={18} />
+                                </button>
+                                <button
+                                  className="action-btn edit-btn"
+                                  onClick={() => handleEdit(service)}
+                                  title="Update"
+                                >
+                                  <Edit size={18} />
+                                </button>
+                                <button
+                                  className="action-btn delete-btn"
+                                  onClick={() => handleDeleteClick(service)}
+                                  title="Delete"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
 
-      {filteredServices.length > itemsPerPage && (
-        <div className="pagination">
-          <button
-            className="pagination-btn"
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft size={18} />
-            <span>Previous</span>
-          </button>
-          <div className="pagination-info">
-            Page {currentPage} of {totalPages}
-          </div>
-          <button
-            className="pagination-btn"
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-            disabled={currentPage === totalPages}
-          >
-            <span>Next</span>
-            <ChevronRight size={18} />
-          </button>
+          {filteredServices.length > itemsPerPage && (
+            <div className="pagination">
+              <button
+                className="pagination-btn"
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft size={18} />
+                <span>Previous</span>
+              </button>
+              <div className="pagination-info">
+                Page {currentPage} of {totalPages}
+              </div>
+              <button
+                className="pagination-btn"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <span>Next</span>
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
         </div>
-      )}
+
+        {viewService && (
+          <div className="services-details-section">
+            <div className="service-details-card">
+              <h3 className="card-title">Service Details</h3>
+              <div className="detail-content">
+                <div className="detail-item">
+                  <span className="detail-label">Service Name:</span>
+                  <span className="detail-value">{viewService.service_name}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Date:</span>
+                  <span className="detail-value">{formatDateOnly(viewService.date)}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Location:</span>
+                  <span className="detail-value">{viewService.location}</span>
+                </div>
+                {viewService.description && (
+                  <div className="detail-item">
+                    <span className="detail-label">Description:</span>
+                    <span className="detail-value">{viewService.description}</span>
+                  </div>
+                )}
+              </div>
+              <div className="service-actions-buttons">
+                <button
+                  className="action-button add-beneficiaries-btn"
+                  onClick={() => {
+                    setShowBeneficiariesForm(true);
+                  }}
+                >
+                  <UserPlus size={18} />
+                  <span>ADD BENEFICIARY</span>
+                </button>
+                <button
+                  className="action-button print-btn"
+                  onClick={handlePrint}
+                  disabled={viewBeneficiaries.length === 0}
+                >
+                  <Printer size={18} />
+                  <span>PRINT</span>
+                </button>
+                <button
+                  className="action-button export-excel-btn"
+                  onClick={handleExportExcel}
+                  disabled={viewBeneficiaries.length === 0}
+                >
+                  <FileSpreadsheet size={18} />
+                  <span>EXPORT EXCEL</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="beneficiaries-list-card">
+              <h3 className="card-title">Beneficiaries</h3>
+              {loadingBeneficiaries ? (
+                <div className="loading-state">Loading beneficiaries...</div>
+              ) : viewBeneficiaries.length === 0 ? (
+                <div className="empty-state">No beneficiaries for this service.</div>
+              ) : (
+                <div className="beneficiaries-table-container">
+                  <table className="beneficiaries-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewBeneficiaries.map((beneficiary) => (
+                        <tr key={beneficiary.id}>
+                          <td>{getResidentFullName(beneficiary)}</td>
+                          <td>
+                            <button
+                              className="action-btn delete-btn"
+                              onClick={() => handleRemoveBeneficiary(beneficiary.id)}
+                              title="Remove"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {showForm && (
         <ServiceForm
@@ -492,146 +708,19 @@ function Services() {
           onClose={() => {
             setShowForm(false);
             setSelectedService(null);
-            setShowAddBeneficiaries(false);
           }}
           onSuccess={handleFormSuccess}
         />
       )}
 
-      {showAddBeneficiaries && selectedService && (
-        <ServiceForm
-          service={selectedService}
-          serviceId={selectedService.id}
-          mode="add-beneficiaries"
+      {showBeneficiariesForm && viewService && (
+        <BeneficiariesForm
+          serviceId={viewService.id}
           onClose={() => {
-            setShowAddBeneficiaries(false);
-            setSelectedService(null);
-            if (viewService) {
-              fetchBeneficiaries(viewService.id);
-            }
+            setShowBeneficiariesForm(false);
           }}
-          onSuccess={() => {
-            if (viewService) {
-              fetchBeneficiaries(viewService.id);
-            }
-          }}
+          onSuccess={handleFormSuccess}
         />
-      )}
-
-      {viewService && (
-        <div className="view-modal-overlay">
-          <div className="view-modal-container">
-            <div className="view-modal">
-              <div className="view-modal-header">
-                <h2 className="view-modal-title">Service Details</h2>
-                <button className="view-modal-close" onClick={() => {
-                  setViewService(null);
-                  setViewBeneficiaries([]);
-                }}>
-                  <X size={24} />
-                </button>
-              </div>
-              <div className="view-modal-content-wrapper">
-                <div className="view-modal-left">
-                  <div className="service-details-card">
-                    <div className="detail-row">
-                      <span className="detail-label">Service Name:</span>
-                      <span className="detail-value">{viewService.service_name}</span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Status:</span>
-                      <span 
-                        className="detail-value"
-                        style={{ 
-                          color: getStatusColor(viewService.status),
-                          fontWeight: 600
-                        }}
-                      >
-                        {getStatusLabel(viewService.status)}
-                      </span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Location:</span>
-                      <span className="detail-value">{viewService.location}</span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Date:</span>
-                      <span className="detail-value">{formatDateOnly(viewService.date)}</span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Time:</span>
-                      <span className="detail-value">{formatTime(viewService.time)}</span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Description:</span>
-                      <span className="detail-value">{viewService.description}</span>
-                    </div>
-                    <div className="detail-row">
-                      <span className="detail-label">Created:</span>
-                      <span className="detail-value">{formatDate(viewService.created_at)}</span>
-                    </div>
-                    {viewService.updated_at && viewService.updated_at !== viewService.created_at && (
-                      <div className="detail-row">
-                        <span className="detail-label">Last Updated:</span>
-                        <span className="detail-value">{formatDate(viewService.updated_at)}</span>
-                      </div>
-                    )}
-                    <div className="service-actions">
-                      <button
-                        className="action-button add-beneficiaries-btn"
-                        onClick={() => {
-                          setShowAddBeneficiaries(true);
-                          setSelectedService(viewService);
-                        }}
-                      >
-                        <Users size={18} />
-                        <span>Add Beneficiaries</span>
-                      </button>
-                      <button
-                        className="action-button export-pdf-btn"
-                        onClick={handleExportPDF}
-                        disabled={viewBeneficiaries.length === 0}
-                      >
-                        <FileText size={18} />
-                        <span>Export PDF</span>
-                      </button>
-                      <button
-                        className="action-button export-excel-btn"
-                        onClick={handleExportExcel}
-                        disabled={viewBeneficiaries.length === 0}
-                      >
-                        <Download size={18} />
-                        <span>Export Excel</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="beneficiaries-card">
-                    <h3 className="beneficiaries-card-title">Beneficiaries</h3>
-                    {loadingBeneficiaries ? (
-                      <div className="loading-state">Loading beneficiaries...</div>
-                    ) : viewBeneficiaries.length === 0 ? (
-                      <div className="empty-beneficiaries">No beneficiaries added yet.</div>
-                    ) : (
-                      <div className="beneficiaries-list">
-                        {viewBeneficiaries.map((beneficiary) => (
-                          <div key={beneficiary.id} className="beneficiary-item">
-                            <div className="beneficiary-info">
-                              <div className="beneficiary-name">{getFullName(beneficiary)}</div>
-                              {beneficiary.contact_no && (
-                                <div className="beneficiary-contact">{beneficiary.contact_no}</div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       )}
 
       {deleteService && (
@@ -639,7 +728,7 @@ function Services() {
           <div className="delete-modal">
             <h3 className="delete-modal-title">Confirm Delete</h3>
             <p className="delete-modal-message">
-              Are you sure you want to delete service "{deleteService.service_name}"? This action cannot be undone.
+              Are you sure you want to delete service "{deleteService.service_name}"? This action cannot be undone and will also remove all associated beneficiaries.
             </p>
             <div className="delete-modal-actions">
               <button className="delete-modal-cancel" onClick={() => setDeleteService(null)}>
@@ -665,4 +754,3 @@ function Services() {
 }
 
 export default Services;
-

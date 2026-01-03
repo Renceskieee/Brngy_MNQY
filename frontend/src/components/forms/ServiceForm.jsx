@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, Info, Plus, Trash2 } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import Messages from '../shared/Messages';
 import '../../assets/style/ServiceForm.css';
 
 const API_URL = '/api';
 
-function ServiceForm({ onClose, service = null, serviceId = null, mode = 'service', onSuccess }) {
+function ServiceForm({ onClose, service = null, onSuccess }) {
   const [formData, setFormData] = useState({
     service_name: '',
     location: '',
@@ -18,16 +18,9 @@ function ServiceForm({ onClose, service = null, serviceId = null, mode = 'servic
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [availableResidents, setAvailableResidents] = useState([]);
-  const [selectedResident, setSelectedResident] = useState('');
-  const [loadingResidents, setLoadingResidents] = useState(false);
-  const [beneficiaries, setBeneficiaries] = useState([]);
-  const [loadingBeneficiaries, setLoadingBeneficiaries] = useState(false);
-
-  const isAddBeneficiariesMode = mode === 'add-beneficiaries' && (serviceId || service?.id);
 
   useEffect(() => {
-    if (service && !isAddBeneficiariesMode) {
+    if (service) {
       const formatDateForInput = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -51,43 +44,7 @@ function ServiceForm({ onClose, service = null, serviceId = null, mode = 'servic
         description: service.description || ''
       });
     }
-  }, [service, isAddBeneficiariesMode]);
-
-  useEffect(() => {
-    if (isAddBeneficiariesMode) {
-      fetchAvailableResidents();
-      fetchBeneficiaries();
-    }
-  }, [isAddBeneficiariesMode, serviceId, service]);
-
-  const fetchAvailableResidents = async () => {
-    setLoadingResidents(true);
-    try {
-      const response = await axios.get(`${API_URL}/residents`);
-      if (response.data.success) {
-        setAvailableResidents(response.data.residents);
-      }
-    } catch (error) {
-      console.error('Error fetching residents:', error);
-    } finally {
-      setLoadingResidents(false);
-    }
-  };
-
-  const fetchBeneficiaries = async () => {
-    setLoadingBeneficiaries(true);
-    try {
-      const id = serviceId || service?.id;
-      const response = await axios.get(`${API_URL}/services/${id}/beneficiaries`);
-      if (response.data.success) {
-        setBeneficiaries(response.data.beneficiaries);
-      }
-    } catch (error) {
-      console.error('Error fetching beneficiaries:', error);
-    } finally {
-      setLoadingBeneficiaries(false);
-    }
-  };
+  }, [service]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -106,30 +63,24 @@ function ServiceForm({ onClose, service = null, serviceId = null, mode = 'servic
   const validateForm = () => {
     const newErrors = {};
 
-    if (!isAddBeneficiariesMode) {
-      if (!formData.service_name.trim()) {
-        newErrors.service_name = 'Service name is required';
-      }
+    if (!formData.service_name.trim()) {
+      newErrors.service_name = 'Service name is required';
+    }
 
-      if (!formData.location.trim()) {
-        newErrors.location = 'Location is required';
-      }
+    if (!formData.location.trim()) {
+      newErrors.location = 'Location is required';
+    }
 
-      if (!formData.date) {
-        newErrors.date = 'Date is required';
-      }
+    if (!formData.date) {
+      newErrors.date = 'Date is required';
+    }
 
-      if (!formData.time) {
-        newErrors.time = 'Time is required';
-      }
+    if (!formData.time) {
+      newErrors.time = 'Time is required';
+    }
 
-      if (!formData.description.trim()) {
-        newErrors.description = 'Description is required';
-      }
-    } else {
-      if (!selectedResident) {
-        newErrors.selectedResident = 'Please select a resident';
-      }
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
     }
 
     setErrors(newErrors);
@@ -148,196 +99,49 @@ function ServiceForm({ onClose, service = null, serviceId = null, mode = 'servic
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const requestData = {
+        service_name: formData.service_name,
+        location: formData.location,
+        date: formData.date,
+        time: formData.time,
+        status: formData.status,
+        description: formData.description,
+        userId: user.id
+      };
 
-      if (isAddBeneficiariesMode) {
-        const id = serviceId || service?.id;
-        const response = await axios.post(`${API_URL}/services/${id}/beneficiaries`, {
-          resident_id: selectedResident
-        });
-
-        if (response.data.success) {
-          setMessage({ text: 'Beneficiary added successfully', type: 'success' });
-          setSelectedResident('');
-          fetchBeneficiaries();
-          fetchAvailableResidents();
-          setTimeout(() => {
-            setMessage({ text: '', type: '' });
-          }, 2000);
-        }
+      let response;
+      if (service) {
+        response = await axios.put(`${API_URL}/services/${service.id}`, requestData);
       } else {
-        const requestData = {
-          service_name: formData.service_name,
-          location: formData.location,
-          date: formData.date,
-          time: formData.time,
-          status: formData.status,
-          description: formData.description,
-          userId: user.id
-        };
+        response = await axios.post(`${API_URL}/services`, requestData);
+      }
 
-        let response;
-        if (service) {
-          response = await axios.put(`${API_URL}/services/${service.id}`, requestData);
-        } else {
-          response = await axios.post(`${API_URL}/services`, requestData);
-        }
-
-        if (response.data.success) {
-          setMessage({ 
-            text: service ? 'Service updated successfully' : 'Service created successfully', 
-            type: 'success' 
-          });
-          
-          setTimeout(() => {
-            if (onSuccess) {
-              onSuccess(response.data.service || response.data.serviceId);
-            }
-          }, 500);
-          
-          setTimeout(() => {
-            setMessage({ text: '', type: '' });
-            if (!service) {
-              onClose();
-            }
-          }, 2000);
-        }
+      if (response.data.success) {
+        setMessage({ 
+          text: service ? 'Service updated successfully' : 'Service created successfully', 
+          type: 'success' 
+        });
+        
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess(response.data.service || response.data.serviceId);
+          }
+        }, 500);
+        
+        setTimeout(() => {
+          setMessage({ text: '', type: '' });
+          onClose();
+        }, 2000);
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || 
-        (isAddBeneficiariesMode ? 'Failed to add beneficiary' : 
-         (service ? 'Failed to update service' : 'Failed to create service'));
+        (service ? 'Failed to update service' : 'Failed to create service');
       setErrors({ submit: errorMessage });
       setMessage({ text: errorMessage, type: 'error' });
     } finally {
       setLoading(false);
     }
   };
-
-  const handleRemoveBeneficiary = async (beneficiaryId) => {
-    try {
-      const id = serviceId || service?.id;
-      const response = await axios.delete(`${API_URL}/services/${id}/beneficiaries/${beneficiaryId}`);
-      if (response.data.success) {
-        setMessage({ text: 'Beneficiary removed successfully', type: 'success' });
-        fetchBeneficiaries();
-        fetchAvailableResidents();
-        setTimeout(() => {
-          setMessage({ text: '', type: '' });
-        }, 2000);
-      }
-    } catch (error) {
-      setMessage({ text: error.response?.data?.message || 'Failed to remove beneficiary', type: 'error' });
-    }
-  };
-
-  const getFullName = (resident) => {
-    const suffix = resident.suffix && resident.suffix !== 'NA' ? ` ${resident.suffix}` : '';
-    const mName = resident.m_name ? ` ${resident.m_name}` : '';
-    return `${resident.l_name}, ${resident.f_name}${mName}${suffix}`;
-  };
-
-  const getAvailableResidentsForSelect = () => {
-    const usedResidentIds = beneficiaries.map(b => b.resident_id);
-    return availableResidents.filter(r => !usedResidentIds.includes(r.id));
-  };
-
-  if (isAddBeneficiariesMode) {
-    return (
-      <div className="service-form-overlay">
-        <div className="service-form-modal">
-          <div className="service-form-header">
-            <div className="service-form-title-row">
-              <h2 className="service-form-title">Add Beneficiaries</h2>
-            </div>
-            <button className="service-form-close" onClick={onClose}>
-              <X size={24} />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="service-form">
-            <div className="form-group">
-              <label htmlFor="selectedResident" className="form-label">Select Resident *</label>
-              <select
-                id="selectedResident"
-                value={selectedResident}
-                onChange={(e) => {
-                  setSelectedResident(e.target.value);
-                  if (errors.selectedResident) {
-                    setErrors(prev => ({ ...prev, selectedResident: '' }));
-                  }
-                }}
-                className={`form-select form-select-tight ${errors.selectedResident ? 'error' : ''}`}
-                disabled={loadingResidents}
-              >
-                <option value="">Select resident</option>
-                {getAvailableResidentsForSelect().map(resident => (
-                  <option key={resident.id} value={resident.id}>
-                    {getFullName(resident)}
-                  </option>
-                ))}
-              </select>
-              {errors.selectedResident && <span className="error-message">{errors.selectedResident}</span>}
-            </div>
-
-            {loadingBeneficiaries ? (
-              <div className="loading-state">Loading beneficiaries...</div>
-            ) : beneficiaries.length > 0 ? (
-              <div className="beneficiaries-list">
-                <h3 className="beneficiaries-title">Current Beneficiaries</h3>
-                {beneficiaries.map((beneficiary) => (
-                  <div key={beneficiary.id} className="beneficiary-item">
-                    <span>{getFullName(beneficiary)}</span>
-                    <button
-                      type="button"
-                      className="remove-beneficiary-btn"
-                      onClick={() => handleRemoveBeneficiary(beneficiary.id)}
-                      title="Remove"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="no-beneficiaries">No beneficiaries added yet.</div>
-            )}
-
-            {errors.submit && (
-              <div className="submit-error">
-                <span>{errors.submit}</span>
-                <Info size={18} />
-              </div>
-            )}
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="cancel-button"
-                onClick={onClose}
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                className="service-form-button"
-                disabled={loading || loadingResidents}
-              >
-                {loading ? 'Adding...' : 'Add Beneficiary'}
-              </button>
-            </div>
-          </form>
-
-          {message.text && (
-            <Messages
-              message={message.text}
-              type={message.type}
-              onClose={() => setMessage({ text: '', type: '' })}
-            />
-          )}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="service-form-overlay">

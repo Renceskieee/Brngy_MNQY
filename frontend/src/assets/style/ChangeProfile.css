@@ -169,12 +169,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 9999;
   backdrop-filter: blur(4px);
 }
 
 .delete-confirm-modal {
   background: white;
+  position: relative;
+  z-index: 10000;
   border-radius: 12px;
   padding: 30px;
   max-width: 400px;

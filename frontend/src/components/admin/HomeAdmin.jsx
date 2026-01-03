@@ -121,8 +121,25 @@ function HomeAdmin() {
     let action = '';
     let entityType = '';
     let entityValue = '';
+    let isServiceBeneficiary = false;
+    let residentName = '';
+    let serviceName = '';
 
-    if (activity.incident_reference_number) {
+    if (activity.description.includes('as beneficiary to service:') || activity.description.includes('from service beneficiaries:')) {
+      isServiceBeneficiary = true;
+      const addedMatch = activity.description.match(/Added resident (.+?) as beneficiary to service: (.+)/);
+      const removedMatch = activity.description.match(/Removed resident (.+?) from service beneficiaries: (.+)/);
+      
+      if (addedMatch) {
+        residentName = addedMatch[1].trim();
+        serviceName = addedMatch[2].trim();
+        action = 'added';
+      } else if (removedMatch) {
+        residentName = removedMatch[1].trim();
+        serviceName = removedMatch[2].trim();
+        action = 'removed';
+      }
+    } else if (activity.incident_reference_number) {
       entityType = 'Incident';
       entityValue = activity.incident_reference_number;
       if (activity.description.includes('Added new incident:')) {
@@ -166,15 +183,34 @@ function HomeAdmin() {
       }
     }
 
+    if (isServiceBeneficiary && action && residentName && serviceName) {
+      return {
+        description: (
+          <>
+            <strong>{userName}</strong> {action} {residentName} from service beneficiaries.
+          </>
+        ),
+        entityLine: `Service: ${serviceName}`
+      };
+    }
+
     if (!action) {
       return {
-        description: `${userName} ${activity.description}`,
+        description: (
+          <>
+            <strong>{userName}</strong> {activity.description}
+          </>
+        ),
         entityLine: null
       };
     }
 
     return {
-      description: `${userName} ${action}.`,
+      description: (
+        <>
+          <strong>{userName}</strong> {action}.
+        </>
+      ),
       entityLine: entityType === 'Incident' 
         ? `${entityType} Reference Number: ${entityValue}`
         : `${entityType}: ${entityValue}`

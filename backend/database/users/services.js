@@ -3,11 +3,34 @@ const history = require('./history');
 
 const getAllServices = async (req, res) => {
   try {
-    const [services] = await pool.execute(
-      `SELECT id, service_name, location, date, time, status, description, created_at, updated_at 
-       FROM services 
-       ORDER BY date DESC, time DESC`
-    );
+    const { status, month, year } = req.query;
+    let query = `
+      SELECT s.id, s.service_name, s.location, s.date, s.time, s.status, s.description, s.created_at, s.updated_at,
+      COUNT(sb.id) AS beneficiaries_count
+      FROM services s
+      LEFT JOIN service_beneficiaries sb ON s.id = sb.service_id
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (status && status !== 'all') {
+      query += ' AND s.status = ?';
+      params.push(status);
+    }
+
+    if (month && month !== 'all') {
+      query += ' AND MONTH(s.date) = ?';
+      params.push(parseInt(month));
+    }
+
+    if (year && year !== 'all') {
+      query += ' AND YEAR(s.date) = ?';
+      params.push(parseInt(year));
+    }
+
+    query += ' GROUP BY s.id ORDER BY s.date DESC, s.time DESC';
+
+    const [services] = await pool.execute(query, params);
 
     res.json({
       success: true,
@@ -59,11 +82,11 @@ const getServiceBeneficiaries = async (req, res) => {
 
     const [beneficiaries] = await pool.execute(
       `SELECT sb.id, sb.service_id, sb.resident_id, sb.added_at,
-       r.f_name, r.m_name, r.l_name, r.suffix, r.sex, r.birthdate, r.contact_no, r.email, r.address
+       r.f_name, r.m_name, r.l_name, r.suffix, r.sex, r.birthdate, r.civil_status, r.contact_no, r.email, r.address
        FROM service_beneficiaries sb
        JOIN residents r ON sb.resident_id = r.id
        WHERE sb.service_id = ?
-       ORDER BY sb.added_at DESC`,
+       ORDER BY r.l_name, r.f_name`,
       [id]
     );
 
@@ -297,7 +320,7 @@ const deleteService = async (req, res) => {
 const addBeneficiary = async (req, res) => {
   try {
     const { id } = req.params;
-    const { resident_id } = req.body;
+    const { resident_id, userId } = req.body;
 
     if (!resident_id) {
       return res.status(400).json({
@@ -307,7 +330,7 @@ const addBeneficiary = async (req, res) => {
     }
 
     const [existingService] = await pool.execute(
-      'SELECT id FROM services WHERE id = ?',
+      'SELECT id, service_name FROM services WHERE id = ?',
       [id]
     );
 
@@ -319,7 +342,7 @@ const addBeneficiary = async (req, res) => {
     }
 
     const [existingResident] = await pool.execute(
-      'SELECT id FROM residents WHERE id = ?',
+      'SELECT id, f_name, l_name FROM residents WHERE id = ?',
       [resident_id]
     );
 
@@ -347,6 +370,13 @@ const addBeneficiary = async (req, res) => {
       [id, resident_id]
     );
 
+    if (userId) {
+      const resident = existingResident[0];
+      const service = existingService[0];
+      const description = `Added resident ${resident.f_name} ${resident.l_name} as beneficiary to service: ${service.service_name}`;
+      await history.createHistory(userId, resident_id, null, description, null, id);
+    }
+
     res.json({
       success: true,
       message: 'Beneficiary added successfully'
@@ -369,9 +399,14 @@ const addBeneficiary = async (req, res) => {
 const removeBeneficiary = async (req, res) => {
   try {
     const { id, beneficiaryId } = req.params;
+    const { userId } = req.body;
 
     const [existing] = await pool.execute(
-      'SELECT id FROM service_beneficiaries WHERE id = ? AND service_id = ?',
+      `SELECT sb.id, s.service_name, r.f_name, r.l_name
+       FROM service_beneficiaries sb
+       JOIN services s ON sb.service_id = s.id
+       JOIN residents r ON sb.resident_id = r.id
+       WHERE sb.id = ? AND sb.service_id = ?`,
       [beneficiaryId, id]
     );
 
@@ -382,10 +417,17 @@ const removeBeneficiary = async (req, res) => {
       });
     }
 
+    const beneficiary = existing[0];
+
     await pool.execute(
       'DELETE FROM service_beneficiaries WHERE id = ?',
       [beneficiaryId]
     );
+
+    if (userId) {
+      const description = `Removed resident ${beneficiary.f_name} ${beneficiary.l_name} from service beneficiaries: ${beneficiary.service_name}`;
+      await history.createHistory(userId, null, null, description, null, id);
+    }
 
     res.json({
       success: true,
