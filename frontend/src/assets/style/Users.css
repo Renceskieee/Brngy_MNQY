@@ -366,10 +366,20 @@
   gap: 16px;
 }
 
-.form-group {
+.edit-modal-form .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-modal-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-label {
@@ -387,6 +397,8 @@
   font-size: 14px;
   font-family: 'Poppins', sans-serif;
   transition: all 0.2s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .form-input:focus,

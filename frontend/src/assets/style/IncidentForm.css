@@ -84,10 +84,17 @@
   gap: 15px;
 }
 
-.form-row {
+.incident-form .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.incident-form .form-group {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group {
@@ -113,6 +120,8 @@
   background: #f9f9f9;
   color: #333;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .form-input:focus,

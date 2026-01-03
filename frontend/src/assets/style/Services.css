@@ -591,10 +591,6 @@
   color: white;
 }
 
-.delete-modal-confirm:hover {
-  opacity: 0.9;
-}
-
 .pagination {
   display: flex;
   align-items: center;

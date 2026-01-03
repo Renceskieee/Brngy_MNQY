@@ -186,6 +186,10 @@
   color: #333;
 }
 
+.logout-modal-cancel:hover {
+  background: #d1d5db;
+}
+
 .logout-modal-confirm {
   background: var(--button-color, #dc2626);
   color: white;

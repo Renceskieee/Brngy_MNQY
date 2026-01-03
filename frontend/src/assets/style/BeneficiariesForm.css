@@ -251,7 +251,7 @@
 }
 
 .beneficiaries-form-button {
-  padding: 14px;
+  padding: 10px 20px;
   background: var(--button-color, #dc2626);
   color: white;
   border: none;
