@@ -43,6 +43,11 @@
   transition: all 0.3s ease;
 }
 
+.profile-option-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
 
 .profile-option-icon {
   margin-bottom: 15px;
