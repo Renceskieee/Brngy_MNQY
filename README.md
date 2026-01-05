@@ -1,4 +1,4 @@
-# BrngySystem MNQY — SK Barangay Information System
+# SK Barangay Information System
 
 ## System Overview
 
@@ -109,22 +109,26 @@ These visual insights help administrators quickly assess the current status of t
 * **Frontend:** React + Vite
 * **Backend:** Node.js with Express
 * **Database:** Centralized configuration via backend config files
-* **Uploads & Images:**
-
-  * System screenshots: `images/`
-  * Personalization images: `backend/uploads/personalisation/images`
 
 ---
 
-## Screenshots
+## User Interface
+
+### Login Screen
+
+![Login](images/Login.jpg)
 
 ### Dashboard Overview
 
 ![Dashboard Overview](images/Dashboard.png)
 
-### Login Screen
+### Recent Activities
 
-![Login](images/Login.jpg)
+![Recent Activities](images/Dashboard2.png)
+
+### Settings
+
+![Settings](images/Settings.png)
 
 ---
 
