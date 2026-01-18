@@ -460,6 +460,22 @@
   cursor: not-allowed;
 }
 
+.send-email-btn {
+  background: #8b5cf6;
+  color: white;
+  border-color: #8b5cf6;
+}
+
+.send-email-btn:hover:not(:disabled) {
+  background: #7c3aed;
+  border-color: #7c3aed;
+}
+
+.send-email-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .beneficiaries-table-container {
   overflow-x: auto;
 }

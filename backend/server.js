@@ -15,6 +15,7 @@ const incidents = require('./database/users/incidents');
 const timeLog = require('./database/users/time_log');
 const usersAccount = require('./database/users/usersAccount');
 const services = require('./database/users/services');
+const emailBenef = require('./database/users/emailBenef');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -93,6 +94,7 @@ app.put('/api/services/:id', services.updateService);
 app.delete('/api/services/:id', services.deleteService);
 app.post('/api/services/:id/beneficiaries', services.addBeneficiary);
 app.delete('/api/services/:id/beneficiaries/:beneficiaryId', services.removeBeneficiary);
+app.post('/api/services/:id/send-email', emailBenef.sendEmailToBeneficiaries);
 
 app.use((err, req, res, next) => {
   console.error('Error:', err);

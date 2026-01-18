@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Eye, Edit, Trash2, Search, X, ChevronLeft, ChevronRight, Printer, FileSpreadsheet, UserPlus } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Search, X, ChevronLeft, ChevronRight, Printer, FileSpreadsheet, UserPlus, Mail } from 'lucide-react';
 import ServiceForm from '../forms/ServiceForm';
 import BeneficiariesForm from '../forms/BeneficiariesForm';
+import BeneficiariesEmail from '../modals/BeneficiariesEmail';
 import Messages from '../shared/Messages';
 import '../../assets/style/Services.css';
 import * as XLSX from 'xlsx';
@@ -19,6 +20,7 @@ function Services() {
   const [yearFilter, setYearFilter] = useState('all');
   const [showForm, setShowForm] = useState(false);
   const [showBeneficiariesForm, setShowBeneficiariesForm] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [viewService, setViewService] = useState(null);
   const [viewBeneficiaries, setViewBeneficiaries] = useState([]);
@@ -660,6 +662,14 @@ function Services() {
                   <FileSpreadsheet size={18} />
                   <span>EXPORT EXCEL</span>
                 </button>
+                <button
+                  className="action-button send-email-btn"
+                  onClick={() => setShowEmailModal(true)}
+                  disabled={viewBeneficiaries.length === 0}
+                >
+                  <Mail size={18} />
+                  <span>SEND EMAIL</span>
+                </button>
               </div>
             </div>
 
@@ -718,6 +728,16 @@ function Services() {
           serviceId={viewService.id}
           onClose={() => {
             setShowBeneficiariesForm(false);
+          }}
+          onSuccess={handleFormSuccess}
+        />
+      )}
+
+      {showEmailModal && viewService && (
+        <BeneficiariesEmail
+          service={viewService}
+          onClose={() => {
+            setShowEmailModal(false);
           }}
           onSuccess={handleFormSuccess}
         />
