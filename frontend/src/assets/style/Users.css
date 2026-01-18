@@ -157,8 +157,8 @@
   background: #10b981;
 }
 
-.status-dot.inactive {
-  background: #9ca3af;
+.status-dot.deactivated {
+  background: #991B1B;
 }
 
 .status-text {
@@ -354,9 +354,9 @@
   color: #065f46;
 }
 
-.status-badge.inactive {
-  background: #f3f4f6;
-  color: #6b7280;
+.status-badge.deactivated {
+  background: #FEE2E2;
+  color: #991B1B;
 }
 
 .edit-modal-form,

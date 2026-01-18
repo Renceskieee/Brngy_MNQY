@@ -196,7 +196,7 @@ function Users() {
                     </td>
                     <td>
                       <div className="status-indicator">
-                        <span className={`status-dot ${user.status === 'active' ? 'active' : 'inactive'}`}></span>
+                        <span className={`status-dot ${user.status === 'active' ? 'active' : 'deactivated'}`}></span>
                       </div>
                     </td>
                     <td>
@@ -294,8 +294,8 @@ function Users() {
               <div className="detail-row">
                 <span className="detail-label">Status:</span>
                 <span className="detail-value">
-                  <span className={`status-badge ${viewUser.status === 'active' ? 'active' : 'inactive'}`}>
-                    {viewUser.status === 'active' ? 'Active' : 'Inactive'}
+                  <span className={`status-badge ${viewUser.status === 'active' ? 'active' : 'deactivated'}`}>
+                    {viewUser.status === 'active' ? 'Active' : 'Deactivated'}
                   </span>
                 </span>
               </div>
@@ -404,7 +404,7 @@ function Users() {
                     required
                   >
                     <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+                    <option value="deactivated">Deactivated</option>
                   </select>
                 </div>
               </div>
