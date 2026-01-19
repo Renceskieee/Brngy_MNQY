@@ -64,6 +64,13 @@ function RecentActivities({ onClose }) {
         serviceName = removedMatch[2].trim();
         action = 'removed';
       }
+    } else if (activity.description.includes('sent emails to beneficiaries of service:')) {
+      entityType = 'Service';
+      const match = activity.description.match(/sent emails to beneficiaries of service: (.+)/);
+      if (match) {
+        entityValue = match[1].trim();
+        action = 'sent emails to beneficiaries';
+      }
     } else if (activity.incident_reference_number) {
       entityType = 'Incident';
       entityValue = activity.incident_reference_number;

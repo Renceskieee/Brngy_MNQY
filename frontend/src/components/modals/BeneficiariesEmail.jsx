@@ -56,11 +56,13 @@ function BeneficiariesEmail({ service, onClose, onSuccess }) {
     setErrors({});
 
     try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
       const response = await axios.post(
         `${API_URL}/services/${service.id}/send-email`,
         {
           subject: subject.trim(),
-          message: message.trim()
+          message: message.trim(),
+          userId: user.id
         }
       );
 

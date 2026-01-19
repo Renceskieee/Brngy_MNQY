@@ -37,14 +37,43 @@ function Home() {
     married: 0,
     widowed: 0,
     separated: 0,
-    annulled: 0
+    annulled: 0,
+    divorced: 0,
+    'live-in': 0,
+    unknown: 0
   });
+  const [educationDistribution, setEducationDistribution] = useState({});
+  const [employmentDistribution, setEmploymentDistribution] = useState({});
+  const [youthClassificationDistribution, setYouthClassificationDistribution] = useState({});
   const [loading, setLoading] = useState(true);
   const [showActivitiesModal, setShowActivitiesModal] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const calculateAge = (birthdate) => {
+    if (!birthdate) return null;
+    const today = new Date();
+    const birth = new Date(birthdate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const getAgeGroup = (age) => {
+    if (age === null) return null;
+    if (age < 18) return 'Under 18';
+    if (age < 25) return '18-24';
+    if (age < 35) return '25-34';
+    if (age < 45) return '35-44';
+    if (age < 55) return '45-54';
+    if (age < 65) return '55-64';
+    return 'Above 65';
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -91,9 +120,73 @@ function Home() {
           married: residents.filter(r => r.civil_status === 'married').length,
           widowed: residents.filter(r => r.civil_status === 'widowed').length,
           separated: residents.filter(r => r.civil_status === 'separated').length,
-          annulled: residents.filter(r => r.civil_status === 'annulled').length
+          annulled: residents.filter(r => r.civil_status === 'annulled').length,
+          divorced: residents.filter(r => r.civil_status === 'divorced').length,
+          'live-in': residents.filter(r => r.civil_status === 'live-in').length,
+          unknown: residents.filter(r => r.civil_status === 'unknown').length
         };
         setCivilStatusDistribution(civilDist);
+
+        const educDist = {};
+        residents.forEach(r => {
+          if (r.educ_background) {
+            educDist[r.educ_background] = (educDist[r.educ_background] || 0) + 1;
+          }
+        });
+        setEducationDistribution(educDist);
+
+        const empDist = {};
+        const ageGroups = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', 'Above 65'];
+        ageGroups.forEach(group => {
+          empDist[group] = {
+            'Employed': 0,
+            'Unemployed': 0,
+            'Self-Employed': 0,
+            'Currently looking for a job': 0,
+            'Not interested looking for a job': 0,
+            'No Data': 0
+          };
+        });
+
+        residents.forEach(r => {
+          const age = calculateAge(r.birthdate);
+          const ageGroup = getAgeGroup(age);
+          if (ageGroup) {
+            const workStatus = r.work_status || 'No Data';
+            if (empDist[ageGroup]) {
+              empDist[ageGroup][workStatus] = (empDist[ageGroup][workStatus] || 0) + 1;
+            }
+          }
+        });
+        setEmploymentDistribution(empDist);
+
+        const youthDist = {};
+        const educLevels = ['Elementary Level', 'Elementary Graduate', 'High School Level', 'High School Graduate', 'Vocational Graduate', 'College Level', 'College Graduate', 'Masters Level', 'Masters Graduate', 'Doctorate Level', 'Doctorate Graduate'];
+        educLevels.forEach(level => {
+          youthDist[level] = {
+            'In School Youth': 0,
+            'Out of School Youth': 0,
+            'Working Youth': 0,
+            'Youth w/ Specific Needs': 0,
+            'Indigenous People': 0,
+            'Children In Conflict w/ Law': 0,
+            'Person w/ Disability': 0,
+            'No Classification': 0
+          };
+        });
+
+        residents.forEach(r => {
+          if (r.educ_background && r.youth_classification) {
+            if (youthDist[r.educ_background]) {
+              youthDist[r.educ_background][r.youth_classification] = (youthDist[r.educ_background][r.youth_classification] || 0) + 1;
+            }
+          } else if (r.educ_background) {
+            if (youthDist[r.educ_background]) {
+              youthDist[r.educ_background]['No Classification'] = (youthDist[r.educ_background]['No Classification'] || 0) + 1;
+            }
+          }
+        });
+        setYouthClassificationDistribution(youthDist);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -138,6 +231,20 @@ function Home() {
         residentName = removedMatch[1].trim();
         serviceName = removedMatch[2].trim();
         action = 'removed';
+      }
+    } else if (activity.description.includes('sent emails to beneficiaries of service:')) {
+      entityType = 'Service';
+      const match = activity.description.match(/sent emails to beneficiaries of service: (.+)/);
+      if (match) {
+        entityValue = match[1].trim();
+        return {
+          description: (
+            <>
+              <strong>{userName}</strong> initiated email distribution to beneficiaries of the <strong>{entityValue}</strong>.
+            </>
+          ),
+          entityLine: null
+        };
       }
     } else if (activity.incident_reference_number) {
       entityType = 'Incident';
@@ -235,7 +342,7 @@ function Home() {
   };
 
   const civilStatusChartData = {
-    labels: ['Single', 'Married', 'Widowed', 'Separated', 'Annulled'],
+    labels: ['Single', 'Married', 'Widowed', 'Separated', 'Annulled', 'Divorced', 'Live-in', 'Unknown'],
     datasets: [
       {
         label: 'Residents',
@@ -244,11 +351,99 @@ function Home() {
           civilStatusDistribution.married,
           civilStatusDistribution.widowed,
           civilStatusDistribution.separated,
-          civilStatusDistribution.annulled
+          civilStatusDistribution.annulled,
+          civilStatusDistribution.divorced,
+          civilStatusDistribution['live-in'],
+          civilStatusDistribution.unknown
         ],
-        backgroundColor: ['#3F9AAE', '#79C9C5', '#FFE2AF', '#F96E5B', '#88B0B9'],
-        borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
+        backgroundColor: ['#3F9AAE', '#79C9C5', '#FFE2AF', '#F96E5B', '#88B0B9', '#A8DADC', '#F4A261', '#E9C46A'],
+        borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
         borderWidth: 2
+      }
+    ]
+  };
+
+  const educationChartData = {
+    labels: Object.keys(educationDistribution),
+    datasets: [
+      {
+        label: 'Residents',
+        data: Object.values(educationDistribution),
+        backgroundColor: '#3F9AAE',
+        borderColor: '#ffffff',
+        borderWidth: 2
+      }
+    ]
+  };
+
+  const employmentChartData = {
+    labels: Object.keys(employmentDistribution),
+    datasets: [
+      {
+        label: 'Employed',
+        data: Object.keys(employmentDistribution).map(age => employmentDistribution[age]['Employed'] || 0),
+        backgroundColor: '#3F9AAE'
+      },
+      {
+        label: 'Unemployed',
+        data: Object.keys(employmentDistribution).map(age => employmentDistribution[age]['Unemployed'] || 0),
+        backgroundColor: '#F96E5B'
+      },
+      {
+        label: 'Self-Employed',
+        data: Object.keys(employmentDistribution).map(age => employmentDistribution[age]['Self-Employed'] || 0),
+        backgroundColor: '#79C9C5'
+      },
+      {
+        label: 'Currently looking for a job',
+        data: Object.keys(employmentDistribution).map(age => employmentDistribution[age]['Currently looking for a job'] || 0),
+        backgroundColor: '#FFE2AF'
+      },
+      {
+        label: 'Not interested looking for a job',
+        data: Object.keys(employmentDistribution).map(age => employmentDistribution[age]['Not interested looking for a job'] || 0),
+        backgroundColor: '#88B0B9'
+      }
+    ]
+  };
+
+  const youthClassificationChartData = {
+    labels: Object.keys(youthClassificationDistribution),
+    datasets: [
+      {
+        label: 'In School Youth',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['In School Youth'] || 0),
+        backgroundColor: '#3F9AAE'
+      },
+      {
+        label: 'Out of School Youth',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Out of School Youth'] || 0),
+        backgroundColor: '#F96E5B'
+      },
+      {
+        label: 'Working Youth',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Working Youth'] || 0),
+        backgroundColor: '#79C9C5'
+      },
+      {
+        label: 'Youth w/ Specific Needs',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Youth w/ Specific Needs'] || 0),
+        backgroundColor: '#FFE2AF'
+      },
+      {
+        label: 'Indigenous People',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Indigenous People'] || 0),
+        backgroundColor: '#88B0B9'
+      },
+      {
+        label: 'Children In Conflict w/ Law',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Children In Conflict w/ Law'] || 0),
+        backgroundColor: '#A8DADC'
+      },
+      {
+        label: 'Person w/ Disability',
+        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Person w/ Disability'] || 0),
+        backgroundColor: '#F4A261'
       }
     ]
   };
@@ -325,6 +520,130 @@ function Home() {
     }
   };
 
+  const verticalBarChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            return `${context.parsed.y} residents`;
+          }
+        },
+        font: {
+          family: 'Poppins'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            family: 'Poppins'
+          }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          font: {
+            family: 'Poppins'
+          },
+          stepSize: 1
+        }
+      }
+    }
+  };
+
+  const stackedBarChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 10,
+          font: {
+            family: 'Poppins',
+            size: 12
+          }
+        }
+      },
+      tooltip: {
+        font: {
+          family: 'Poppins'
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          font: {
+            family: 'Poppins'
+          },
+          maxRotation: 0,
+          minRotation: 0
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        ticks: {
+          font: {
+            family: 'Poppins'
+          },
+          stepSize: 1
+        }
+      }
+    }
+  };
+
+  const stackedColumnChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 10,
+          font: {
+            family: 'Poppins',
+            size: 11
+          }
+        }
+      },
+      tooltip: {
+        font: {
+          family: 'Poppins'
+        }
+      }
+    },
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          font: {
+            family: 'Poppins'
+          }
+        }
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        ticks: {
+          font: {
+            family: 'Poppins'
+          },
+          stepSize: 1
+        }
+      }
+    }
+  };
+
   return (
     <div className="home-staff">
       <div className="home-staff-content">
@@ -393,6 +712,49 @@ function Home() {
                 <div className="loading-state">Loading chart...</div>
               ) : (
                 <Bar data={civilStatusChartData} options={barChartOptions} />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="charts-section charts-section-single">
+          <div className="chart-section">
+            <h2 className="section-title">Resident Education Overview</h2>
+            <div className="chart-container chart-container-large">
+              {loading ? (
+                <div className="loading-state">Loading chart...</div>
+              ) : Object.keys(educationDistribution).length === 0 ? (
+                <div className="empty-state">No education data available</div>
+              ) : (
+                <Bar data={educationChartData} options={verticalBarChartOptions} />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="charts-section charts-section-single">
+          <div className="chart-section">
+            <h2 className="section-title">Employment Breakdown</h2>
+            <div className="chart-container chart-container-large">
+              {loading ? (
+                <div className="loading-state">Loading chart...</div>
+              ) : (
+                <Bar data={employmentChartData} options={stackedBarChartOptions} />
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="charts-section charts-section-single">
+          <div className="chart-section">
+            <h2 className="section-title">Youth Classification Overview</h2>
+            <div className="chart-container chart-container-large">
+              {loading ? (
+                <div className="loading-state">Loading chart...</div>
+              ) : Object.keys(youthClassificationDistribution).length === 0 ? (
+                <div className="empty-state">No youth classification data available</div>
+              ) : (
+                <Bar data={youthClassificationChartData} options={stackedColumnChartOptions} />
               )}
             </div>
           </div>

@@ -1,5 +1,6 @@
 const pool = require('../config');
 const nodemailer = require('nodemailer');
+const history = require('./history');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
@@ -136,6 +137,12 @@ const sendEmailToBeneficiaries = async (req, res) => {
           error: error.message
         });
       }
+    }
+
+    const userId = req.body.userId || req.user?.userId || null;
+    if (userId && service) {
+      const description = `Sent emails to beneficiaries of service: ${service.service_name}`;
+      await history.createHistory(userId, null, null, description, null, service.id);
     }
 
     res.json({

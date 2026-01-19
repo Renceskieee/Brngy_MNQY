@@ -40,6 +40,14 @@
   gap: 20px;
 }
 
+.charts-section-single {
+  grid-template-columns: 1fr;
+}
+
+.chart-container-large {
+  height: 400px;
+}
+
 .stat-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
