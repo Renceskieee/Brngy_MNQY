@@ -59,6 +59,18 @@ function Residents() {
     }
   };
 
+  const calculateAge = (birthdate) => {
+    if (!birthdate) return null;
+    const today = new Date();
+    const birth = new Date(birthdate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -268,6 +280,22 @@ function Residents() {
               </button>
             </div>
             <div className="view-modal-content">
+              {viewResident.profile && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+                  <img 
+                    src={viewResident.profile.startsWith('/uploads/') ? viewResident.profile : `/uploads/residents/${viewResident.profile}`}
+                    alt="Profile" 
+                    style={{
+                      width: '150px',
+                      height: '150px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '4px solid #e5e7eb',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                  />
+                </div>
+              )}
               <div className="detail-row">
                 <span className="detail-label">Full Name:</span>
                 <span className="detail-value">{getFullName(viewResident)}</span>
@@ -277,6 +305,14 @@ function Residents() {
                 <span className="detail-value">{viewResident.sex ? viewResident.sex.charAt(0).toUpperCase() + viewResident.sex.slice(1) : 'N/A'}</span>
               </div>
               <div className="detail-row">
+                <span className="detail-label">Age:</span>
+                <span className="detail-value">
+                  {calculateAge(viewResident.birthdate) !== null 
+                    ? `${calculateAge(viewResident.birthdate)} years old` 
+                    : 'N/A'}
+                </span>
+              </div>
+              <div className="detail-row">
                 <span className="detail-label">Birthdate:</span>
                 <span className="detail-value">{formatDateOnly(viewResident.birthdate)}</span>
               </div>
@@ -284,6 +320,24 @@ function Residents() {
                 <span className="detail-label">Civil Status:</span>
                 <span className="detail-value">{viewResident.civil_status ? viewResident.civil_status.charAt(0).toUpperCase() + viewResident.civil_status.slice(1) : 'N/A'}</span>
               </div>
+              {viewResident.educ_background && (
+                <div className="detail-row">
+                  <span className="detail-label">Educational Background:</span>
+                  <span className="detail-value">{viewResident.educ_background}</span>
+                </div>
+              )}
+              {viewResident.work_status && (
+                <div className="detail-row">
+                  <span className="detail-label">Work Status:</span>
+                  <span className="detail-value">{viewResident.work_status}</span>
+                </div>
+              )}
+              {viewResident.youth_classification && (
+                <div className="detail-row">
+                  <span className="detail-label">Youth Classification:</span>
+                  <span className="detail-value">{viewResident.youth_classification}</span>
+                </div>
+              )}
               {viewResident.contact_no && (
                 <div className="detail-row">
                   <span className="detail-label">Contact Number:</span>
@@ -348,4 +402,3 @@ function Residents() {
 }
 
 export default Residents;
-

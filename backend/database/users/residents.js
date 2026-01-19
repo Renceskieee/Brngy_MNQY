@@ -1,11 +1,45 @@
 const pool = require('../config');
 const history = require('./history');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
+
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '../../uploads/residents');
+    try {
+      await fs.mkdir(uploadPath, { recursive: true });
+      cb(null, uploadPath);
+    } catch (error) {
+      cb(error);
+    }
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'resident-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Only image files are allowed'));
+  }
+});
 
 const getAllResidents = async (req, res) => {
   try {
     const [residents] = await pool.execute(
       `SELECT id, f_name, m_name, l_name, suffix, sex, birthdate, 
-       civil_status, contact_no, email, address, created_at, updated_at 
+       civil_status, educ_background, work_status, youth_classification,
+       contact_no, email, address, profile, created_at, updated_at 
        FROM residents 
        ORDER BY l_name ASC, f_name ASC`
     );
@@ -29,7 +63,8 @@ const getResidentById = async (req, res) => {
 
     const [residents] = await pool.execute(
       `SELECT id, f_name, m_name, l_name, suffix, sex, birthdate, 
-       civil_status, contact_no, email, address, created_at, updated_at 
+       civil_status, educ_background, work_status, youth_classification,
+       contact_no, email, address, profile, created_at, updated_at 
        FROM residents 
        WHERE id = ?`,
       [id]
@@ -96,8 +131,24 @@ const validateResidentData = (data) => {
     }
   }
 
-  if (!['single', 'married', 'widowed', 'separated', 'annulled'].includes(data.civil_status)) {
+  const validCivilStatus = ['single', 'married', 'widowed', 'separated', 'annulled', 'divorced', 'live-in', 'unknown'];
+  if (!validCivilStatus.includes(data.civil_status)) {
     errors.push('Civil status is required');
+  }
+
+  const validEducBackground = ['Elementary Level', 'Elementary Graduate', 'High School Level', 'High School Graduate', 'Vocational Graduate', 'College Level', 'College Graduate', 'Masters Level', 'Masters Graduate', 'Doctorate Level', 'Doctorate Graduate'];
+  if (data.educ_background && !validEducBackground.includes(data.educ_background)) {
+    errors.push('Invalid educational background value');
+  }
+
+  const validWorkStatus = ['Employed', 'Unemployed', 'Self-Employed', 'Currently looking for a job', 'Not interested looking for a job'];
+  if (data.work_status && !validWorkStatus.includes(data.work_status)) {
+    errors.push('Invalid work status value');
+  }
+
+  const validYouthClassification = ['In School Youth', 'Out of School Youth', 'Working Youth', 'Youth w/ Specific Needs', 'Indigenous People', 'Children In Conflict w/ Law', 'Person w/ Disability'];
+  if (data.youth_classification && !validYouthClassification.includes(data.youth_classification)) {
+    errors.push('Invalid youth classification value');
   }
 
   if (data.contact_no) {
@@ -127,6 +178,9 @@ const createResident = async (req, res) => {
       sex,
       birthdate,
       civil_status,
+      educ_background,
+      work_status,
+      youth_classification,
       contact_no,
       email,
       address
@@ -140,6 +194,9 @@ const createResident = async (req, res) => {
       sex,
       birthdate,
       civil_status,
+      educ_background: educ_background || null,
+      work_status: work_status || null,
+      youth_classification: youth_classification || null,
       contact_no: contact_no || null,
       email: email || null
     });
@@ -177,10 +234,16 @@ const createResident = async (req, res) => {
       }
     }
 
+    let profilePath = null;
+    if (req.file) {
+      profilePath = `/uploads/residents/${req.file.filename}`;
+    }
+
     const [result] = await pool.execute(
       `INSERT INTO residents (f_name, m_name, l_name, suffix, sex, birthdate, 
-       civil_status, contact_no, email, address) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       civil_status, educ_background, work_status, youth_classification,
+       contact_no, email, address, profile) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         f_name.trim(),
         m_name ? m_name.trim() : null,
@@ -189,9 +252,13 @@ const createResident = async (req, res) => {
         sex,
         birthdate,
         civil_status,
+        educ_background ? educ_background : null,
+        work_status ? work_status : null,
+        youth_classification ? youth_classification : null,
         contact_no ? contact_no.trim() : null,
         email ? email.trim() : null,
-        address ? address.trim() : null
+        address ? address.trim() : null,
+        profilePath
       ]
     );
 
@@ -201,7 +268,7 @@ const createResident = async (req, res) => {
     );
 
     const userId = req.body.userId || req.user?.userId || null;
-    if (userId) {
+    if (userId && newResident[0]) {
       const fullName = `${l_name.trim()}, ${f_name.trim()}${m_name ? ' ' + m_name.trim() : ''}${suffix && suffix !== 'NA' ? ' ' + suffix : ''}`;
       const description = `Added new resident: ${fullName}`;
       await history.createHistory(userId, result.insertId, null, description);
@@ -239,13 +306,24 @@ const updateResident = async (req, res) => {
       sex,
       birthdate,
       civil_status,
+      educ_background,
+      work_status,
+      youth_classification,
       contact_no,
       email,
       address
     } = req.body;
 
-    const [existing] = await pool.execute('SELECT id FROM residents WHERE id = ?', [id]);
+    const [existing] = await pool.execute('SELECT id, profile FROM residents WHERE id = ?', [id]);
     if (existing.length === 0) {
+      if (req.file) {
+        const filePath = path.join(__dirname, '../../uploads/residents', req.file.filename);
+        try {
+          await fs.unlink(filePath);
+        } catch (unlinkError) {
+          console.error('Error deleting uploaded file:', unlinkError);
+        }
+      }
       return res.status(404).json({
         success: false,
         message: 'Resident not found'
@@ -260,11 +338,22 @@ const updateResident = async (req, res) => {
       sex,
       birthdate,
       civil_status,
+      educ_background: educ_background || null,
+      work_status: work_status || null,
+      youth_classification: youth_classification || null,
       contact_no: contact_no || null,
       email: email || null
     });
 
     if (validationErrors.length > 0) {
+      if (req.file) {
+        const filePath = path.join(__dirname, '../../uploads/residents', req.file.filename);
+        try {
+          await fs.unlink(filePath);
+        } catch (unlinkError) {
+          console.error('Error deleting uploaded file:', unlinkError);
+        }
+      }
       return res.status(400).json({
         success: false,
         message: validationErrors.join(', ')
@@ -277,6 +366,14 @@ const updateResident = async (req, res) => {
         [contact_no, id]
       );
       if (existingContact.length > 0) {
+        if (req.file) {
+          const filePath = path.join(__dirname, '../../uploads/residents', req.file.filename);
+          try {
+            await fs.unlink(filePath);
+          } catch (unlinkError) {
+            console.error('Error deleting uploaded file:', unlinkError);
+          }
+        }
         return res.status(400).json({
           success: false,
           message: 'Contact number already exists'
@@ -290,6 +387,14 @@ const updateResident = async (req, res) => {
         [email, id]
       );
       if (existingEmail.length > 0) {
+        if (req.file) {
+          const filePath = path.join(__dirname, '../../uploads/residents', req.file.filename);
+          try {
+            await fs.unlink(filePath);
+          } catch (unlinkError) {
+            console.error('Error deleting uploaded file:', unlinkError);
+          }
+        }
         return res.status(400).json({
           success: false,
           message: 'Email already exists'
@@ -297,10 +402,24 @@ const updateResident = async (req, res) => {
       }
     }
 
+    let profilePath = existing[0].profile;
+    if (req.file) {
+      if (existing[0].profile) {
+        const oldFilePath = path.join(__dirname, '../../uploads/residents', path.basename(existing[0].profile));
+        try {
+          await fs.unlink(oldFilePath);
+        } catch (unlinkError) {
+          console.error('Error deleting old profile picture:', unlinkError);
+        }
+      }
+      profilePath = `/uploads/residents/${req.file.filename}`;
+    }
+
     await pool.execute(
       `UPDATE residents SET 
        f_name = ?, m_name = ?, l_name = ?, suffix = ?, sex = ?, 
-       birthdate = ?, civil_status = ?, contact_no = ?, email = ?, address = ? 
+       birthdate = ?, civil_status = ?, educ_background = ?, work_status = ?,
+       youth_classification = ?, contact_no = ?, email = ?, address = ?, profile = ? 
        WHERE id = ?`,
       [
         f_name.trim(),
@@ -310,9 +429,13 @@ const updateResident = async (req, res) => {
         sex,
         birthdate,
         civil_status,
+        educ_background ? educ_background : null,
+        work_status ? work_status : null,
+        youth_classification ? youth_classification : null,
         contact_no ? contact_no.trim() : null,
         email ? email.trim() : null,
         address ? address.trim() : null,
+        profilePath,
         id
       ]
     );
@@ -320,7 +443,7 @@ const updateResident = async (req, res) => {
     const [updated] = await pool.execute('SELECT * FROM residents WHERE id = ?', [id]);
 
     const userId = req.body.userId || req.user?.userId || null;
-    if (userId) {
+    if (userId && updated[0]) {
       const fullName = `${l_name.trim()}, ${f_name.trim()}${m_name ? ' ' + m_name.trim() : ''}${suffix && suffix !== 'NA' ? ' ' + suffix : ''}`;
       const description = `Updated resident: ${fullName}`;
       await history.createHistory(userId, id, null, description);
@@ -333,6 +456,14 @@ const updateResident = async (req, res) => {
     });
   } catch (error) {
     console.error('Update resident error:', error);
+    if (req.file) {
+      const filePath = path.join(__dirname, '../../uploads/residents', req.file.filename);
+      try {
+        await fs.unlink(filePath);
+      } catch (unlinkError) {
+        console.error('Error deleting uploaded file:', unlinkError);
+      }
+    }
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(400).json({
         success: false,
@@ -351,7 +482,7 @@ const deleteResident = async (req, res) => {
     const { id } = req.params;
 
     const [existing] = await pool.execute(
-      'SELECT id, f_name, m_name, l_name, suffix FROM residents WHERE id = ?',
+      'SELECT id, f_name, m_name, l_name, suffix, profile FROM residents WHERE id = ?',
       [id]
     );
     if (existing.length === 0) {
@@ -362,6 +493,15 @@ const deleteResident = async (req, res) => {
     }
 
     const resident = existing[0];
+    if (resident.profile) {
+      const filePath = path.join(__dirname, '../../uploads/residents', path.basename(resident.profile));
+      try {
+        await fs.unlink(filePath);
+      } catch (unlinkError) {
+        console.error('Error deleting profile picture:', unlinkError);
+      }
+    }
+
     const userId = req.body.userId || req.user?.userId || null;
     
     if (userId) {
@@ -401,11 +541,33 @@ const getResidentsCount = async (req, res) => {
   }
 };
 
+const uploadMiddleware = upload.single('profile');
+
 module.exports = {
   getAllResidents,
   getResidentById,
-  createResident,
-  updateResident,
+  createResident: (req, res) => {
+    uploadMiddleware(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          message: err.message || 'File upload error'
+        });
+      }
+      createResident(req, res);
+    });
+  },
+  updateResident: (req, res) => {
+    uploadMiddleware(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({
+          success: false,
+          message: err.message || 'File upload error'
+        });
+      }
+      updateResident(req, res);
+    });
+  },
   deleteResident,
   getResidentsCount
 };

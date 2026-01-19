@@ -276,6 +276,9 @@ function HouseholdForm({ onClose, household = null, onSuccess }) {
               rows="3"
             />
             {errors.address && <span className="error-message">{errors.address}</span>}
+            <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px', fontFamily: 'Poppins, sans-serif' }}>
+              <i>(House No., Street, Barangay, City, Region, ZIP Code)</i>
+            </div>
           </div>
 
           {household && (
