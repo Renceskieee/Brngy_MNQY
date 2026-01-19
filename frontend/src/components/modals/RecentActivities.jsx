@@ -64,12 +64,19 @@ function RecentActivities({ onClose }) {
         serviceName = removedMatch[2].trim();
         action = 'removed';
       }
-    } else if (activity.description.includes('sent emails to beneficiaries of service:')) {
+    } else if (activity.description.includes('Sent emails to beneficiaries of service:')) {
       entityType = 'Service';
-      const match = activity.description.match(/sent emails to beneficiaries of service: (.+)/);
+      const match = activity.description.match(/Sent emails to beneficiaries of service: (.+)/);
       if (match) {
         entityValue = match[1].trim();
-        action = 'sent emails to beneficiaries';
+        return {
+          description: (
+            <>
+              <strong>{userName}</strong> initiated email distribution to beneficiaries of the <strong>{entityValue}</strong>.
+            </>
+          ),
+          entityLine: null
+        };
       }
     } else if (activity.incident_reference_number) {
       entityType = 'Incident';
@@ -200,4 +207,3 @@ function RecentActivities({ onClose }) {
 }
 
 export default RecentActivities;
-
