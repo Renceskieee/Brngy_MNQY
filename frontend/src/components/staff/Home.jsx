@@ -232,9 +232,9 @@ function Home() {
         serviceName = removedMatch[2].trim();
         action = 'removed';
       }
-    } else if (activity.description.includes('sent emails to beneficiaries of service:')) {
+    } else if (activity.description.includes('Sent emails to beneficiaries of service:')) {
       entityType = 'Service';
-      const match = activity.description.match(/sent emails to beneficiaries of service: (.+)/);
+      const match = activity.description.match(/Sent emails to beneficiaries of service: (.+)/);
       if (match) {
         entityValue = match[1].trim();
         return {
@@ -505,7 +505,6 @@ function Home() {
           font: {
             family: 'Poppins'
           },
-          stepSize: 1,
           minRotation: 0,
           maxRotation: 0
         }
@@ -551,8 +550,7 @@ function Home() {
         ticks: {
           font: {
             family: 'Poppins'
-          },
-          stepSize: 1
+          }
         }
       }
     }
@@ -595,8 +593,7 @@ function Home() {
         ticks: {
           font: {
             family: 'Poppins'
-          },
-          stepSize: 1
+          }
         }
       }
     }
@@ -637,8 +634,7 @@ function Home() {
         ticks: {
           font: {
             family: 'Poppins'
-          },
-          stepSize: 1
+          }
         }
       }
     }
