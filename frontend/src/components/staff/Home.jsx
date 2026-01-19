@@ -328,6 +328,43 @@ function Home() {
     if (!activity.user_first_name) return 'Unknown User';
     return `${activity.user_first_name} ${activity.user_last_name}`;
   };
+  
+  const educationOrder = [
+    'Elementary Level',
+    'Elementary Graduate',
+    'High School Level',
+    'High School Graduate',
+    'Vocational Graduate',
+    'College Level',
+    'College Graduate',
+    'Masters Level',
+    'Masters Graduate',
+    'Doctorate Level',
+    'Doctorate Graduate'
+  ];
+
+  const formatLabelToTwoLines = (label) => {
+    if (!label) return [''];
+    const idx = label.lastIndexOf(' ');
+    if (idx === -1) return [label];
+    const primary = label.substring(0, idx);
+    const status = label.substring(idx + 1);
+    return [primary, status];
+  };
+
+  const orderedEducationLabels = educationOrder.filter(l => Object.prototype.hasOwnProperty.call(educationDistribution, l));
+  const educationChartData = {
+    labels: orderedEducationLabels.map(formatLabelToTwoLines),
+    datasets: [
+      {
+        label: 'Residents',
+        data: orderedEducationLabels.map(l => educationDistribution[l] || 0),
+        backgroundColor: '#3F9AAE',
+        borderColor: '#ffffff',
+        borderWidth: 2
+      }
+    ]
+  };
 
   const sexChartData = {
     labels: ['Male', 'Female'],
@@ -358,19 +395,6 @@ function Home() {
         ],
         backgroundColor: ['#3F9AAE', '#79C9C5', '#FFE2AF', '#F96E5B', '#88B0B9', '#A8DADC', '#F4A261', '#E9C46A'],
         borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
-        borderWidth: 2
-      }
-    ]
-  };
-
-  const educationChartData = {
-    labels: Object.keys(educationDistribution),
-    datasets: [
-      {
-        label: 'Residents',
-        data: Object.values(educationDistribution),
-        backgroundColor: '#3F9AAE',
-        borderColor: '#ffffff',
         borderWidth: 2
       }
     ]
