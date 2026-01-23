@@ -160,32 +160,22 @@ function HomeAdmin() {
         });
         setEmploymentDistribution(empDist);
 
-        const youthDist = {};
-        const educLevels = ['Elementary Level', 'Elementary Graduate', 'High School Level', 'High School Graduate', 'Vocational Graduate', 'College Level', 'College Graduate', 'Masters Level', 'Masters Graduate', 'Doctorate Level', 'Doctorate Graduate'];
-        educLevels.forEach(level => {
-          youthDist[level] = {
-            'In School Youth': 0,
-            'Out of School Youth': 0,
-            'Working Youth': 0,
-            'Youth w/ Specific Needs': 0,
-            'Indigenous People': 0,
-            'Children In Conflict w/ Law': 0,
-            'Person w/ Disability': 0,
-            'No Classification': 0
-          };
-        });
+        const youthDist = {
+          'In School Youth': 0,
+          'Out of School Youth': 0,
+          'Working Youth': 0,
+          'Youth w/ Specific Needs': 0,
+          'Indigenous People': 0,
+          'Children In Conflict w/ Law': 0,
+          'Person w/ Disability': 0
+        };
 
         residents.forEach(r => {
-          if (r.educ_background && r.youth_classification) {
-            if (youthDist[r.educ_background]) {
-              youthDist[r.educ_background][r.youth_classification] = (youthDist[r.educ_background][r.youth_classification] || 0) + 1;
-            }
-          } else if (r.educ_background) {
-            if (youthDist[r.educ_background]) {
-              youthDist[r.educ_background]['No Classification'] = (youthDist[r.educ_background]['No Classification'] || 0) + 1;
-            }
+          if (r.youth_classification) {
+            youthDist[r.youth_classification] = (youthDist[r.youth_classification] || 0) + 1;
           }
         });
+        
         setYouthClassificationDistribution(youthDist);
       }
     } catch (error) {
@@ -435,39 +425,20 @@ function HomeAdmin() {
     labels: Object.keys(youthClassificationDistribution),
     datasets: [
       {
-        label: 'In School Youth',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['In School Youth'] || 0),
-        backgroundColor: '#3F9AAE'
-      },
-      {
-        label: 'Out of School Youth',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Out of School Youth'] || 0),
-        backgroundColor: '#F96E5B'
-      },
-      {
-        label: 'Working Youth',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Working Youth'] || 0),
-        backgroundColor: '#79C9C5'
-      },
-      {
-        label: 'Youth w/ Specific Needs',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Youth w/ Specific Needs'] || 0),
-        backgroundColor: '#FFE2AF'
-      },
-      {
-        label: 'Indigenous People',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Indigenous People'] || 0),
-        backgroundColor: '#88B0B9'
-      },
-      {
-        label: 'Children In Conflict w/ Law',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Children In Conflict w/ Law'] || 0),
-        backgroundColor: '#A8DADC'
-      },
-      {
-        label: 'Person w/ Disability',
-        data: Object.keys(youthClassificationDistribution).map(educ => youthClassificationDistribution[educ]['Person w/ Disability'] || 0),
-        backgroundColor: '#F4A261'
+        label: 'Number of Youth',
+        data: Object.values(youthClassificationDistribution),
+        backgroundColor: [
+          '#3F9AAE',
+          '#F96E5B',
+          '#79C9C5',
+          '#FFE2AF',
+          '#88B0B9',
+          '#A8DADC',
+          '#F4A261',
+          '#E9C46A'
+        ],
+        borderColor: '#ffffff',
+        borderWidth: 2
       }
     ]
   };
@@ -623,21 +594,22 @@ function HomeAdmin() {
     }
   };
 
-  const stackedColumnChartOptions = {
+  const horizontalBarChartOptions = {
+    indexAxis: 'y',
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'bottom',
-        labels: {
-          padding: 10,
-          font: {
-            family: 'Poppins',
-            size: 11
-          }
-        }
+        display: false
       },
       tooltip: {
+        callbacks: {
+          label: function(context) {
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = total > 0 ? ((context.parsed.x / total) * 100).toFixed(1) : 0;
+            return `${context.parsed.x} youth (${percentage}%)`;
+          }
+        },
         font: {
           family: 'Poppins'
         }
@@ -645,7 +617,7 @@ function HomeAdmin() {
     },
     scales: {
       x: {
-        stacked: true,
+        beginAtZero: true,
         ticks: {
           font: {
             family: 'Poppins'
@@ -653,11 +625,10 @@ function HomeAdmin() {
         }
       },
       y: {
-        stacked: true,
-        beginAtZero: true,
         ticks: {
           font: {
-            family: 'Poppins'
+            family: 'Poppins',
+            size: 12
           }
         }
       }
@@ -771,10 +742,10 @@ function HomeAdmin() {
             <div className="chart-container chart-container-large">
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
-              ) : Object.keys(youthClassificationDistribution).length === 0 ? (
+              ) : Object.values(youthClassificationDistribution).every(v => v === 0) ? (
                 <div className="empty-state">No youth classification data available</div>
               ) : (
-                <Bar data={youthClassificationChartData} options={stackedColumnChartOptions} />
+                <Bar data={youthClassificationChartData} options={horizontalBarChartOptions} />
               )}
             </div>
           </div>
