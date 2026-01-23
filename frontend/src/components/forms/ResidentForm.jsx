@@ -298,9 +298,9 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} className="create-account-form">
-          <div className="form-group" style={{ marginBottom: '24px' }}>
+          <div className="form-group">
             <label className="form-label">Profile Picture</label>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
               {profilePreview ? (
                 <div style={{ position: 'relative', display: 'inline-block' }}>
                   <img 
@@ -400,7 +400,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
                 </button>
               </div>
               {showCamera && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
                   <video
                     ref={videoRef}
                     autoPlay

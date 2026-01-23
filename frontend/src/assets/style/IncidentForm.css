@@ -81,13 +81,13 @@
 .incident-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .incident-form .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 16px;
   width: 100%;
   box-sizing: border-box;
 }
