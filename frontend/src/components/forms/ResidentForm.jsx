@@ -126,14 +126,23 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'user'
+        } 
+      });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setShowCamera(true);
-      }
+      setShowCamera(true);
+      
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      }, 100);
     } catch (error) {
-      setMessage({ text: 'Unable to access camera', type: 'error' });
+      setMessage({ text: 'Unable to access camera: ' + error.message, type: 'error' });
     }
   };
 
@@ -395,6 +404,8 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
                   <video
                     ref={videoRef}
                     autoPlay
+                    playsInline
+                    muted
                     style={{
                       width: '100%',
                       maxWidth: '300px',
