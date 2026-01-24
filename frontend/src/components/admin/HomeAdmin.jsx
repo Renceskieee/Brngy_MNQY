@@ -715,7 +715,7 @@ function HomeAdmin() {
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
               ) : Object.keys(educationDistribution).length === 0 ? (
-                <div className="empty-state">No education data available</div>
+                <div className="empty-state">No education data available.</div>
               ) : (
                 <Bar data={educationChartData} options={verticalBarChartOptions} />
               )}
@@ -743,7 +743,7 @@ function HomeAdmin() {
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
               ) : Object.values(youthClassificationDistribution).every(v => v === 0) ? (
-                <div className="empty-state">No youth classification data available</div>
+                <div className="empty-state">No youth classification data available.</div>
               ) : (
                 <Bar data={youthClassificationChartData} options={horizontalBarChartOptions} />
               )}
