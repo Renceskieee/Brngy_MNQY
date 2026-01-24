@@ -404,7 +404,7 @@ function Users() {
                     required
                   >
                     <option value="active">Active</option>
-                    <option value="deactivated">Deactivated</option>
+                    <option value="deactivated">Deactivate</option>
                   </select>
                 </div>
               </div>

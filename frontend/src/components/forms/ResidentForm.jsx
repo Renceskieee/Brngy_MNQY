@@ -198,8 +198,30 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
       newErrors.civil_status = 'Civil status is required';
     }
 
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!formData.educ_background) {
+      newErrors.educ_background = 'Educational background is required';
+    }
+
+    if (!formData.work_status) {
+      newErrors.work_status = 'Work status is required';
+    }
+
+    if (isYouthAge() && !formData.youth_classification) {
+      newErrors.youth_classification = 'Youth classification is required for ages 15-30';
+    }
+
+    if (!formData.contact_no.trim()) {
+      newErrors.contact_no = 'Contact number is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Invalid email format';
+    }
+
+    if (!formData.address.trim()) {
+      newErrors.address = 'Address is required';
     }
 
     setErrors(newErrors);
@@ -555,7 +577,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="educ_background" className="form-label">Educational Background</label>
+            <label htmlFor="educ_background" className="form-label">Educational Background *</label>
             <select
               id="educ_background"
               name="educ_background"
@@ -580,7 +602,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="work_status" className="form-label">Work Status</label>
+            <label htmlFor="work_status" className="form-label">Work Status *</label>
             <select
               id="work_status"
               name="work_status"
@@ -600,7 +622,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
 
           <div className="form-group">
             <label htmlFor="youth_classification" className="form-label">
-              Youth Classification
+              Youth Classification *
               {!isYouthAge() && formData.birthdate && (
                 <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
                   (Available for ages 15-30 only)
@@ -628,7 +650,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="contact_no" className="form-label">Contact Number</label>
+            <label htmlFor="contact_no" className="form-label">Contact Number *</label>
             <div className="phone-input-wrapper">
               <div className="phone-flag">
                 <img src={phFlag} alt="PH" onError={(e) => { e.target.style.display = 'none'; }} />
@@ -647,7 +669,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">Email *</label>
             <input
               type="email"
               id="email"
@@ -661,7 +683,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="address" className="form-label">Address</label>
+            <label htmlFor="address" className="form-label">Address *</label>
             <textarea
               id="address"
               name="address"
