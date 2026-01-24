@@ -583,7 +583,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               name="educ_background"
               value={formData.educ_background}
               onChange={handleChange}
-              className={`form-select ${errors.educ_background ? 'error' : ''}`}
+              className={`form-select form-select-tight ${errors.educ_background ? 'error' : ''}`}
             >
               <option value="">Select educational background</option>
               <option value="Elementary Level">Elementary Level</option>
@@ -608,7 +608,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               name="work_status"
               value={formData.work_status}
               onChange={handleChange}
-              className={`form-select ${errors.work_status ? 'error' : ''}`}
+              className={`form-select form-select-tight ${errors.work_status ? 'error' : ''}`}
             >
               <option value="">Select work status</option>
               <option value="Employed">Employed</option>
@@ -635,7 +635,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               value={formData.youth_classification}
               onChange={handleChange}
               disabled={!isYouthAge()}
-              className={`form-select ${errors.youth_classification ? 'error' : ''} ${!isYouthAge() ? 'disabled' : ''}`}
+              className={`form-select form-select-tight ${errors.youth_classification ? 'error' : ''} ${!isYouthAge() ? 'disabled' : ''}`}
             >
               <option value="">Select youth classification</option>
               <option value="In School Youth">In School Youth</option>
