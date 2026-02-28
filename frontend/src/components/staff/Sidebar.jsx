@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   LayoutDashboard,
   Users,
@@ -128,7 +129,7 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
         })}
       </nav>
 
-      {showLogoutModal && (
+      {showLogoutModal && createPortal(
         <div className="logout-modal-overlay">
           <div className="logout-modal">
             <h3 className="logout-modal-title">Confirm Logout</h3>
@@ -142,7 +143,8 @@ function Sidebar({ activePage, setActivePage, user, onLogout }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </aside>
   );

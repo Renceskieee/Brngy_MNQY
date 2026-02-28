@@ -50,6 +50,10 @@
   transition: all 0.3s ease;
 }
 
+.otp-modal-close:hover {
+  background: #f3f4f6;
+  color: #333;
+}
 
 .otp-modal-content {
   display: flex;

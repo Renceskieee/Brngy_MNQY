@@ -691,6 +691,8 @@ function HomeAdmin() {
             <div className="chart-container">
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
+              ) : (sexDistribution.male === 0 && sexDistribution.female === 0) ? (
+                <div className="empty-state">No gender data available.</div>
               ) : (
                 <Pie data={sexChartData} options={pieChartOptions} />
               )}
@@ -701,6 +703,8 @@ function HomeAdmin() {
             <div className="chart-container">
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
+              ) : Object.values(civilStatusDistribution).every(v => v === 0) ? (
+                <div className="empty-state">No civil status data available.</div>
               ) : (
                 <Bar data={civilStatusChartData} options={barChartOptions} />
               )}
@@ -729,6 +733,11 @@ function HomeAdmin() {
             <div className="chart-container chart-container-large">
               {loading ? (
                 <div className="loading-state">Loading chart...</div>
+              ) : Object.keys(employmentDistribution).every(age => {
+                const total = Object.values(employmentDistribution[age] || {}).reduce((a, b) => a + b, 0);
+                return total === 0;
+              }) ? (
+                <div className="empty-state">No employment data available.</div>
               ) : (
                 <Bar data={employmentChartData} options={stackedBarChartOptions} />
               )}

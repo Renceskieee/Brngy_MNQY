@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { X, Info, Upload, Camera, Trash2 } from 'lucide-react';
 import Messages from '../shared/Messages';
-import '../../assets/style/CreateAccount.css';
+import '../../assets/style/ResidentForm.css';
 import phFlag from '../../assets/logo/philippines.png';
 
 const API_URL = '/api';
@@ -253,6 +253,9 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
       if (profilePicture) {
         formDataToSend.append('profile', profilePicture);
       }
+      if (resident && resident.profile && !profilePicture && !profilePreview) {
+        formDataToSend.append('removeProfile', 'true');
+      }
 
       let response;
       if (resident) {
@@ -308,20 +311,20 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
   };
 
   return (
-    <div className="create-account-overlay">
-      <div className="create-account-modal">
-        <div className="create-account-header">
-          <div className="create-account-title-row">
-            <h2 className="create-account-title">{resident ? 'Update Resident' : 'Add New Resident'}</h2>
+    <div className="resident-form-overlay">
+      <div className="resident-form-modal">
+        <div className="resident-form-header">
+          <div className="resident-form-title-row">
+            <h2 className="resident-form-title">{resident ? 'Update Resident' : 'Add New Resident'}</h2>
           </div>
-          <button className="create-account-close" onClick={onClose}>
+          <button className="resident-form-close" onClick={onClose}>
             <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="create-account-form">
-          <div className="form-group">
-            <label className="form-label">Profile Picture</label>
+        <form onSubmit={handleSubmit} className="resident-form-form">
+          <div className="resident-form-group">
+            <label className="resident-form-label">Profile Picture</label>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
               {profilePreview ? (
                 <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -457,59 +460,59 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="f_name" className="form-label">First Name *</label>
+          <div className="resident-form-row">
+            <div className="resident-form-group">
+              <label htmlFor="f_name" className="resident-form-label">First Name *</label>
               <input
                 type="text"
                 id="f_name"
                 name="f_name"
                 value={formData.f_name}
                 onChange={handleChange}
-                className={`form-input ${errors.f_name ? 'error' : ''}`}
+                className={`resident-form-input ${errors.f_name ? 'resident-form-error' : ''}`}
                 placeholder="Enter first name"
               />
-              {errors.f_name && <span className="error-message">{errors.f_name}</span>}
+              {errors.f_name && <span className="resident-form-error">{errors.f_name}</span>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="m_name" className="form-label">Middle Name</label>
+            <div className="resident-form-group">
+              <label htmlFor="m_name" className="resident-form-label">Middle Name</label>
               <input
                 type="text"
                 id="m_name"
                 name="m_name"
                 value={formData.m_name}
                 onChange={handleChange}
-                className={`form-input ${errors.m_name ? 'error' : ''}`}
+                className={`resident-form-input ${errors.m_name ? 'resident-form-error' : ''}`}
                 placeholder="Enter middle name"
               />
-              {errors.m_name && <span className="error-message">{errors.m_name}</span>}
+              {errors.m_name && <span className="resident-form-error">{errors.m_name}</span>}
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="l_name" className="form-label">Last Name *</label>
+          <div className="resident-form-row">
+            <div className="resident-form-group">
+              <label htmlFor="l_name" className="resident-form-label">Last Name *</label>
               <input
                 type="text"
                 id="l_name"
                 name="l_name"
                 value={formData.l_name}
                 onChange={handleChange}
-                className={`form-input ${errors.l_name ? 'error' : ''}`}
+                className={`resident-form-input ${errors.l_name ? 'resident-form-error' : ''}`}
                 placeholder="Enter last name"
               />
-              {errors.l_name && <span className="error-message">{errors.l_name}</span>}
+              {errors.l_name && <span className="resident-form-error">{errors.l_name}</span>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="suffix" className="form-label">Suffix</label>
+            <div className="resident-form-group">
+              <label htmlFor="suffix" className="resident-form-label">Suffix</label>
               <select
                 id="suffix"
                 name="suffix"
                 value={formData.suffix}
                 onChange={handleChange}
-                className={`form-select form-select-tight ${errors.suffix ? 'error' : ''}`}
+                className={`resident-form-select resident-form-select-tight ${errors.suffix ? 'resident-form-error' : ''}`}
               >
                 <option value="NA">None</option>
                 <option value="Jr.">Jr.</option>
@@ -518,50 +521,50 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
                 <option value="III">III</option>
                 <option value="IV">IV</option>
               </select>
-              {errors.suffix && <span className="error-message">{errors.suffix}</span>}
+              {errors.suffix && <span className="resident-form-error">{errors.suffix}</span>}
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="sex" className="form-label">Sex *</label>
+          <div className="resident-form-row">
+            <div className="resident-form-group">
+              <label htmlFor="sex" className="resident-form-label">Sex *</label>
               <select
                 id="sex"
                 name="sex"
                 value={formData.sex}
                 onChange={handleChange}
-                className={`form-select form-select-tight ${errors.sex ? 'error' : ''}`}
+                className={`resident-form-select resident-form-select-tight ${errors.sex ? 'resident-form-error' : ''}`}
               >
                 <option value="">Select sex</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
-              {errors.sex && <span className="error-message">{errors.sex}</span>}
+              {errors.sex && <span className="resident-form-error">{errors.sex}</span>}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="birthdate" className="form-label">Birthdate *</label>
+            <div className="resident-form-group">
+              <label htmlFor="birthdate" className="resident-form-label">Birthdate *</label>
               <input
                 type="date"
                 id="birthdate"
                 name="birthdate"
                 value={formData.birthdate}
                 onChange={handleChange}
-                className={`form-input ${errors.birthdate ? 'error' : ''}`}
+                className={`resident-form-input ${errors.birthdate ? 'resident-form-error' : ''}`}
                 max={new Date().toISOString().split('T')[0]}
               />
-              {errors.birthdate && <span className="error-message">{errors.birthdate}</span>}
+              {errors.birthdate && <span className="resident-form-error">{errors.birthdate}</span>}
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="civil_status" className="form-label">Civil Status *</label>
+          <div className="resident-form-group">
+            <label htmlFor="civil_status" className="resident-form-label">Civil Status *</label>
             <select
               id="civil_status"
               name="civil_status"
               value={formData.civil_status}
               onChange={handleChange}
-              className={`form-select form-select-tight ${errors.civil_status ? 'error' : ''}`}
+              className={`resident-form-select resident-form-select-tight ${errors.civil_status ? 'resident-form-error' : ''}`}
             >
               <option value="">Select civil status</option>
               <option value="single">Single</option>
@@ -573,17 +576,17 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               <option value="live-in">Live-in</option>
               <option value="unknown">Unknown</option>
             </select>
-            {errors.civil_status && <span className="error-message">{errors.civil_status}</span>}
+            {errors.civil_status && <span className="resident-form-error">{errors.civil_status}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="educ_background" className="form-label">Educational Background *</label>
+          <div className="resident-form-group">
+            <label htmlFor="educ_background" className="resident-form-label">Educational Background *</label>
             <select
               id="educ_background"
               name="educ_background"
               value={formData.educ_background}
               onChange={handleChange}
-              className={`form-select form-select-tight ${errors.educ_background ? 'error' : ''}`}
+              className={`resident-form-select resident-form-select-tight ${errors.educ_background ? 'resident-form-error' : ''}`}
             >
               <option value="">Select educational background</option>
               <option value="Elementary Level">Elementary Level</option>
@@ -598,17 +601,17 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               <option value="Doctorate Level">Doctorate Level</option>
               <option value="Doctorate Graduate">Doctorate Graduate</option>
             </select>
-            {errors.educ_background && <span className="error-message">{errors.educ_background}</span>}
+            {errors.educ_background && <span className="resident-form-error">{errors.educ_background}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="work_status" className="form-label">Work Status *</label>
+          <div className="resident-form-group">
+            <label htmlFor="work_status" className="resident-form-label">Work Status *</label>
             <select
               id="work_status"
               name="work_status"
               value={formData.work_status}
               onChange={handleChange}
-              className={`form-select form-select-tight ${errors.work_status ? 'error' : ''}`}
+              className={`resident-form-select resident-form-select-tight ${errors.work_status ? 'resident-form-error' : ''}`}
             >
               <option value="">Select work status</option>
               <option value="Employed">Employed</option>
@@ -617,11 +620,11 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               <option value="Currently looking for a job">Currently looking for a job</option>
               <option value="Not interested looking for a job">Not interested looking for a job</option>
             </select>
-            {errors.work_status && <span className="error-message">{errors.work_status}</span>}
+            {errors.work_status && <span className="resident-form-error">{errors.work_status}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="youth_classification" className="form-label">
+          <div className="resident-form-group">
+            <label htmlFor="youth_classification" className="resident-form-label">
               Youth Classification *
               {!isYouthAge() && formData.birthdate && (
                 <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: 'normal', marginLeft: '8px' }}>
@@ -635,7 +638,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               value={formData.youth_classification}
               onChange={handleChange}
               disabled={!isYouthAge()}
-              className={`form-select form-select-tight ${errors.youth_classification ? 'error' : ''} ${!isYouthAge() ? 'disabled' : ''}`}
+              className={`resident-form-select resident-form-select-tight ${errors.youth_classification ? 'resident-form-error' : ''} ${!isYouthAge() ? 'resident-form-disabled' : ''}`}
             >
               <option value="">Select youth classification</option>
               <option value="In School Youth">In School Youth</option>
@@ -646,13 +649,13 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
               <option value="Children In Conflict w/ Law">Children In Conflict w/ Law</option>
               <option value="Person w/ Disability">Person w/ Disability</option>
             </select>
-            {errors.youth_classification && <span className="error-message">{errors.youth_classification}</span>}
+            {errors.youth_classification && <span className="resident-form-error">{errors.youth_classification}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="contact_no" className="form-label">Contact Number *</label>
-            <div className="phone-input-wrapper">
-              <div className="phone-flag">
+          <div className="resident-form-group">
+            <label htmlFor="contact_no" className="resident-form-label">Contact Number *</label>
+            <div className="resident-form-phone-wrapper">
+              <div className="resident-form-phone-flag">
                 <img src={phFlag} alt="PH" onError={(e) => { e.target.style.display = 'none'; }} />
               </div>
               <input
@@ -661,50 +664,50 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
                 name="contact_no"
                 value={formData.contact_no}
                 onChange={handleChange}
-                className={`form-input ${errors.contact_no ? 'error' : ''}`}
+                className={`resident-form-input ${errors.contact_no ? 'resident-form-error' : ''}`}
                 placeholder="Enter contact number"
               />
             </div>
-            {errors.contact_no && <span className="error-message">{errors.contact_no}</span>}
+            {errors.contact_no && <span className="resident-form-error">{errors.contact_no}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Email *</label>
+          <div className="resident-form-group">
+            <label htmlFor="email" className="resident-form-label">Email *</label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`form-input ${errors.email ? 'error' : ''}`}
+              className={`resident-form-input ${errors.email ? 'resident-form-error' : ''}`}
               placeholder="Enter email address"
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && <span className="resident-form-error">{errors.email}</span>}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="address" className="form-label">Address *</label>
+          <div className="resident-form-group">
+            <label htmlFor="address" className="resident-form-label">Address *</label>
             <textarea
               id="address"
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className={`form-input ${errors.address ? 'error' : ''}`}
+              className={`resident-form-input ${errors.address ? 'resident-form-error' : ''}`}
               placeholder="Enter home address"
               rows="3"
             />
             <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px', fontFamily: 'Poppins, sans-serif' }}>
               <i>(House No., Street, Barangay, City, Region, ZIP Code)</i>
             </div>
-            {errors.address && <span className="error-message">{errors.address}</span>}
+            {errors.address && <span className="resident-form-error">{errors.address}</span>}
           </div>
 
-          <p className="form-instruction">
+          <p className="resident-form-instruction">
             Please review all entered details before {resident ? 'updating' : 'creating'} the resident.
           </p>
 
           {errors.submit && (
-            <div className="submit-error">
+            <div className="resident-form-submit-error">
               <span>{errors.submit}</span>
               <Info size={18} />
             </div>
@@ -712,7 +715,7 @@ function ResidentForm({ onClose, resident = null, onSuccess }) {
 
           <button
             type="submit"
-            className="create-account-button"
+            className="resident-form-button"
             disabled={loading}
           >
             {loading ? (resident ? 'Updating...' : 'Creating...') : (resident ? 'Update Resident' : 'Create Resident')}

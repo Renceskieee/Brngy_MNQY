@@ -403,7 +403,16 @@ const updateResident = async (req, res) => {
     }
 
     let profilePath = existing[0].profile;
-    if (req.file) {
+    const removeProfile = req.body.removeProfile === 'true' || req.body.removeProfile === true;
+    if (removeProfile && existing[0].profile) {
+      const oldFilePath = path.join(__dirname, '../../uploads/residents', path.basename(existing[0].profile));
+      try {
+        await fs.unlink(oldFilePath);
+      } catch (unlinkError) {
+        console.error('Error deleting profile picture:', unlinkError);
+      }
+      profilePath = null;
+    } else if (req.file) {
       if (existing[0].profile) {
         const oldFilePath = path.join(__dirname, '../../uploads/residents', path.basename(existing[0].profile));
         try {
